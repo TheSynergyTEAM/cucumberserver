@@ -1,5 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.favourite.favouritelist;
 
+import cucumbermarket.cucumbermarketspring.domain.favourite.favouriteitem.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import lombok.Getter;
@@ -24,8 +25,7 @@ public class FavouriteList {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ElementCollection
-    @CollectionTable(name = "item_list", joinColumns = @JoinColumn(name = "favouriteList_id"))
+    @OneToMany(mappedBy = "favouriteList")
     @Column(name = "item_name")
-    private List<Item> itemList = new ArrayList<>();
+    private List<FavouriteItem> itemList = new ArrayList<>();
 }

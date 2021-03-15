@@ -1,20 +1,17 @@
 package cucumbermarket.cucumbermarketspring.domain.member;
 
+import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.favourite.favouritelist.FavouriteList;
+import cucumbermarket.cucumbermarketspring.domain.review.Review;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -50,6 +47,12 @@ public class Member {
 
     @OneToOne(mappedBy = "member")
     private FavouriteList favouriteList;
+
+    @OneToMany(mappedBy = "member")
+    private List<Review> reviewList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Message> messageList = new ArrayList<>();
 
 
     //빌더
