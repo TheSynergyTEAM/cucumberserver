@@ -1,6 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.chat.chatroom;
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
-import cucumbermarket.cucumbermarketspring.domain.chat.chatmessage.ChatMessages;
+import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,5 +25,5 @@ public class ChatRoom extends BaseTimeEntity {
     private Item item;
 
     @OneToMany(mappedBy = "chatroom")
-    private List<ChatMessages> chatMessages = new ArrayList<>();
+    private List<Message> messageList = new ArrayList<>();
 }

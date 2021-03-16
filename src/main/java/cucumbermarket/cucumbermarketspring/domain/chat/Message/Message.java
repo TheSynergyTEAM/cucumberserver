@@ -1,5 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.chat.Message;
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
+import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoom;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,6 +30,10 @@ public class Message extends BaseTimeEntity {
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
+
+    @ManyToOne
+    @JoinColumn(name = "chat_room")
+    private ChatRoom chatRoom;
 
     @Builder
     public Message(String content){
