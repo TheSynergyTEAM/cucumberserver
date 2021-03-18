@@ -24,15 +24,15 @@ public class Message extends BaseTimeEntity {
     @Column(name = "message_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @ManyToOne
-    @JoinColumn(name = "chat_room")
+    @ManyToOne(targetEntity = ChatRoom.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "chatroom_id")
     private ChatRoom chatRoom;
 
     @Builder
