@@ -66,4 +66,17 @@ public class Member {
         this.contact = contact;
         this.ratingScore = ratingScore;
     }
+
+    /**
+     * 수정
+     */
+    public void change(UpdateMemberDto updateMemberDto) {
+        this.id = updateMemberDto.getId();
+        this.name = updateMemberDto.getName();
+        this.password = updateMemberDto.getPassword();
+        this.address = updateMemberDto.getAddress();
+        this.birthdate = updateMemberDto.getBirthdate();
+        this.email = updateMemberDto.getEmail();
+        this.contact = updateMemberDto.getContact();
+    }
 }
