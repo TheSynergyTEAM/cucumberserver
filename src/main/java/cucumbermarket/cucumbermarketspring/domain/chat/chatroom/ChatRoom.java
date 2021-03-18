@@ -4,6 +4,7 @@ import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,6 +33,13 @@ public class ChatRoom extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "chatroom")
+    @OneToMany(mappedBy = "chatRoom")
     private List<Message> messageList = new ArrayList<>();
+
+    @Builder
+    public ChatRoom(Item item, Member member) {
+        this.item = item;
+        this.member = member;
+    }
+
 }
