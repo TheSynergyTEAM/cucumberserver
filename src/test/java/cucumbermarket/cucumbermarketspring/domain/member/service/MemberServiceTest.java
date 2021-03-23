@@ -1,6 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.member.service;
 
-import cucumbermarket.cucumbermarketspring.domain.member.Address;
+import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import org.junit.Test;

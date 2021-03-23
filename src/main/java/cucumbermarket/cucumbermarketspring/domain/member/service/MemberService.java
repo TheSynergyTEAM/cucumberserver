@@ -4,14 +4,18 @@ import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.UpdateMemberDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.Null;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
@@ -30,8 +34,8 @@ public class MemberService {
      */
     private void validateDuplicateMember(Member member) {
 
-        List<Member> memberByEmail = memberRepository.findByEmail(member.getEmail());
-        if (!memberByEmail.isEmpty()) {
+        Member memberByEmail = memberRepository.findByEmail(member.getEmail());
+        if (memberByEmail != null) {
             throw new IllegalStateException("중복 회원 존재");
         }
     }
@@ -52,6 +56,17 @@ public class MemberService {
         return memberRepository.getOne(memberId);
     }
 
+    @Override
+    public Member loadUserByUsername (String email) throws UsernameNotFoundException {
+        try {
+            Member byEmail = memberRepository.findByEmail(email);
+            return byEmail;
+        } catch (UsernameNotFoundException e) {
+            throw new UsernameNotFoundException((email));
+        }
+
+
+    }
     /**
      * 회원 수정
      */

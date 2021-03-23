@@ -2,10 +2,8 @@ package cucumbermarket.cucumbermarketspring.domain.chat.Message.service;
 
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageRepository;
-import cucumbermarket.cucumbermarketspring.domain.member.Address;
+import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
-import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
-import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

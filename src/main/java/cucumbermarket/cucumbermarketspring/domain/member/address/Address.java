@@ -1,4 +1,4 @@
-package cucumbermarket.cucumbermarketspring.domain.member;
+package cucumbermarket.cucumbermarketspring.domain.member.address;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

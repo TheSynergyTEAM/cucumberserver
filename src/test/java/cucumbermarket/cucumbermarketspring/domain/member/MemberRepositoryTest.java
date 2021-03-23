@@ -1,5 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.member;
 
+import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
