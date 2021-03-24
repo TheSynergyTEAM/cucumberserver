@@ -1,10 +1,8 @@
 package cucumbermarket.cucumbermarketspring.domain.review.dto;
 
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.review.domain.Review;
-import cucumbermarket.cucumbermarketspring.domain.upload.domain.photo.Photo;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +28,7 @@ public class ReviewCreateRequestDto {
                 .item(item)
                 .member(member)
                 .ratingScore(ratingScore)
-                .cotent(content)
+                .content(content)
                 .build();
     }
 }

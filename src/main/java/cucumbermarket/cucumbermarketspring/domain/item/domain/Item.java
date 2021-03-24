@@ -1,8 +1,9 @@
 package cucumbermarket.cucumbermarketspring.domain.item.domain;
+
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
+import cucumbermarket.cucumbermarketspring.domain.file.domain.File;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
-import cucumbermarket.cucumbermarketspring.domain.upload.photo.Photo;
-import cucumbermarket.cucumbermarketspring.domain.review.Review;
+import cucumbermarket.cucumbermarketspring.domain.review.domain.Review;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,7 +40,9 @@ public class Item extends BaseTimeEntity {
     private String spec;
 
     @OneToMany(mappedBy = "item")
-    private List<Photo> photo = new ArrayList<>();
+    private List<File> photo = new ArrayList<>();
+
+    //private Long photoId;
 
     private Boolean sold;
 
@@ -48,19 +51,22 @@ public class Item extends BaseTimeEntity {
 
     //빌더
     @Builder
-    public Item(Member member, String title, Categories categories, int price, String spec){
+    public Item(Member member, String title, Categories categories, int price, String spec, List<File> photo, Boolean sold){
         this.member = member;
         this.title = title;
         this.categories = categories;
         this.price = price;
         this.spec = spec;
+        this.photo = photo;
+        this.sold = sold;
     }
 
-    public void update(String title, Categories categories, int price, String spec, Boolean sold){
+    public void update(String title, Categories categories, int price, String spec, List<File> photo, Boolean sold){
         this.title = title;
         this.categories = categories;
         this.price = price;
         this.spec = spec;
+        this.photo = photo;
         this.sold = sold;
     }
 }

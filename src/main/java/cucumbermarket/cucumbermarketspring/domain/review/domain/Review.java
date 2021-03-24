@@ -1,16 +1,14 @@
-package cucumbermarket.cucumbermarketspring.domain.review;
+package cucumbermarket.cucumbermarketspring.domain.review.domain;
 
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
-import cucumbermarket.cucumbermarketspring.domain.item.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -37,9 +35,15 @@ public class Review extends BaseTimeEntity {
     private String content;
 
     @Builder
-    public Review(Member member, int ratingScore, String content){
+    public Review(Item item, Member member, int ratingScore, String content){
+        this.item = item;
         this.member = member;
         this.ratingScore = ratingScore;
         this.content = content;
+    }
+
+    public void update(String content, int ratingScore){
+        this.content = content;
+        this.ratingScore = ratingScore;
     }
 }

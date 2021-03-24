@@ -1,5 +1,6 @@
-package cucumbermarket.cucumbermarketspring.domain.upload.file;
+package cucumbermarket.cucumbermarketspring.domain.file.domain;
 
+import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,18 +20,22 @@ public class File {
     private Long id;
 
     @Column(nullable = false)
-    private String origFilename;
+    private String origFileName;
 
     @Column(nullable = false)
-    private String filename;
+    private String fileName;
 
     @Column(nullable = false)
     private String filePath;
 
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
+
     @Builder
-    public File(String origFilename, String filename, String filePath){
-        this.origFilename = origFilename;
-        this.filename = filename;
+    public File(String origFileName, String fileName, String filePath){
+        this.origFileName = origFileName;
+        this.fileName = fileName;
         this.filePath = filePath;
     }
 }

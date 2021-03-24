@@ -4,7 +4,6 @@ import cucumbermarket.cucumbermarketspring.domain.item.domain.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.ItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
-import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import org.junit.After;
@@ -14,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -89,50 +86,35 @@ public class ItemApiControllerTest {
     @Test
     public void 중고상품_수정() throws Exception{
         //given
-        List<Member> memberList = memberRepository.findAll();
-        Member member = memberList.get(0);
-        Item savedItem = itemRepository.save(Item.builder()
-                .member(member)
-                .title("아기용품 싸게 팝니다.")
-                .categories(Categories.KID)
-                .price(10000)
-                .spec("잔기스 있어요. 감안 부탁드립니다")
-                .build());
-
-        Long updateId = savedItem.getId();
-        String expectedTitle = "판매 완료";
-        Categories expectedCategories = Categories.KID;
-        int expectedPrice = 10000;
-        String expectedSpec = "제곧내";
-        LocalDateTime modified = LocalDateTime.now();
-
-        ItemUpdateRequestDto requestDto = ItemUpdateRequestDto.builder()
-                .title(expectedTitle)
-                .categories(expectedCategories)
-                .price(expectedPrice)
-                .spec(expectedSpec)
-                .sold(true)
-                .build();
-
-        String url = "http://localhost:" + port + "/item/" + updateId;
-        HttpEntity<ItemUpdateRequestDto> requestEntity = new HttpEntity<>(requestDto);
-
         //when
-        ResponseEntity<Long> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, Long.class);
-
         //then
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isGreaterThan(0L);
+    }
 
-        List<Item> all = itemRepository.findAll();
-        assertThat(all.get(0).getMember()).isEqualTo(member);
-        assertThat(all.get(0).getTitle()).isEqualTo(expectedTitle);
-        assertThat(all.get(0).getCategories()).isEqualTo(expectedCategories);
-        assertThat(all.get(0).getPrice()).isEqualTo(expectedPrice);
-        assertThat(all.get(0).getSpec()).isEqualTo(expectedSpec);
-        assertThat(all.get(0).getSold()).isEqualTo(true);
+    @Test
+    public void 중고상품_삭제() throws Exception {
+        //given
+        //when
+        //then
+    }
 
-        System.out.println(">>>>> modified = " + all.get(0).getModified());
-        assertThat(all.get(0).getCreated()).isAfter(modified);
+    @Test
+    public void 상품_하나_조회() throws Exception{
+        //given
+        //when
+        //then
+    }
+
+    @Test
+    public void 상품_전부_조회() throws Exception{
+        //given
+        //when
+        //then
+    }
+
+    @Test
+    public void 키워드로_조회() throws Exception{
+        //given
+        //when
+        //then
     }
 }

@@ -1,21 +1,15 @@
 package cucumbermarket.cucumbermarketspring.domain.review.controller;
 
-import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
-import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
-import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
-import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewCreateRequestDto;
-import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewResponseDto;
-import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewUpdateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
 public class ReviewApiController {
     private final ReviewService reviewService;
 
-    @PostMapping("/review")
+    /*@PostMapping("/review")
     public Long save(@RequestBody ReviewCreateRequestDto requestDto){
         return reviewService.save(requestDto);
     }
@@ -28,5 +22,5 @@ public class ReviewApiController {
     @GetMapping("/review/{id}")
     public ReviewResponseDto findByName(@PathVariable Long id){
         return reviewService.findByName();
-    }
+    }*/
 }

@@ -1,4 +1,4 @@
-package cucumbermarket.cucumbermarketspring.domain.review;
+package cucumbermarket.cucumbermarketspring.domain.review.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

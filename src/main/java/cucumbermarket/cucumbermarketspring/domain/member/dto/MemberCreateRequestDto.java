@@ -1,10 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.member.dto;
 
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Categories;
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
-import cucumbermarket.cucumbermarketspring.domain.upload.domain.photo.Photo;
 import lombok.Builder;
 
 import java.time.LocalDate;

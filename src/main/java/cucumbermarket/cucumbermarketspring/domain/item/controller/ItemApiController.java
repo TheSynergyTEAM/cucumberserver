@@ -22,8 +22,12 @@ public class ItemApiController {
         return itemService.update(id, requestDto);
     }
 
+   // @GetMapping("/item")
+   // public Item findOne(){
+
+   // }
     @GetMapping("/item/{id}")
     public ItemResponseDto findById(@PathVariable Long id){
-        return itemService.findById(id);
+        return itemService.findOne(id);
     }
 }

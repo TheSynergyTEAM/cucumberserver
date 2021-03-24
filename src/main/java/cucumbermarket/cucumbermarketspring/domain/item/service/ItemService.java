@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class ItemService {
@@ -21,21 +23,28 @@ public class ItemService {
 
     @Transactional
     public Long update(Long id, ItemUpdateRequestDto requestDto){
-        Item item = itemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다. id = " + id));
+        Item item = itemRepository.findById(id).orElseThrow(()
+                -> new IllegalArgumentException("해당 상품이 존재하지 않습니다. id = " + id));
 
-        item.update(requestDto.getTitle(), requestDto.getCategories(), requestDto.getPrice(), requestDto.getSold());
+        item.update(requestDto.getTitle(), requestDto.getCategories(), requestDto.getPrice(),
+                requestDto.getSpec(), requestDto.getPhoto(), requestDto.getSold());
 
         return id;
     }
 
     @Transactional
-    public Long delete(Long id){
+    public void remove(Long id){
         itemRepository.deleteById(id);
     }
 
-    public ItemResponseDto findById(Long id){
-        Item entity = itemRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다. id = " + id));
+    public ItemResponseDto findOne(Long id){
+        Item entity = itemRepository.findById(id).orElseThrow(()
+                -> new IllegalArgumentException("해당 상품이 존재하지 않습니다. id = " + id));
 
         return new ItemResponseDto(entity);
+    }
+
+    public List<Item> findAll(Long id){
+        return itemRepository.findAll();
     }
 }
