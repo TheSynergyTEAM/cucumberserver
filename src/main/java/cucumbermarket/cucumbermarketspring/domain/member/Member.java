@@ -86,7 +86,7 @@ public class Member implements UserDetails {
         this.contact = updateMemberDto.getContact();
     }
 
-    // 사용자 권환 콜렉션 형태로 반환
+    // 사용자 권한 콜렉션 형태로 반환
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> roles = new HashSet<>();
@@ -98,7 +98,7 @@ public class Member implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return name;
     }
     //계정 만료 여부
     @Override

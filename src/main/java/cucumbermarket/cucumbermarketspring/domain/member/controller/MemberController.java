@@ -3,15 +3,25 @@ package cucumbermarket.cucumbermarketspring.domain.member.controller;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberDto;
+import cucumbermarket.cucumbermarketspring.domain.member.service.MemberDetailServiceImpl;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import cucumbermarket.cucumbermarketspring.exception.NotCorrectPasswordException;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
@@ -23,6 +33,7 @@ public class MemberController {
 
     private AuthenticationManager authenticationManager;
     private final MemberService memberService;
+    private final MemberDetailServiceImpl memberDetailService;
 
     @GetMapping("/api/members")
     public List<Member> members() {
@@ -61,20 +72,28 @@ public class MemberController {
      */
     @CrossOrigin
     @GetMapping("/login")
-    public LoginResponseDTO loginMember(@RequestBody @Valid LoginRequestDTO loginRequest) {
+    public LoginResponseDTO loginMember(@RequestBody @Valid LoginRequestDTO loginRequest, HttpSession session) {
         String email = loginRequest.getEmail();
-        Member member = memberService.loadUserByUsername(email);
+        UserDetails userDetails = memberDetailService.loadUserByUsername(email);
         String password = loginRequest.getPassword();
+
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        System.out.println("loginRequest.password = " + loginRequest.password);
-        System.out.println("password = " + password);
-        if (!bCryptPasswordEncoder.matches(loginRequest.password, member.getPassword())) {
+        if (!bCryptPasswordEncoder.matches(password, userDetails.getPassword())) {
             throw new NotCorrectPasswordException("비밀번호가 일치하지 않습니다");
         }
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-        loginResponseDTO.email = email;
-        loginResponseDTO.name = member.getName();
+        loginResponseDTO.name = userDetails.getUsername();
         return loginResponseDTO;
+    }
+
+    /**
+     * 로그아웃
+     */
+    @CrossOrigin
+    @GetMapping("/logout")
+    public void logoutMember(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("request = " + request + ", response = " + response);
+        new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
     }
 
     @Data
@@ -106,7 +125,6 @@ public class MemberController {
 
     @Data
     static class LoginResponseDTO {
-        private String email;
         private String name;
     }
 
