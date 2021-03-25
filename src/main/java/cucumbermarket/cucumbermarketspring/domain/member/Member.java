@@ -1,8 +1,8 @@
 package cucumbermarket.cucumbermarketspring.domain.member;
 
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
-import cucumbermarket.cucumbermarketspring.domain.favourite.favouritelist.FavouriteList;
-import cucumbermarket.cucumbermarketspring.domain.review.Review;
+import cucumbermarket.cucumbermarketspring.domain.favourite.domain.FavouriteItem;
+import cucumbermarket.cucumbermarketspring.domain.review.domain.Review;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,16 +42,16 @@ public class Member {
     @Column(length = 20, nullable = false)
     private String contact;
 
-    @Column(columnDefinition = "")
+    @Column(columnDefinition = "int default 0")
     private int ratingScore;
 
-    @OneToOne(mappedBy = "member")
-    private FavouriteList favouriteList;
-
     @OneToMany(mappedBy = "member")
+    private List<FavouriteItem> favouriteItem = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
     private List<Review> reviewList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
     private List<Message> messageList = new ArrayList<>();
 
 
