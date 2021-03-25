@@ -1,8 +1,12 @@
 package cucumbermarket.cucumbermarketspring.domain.chat.chatroom;
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
+<<<<<<< HEAD
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
+=======
+import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
+>>>>>>> 542b833f949a4a026ad951075ec1e42e9cb04c76
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,19 +17,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity
-@Table(name = "chat_room")
+@Table(name = "chatroom")
 public class ChatRoom extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chatroom_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Item.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
 
+<<<<<<< HEAD
     /**
      * 채팅 방을 만든 사용자 (연락을 시도한 유저)
      */
@@ -42,4 +47,8 @@ public class ChatRoom extends BaseTimeEntity {
         this.member = member;
     }
 
+=======
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.PERSIST)
+    private List<Message> message = new ArrayList<>();
+>>>>>>> 542b833f949a4a026ad951075ec1e42e9cb04c76
 }
