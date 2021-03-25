@@ -2,22 +2,25 @@ package cucumbermarket.cucumbermarketspring.domain.member;
 
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.favourite.favouritelist.FavouriteList;
+import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.review.Review;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity
 @Table(name = "member")
-public class Member {
+public class Member implements UserDetails {
     //필드
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +30,7 @@ public class Member {
     @Column(length = 15, nullable = false, unique = true)
     private String name;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 100, nullable = false)
     private String password;
 
     @Embedded
@@ -54,10 +57,12 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Message> messageList = new ArrayList<>();
 
+    @Column(name = "auth")
+    private String auth;
 
     //빌더
     @Builder
-    public Member(String name, String password, Address address, LocalDate birthdate, String email, String contact, int ratingScore){
+    public Member(String name, String password, Address address, LocalDate birthdate, String email, String contact, int ratingScore, String auth) {
         this.name = name;
         this.password = password;
         this.address = address;
@@ -65,5 +70,53 @@ public class Member {
         this.email = email;
         this.contact = contact;
         this.ratingScore = ratingScore;
+        this.auth = auth;
+    }
+
+    /**
+     * 수정
+     */
+    public void change(UpdateMemberDto updateMemberDto) {
+        this.id = updateMemberDto.getId();
+        this.name = updateMemberDto.getName();
+        this.password = updateMemberDto.getPassword();
+        this.address = updateMemberDto.getAddress();
+        this.birthdate = updateMemberDto.getBirthdate();
+        this.email = updateMemberDto.getEmail();
+        this.contact = updateMemberDto.getContact();
+    }
+
+    // 사용자 권한 콜렉션 형태로 반환
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> roles = new HashSet<>();
+        for (String role : auth.split(",")) {
+            roles.add(new SimpleGrantedAuthority(role));
+        }
+        return roles;
+    }
+
+    @Override
+    public String getUsername() {
+        return name;
+    }
+    //계정 만료 여부
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+    //계정 잠금 여부
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+    //패스워드 만료 여부
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

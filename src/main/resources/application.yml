@@ -12,3 +12,13 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+
+  logging:
+    level:
+      org.hibernate.SQL: debug
+      org.hibernate.type: trace
+
+  consumer_key:
+    key: 72a176d718cc486a8cef
+  consumer_secret:
+    secret: 88a1aec13d6b4c4d9f98

@@ -2,7 +2,9 @@ package cucumbermarket.cucumbermarketspring.domain.chat.chatroom;
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
+import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +26,20 @@ public class ChatRoom extends BaseTimeEntity {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @OneToMany(mappedBy = "chatroom")
+    /**
+     * 채팅 방을 만든 사용자 (연락을 시도한 유저)
+     */
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @OneToMany(mappedBy = "chatRoom")
     private List<Message> messageList = new ArrayList<>();
+
+    @Builder
+    public ChatRoom(Item item, Member member) {
+        this.item = item;
+        this.member = member;
+    }
+
 }
