@@ -26,12 +26,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.json:json:20200518'
-	implementation 'com.github.cliftonlabs:json-simple:3.1.0'
-//	implementation group: 'org.javassist', name: 'javassist', version: '3.15.0-GA'
+	implementation group: 'org.javassist', name: 'javassist', version: '3.15.0-GA'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
-	runtime 'com.github.cliftonlabs:json-simple:3.1.1'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

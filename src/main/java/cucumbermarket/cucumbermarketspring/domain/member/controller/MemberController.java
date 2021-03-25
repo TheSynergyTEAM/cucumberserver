@@ -11,8 +11,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -71,7 +69,7 @@ public class MemberController {
      * 로그인
      */
     @CrossOrigin
-    @GetMapping("/login")
+    @PostMapping("/login")
     public LoginResponseDTO loginMember(@RequestBody @Valid LoginRequestDTO loginRequest, HttpSession session) {
         String email = loginRequest.getEmail();
         UserDetails userDetails = memberDetailService.loadUserByUsername(email);
