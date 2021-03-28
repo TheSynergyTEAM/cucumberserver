@@ -70,8 +70,10 @@ public class MemberController {
      */
     @CrossOrigin
     @PostMapping("/login")
-    public LoginResponseDTO loginMember(@RequestBody @Valid LoginRequestDTO loginRequest, HttpSession session) {
+    public LoginResponseDTO loginMember(@RequestBody @Valid LoginRequestDTO loginRequest) {
+        System.out.println("HERE");
         String email = loginRequest.getEmail();
+        System.out.println("email = " + email);
         UserDetails userDetails = memberDetailService.loadUserByUsername(email);
         String password = loginRequest.getPassword();
 
