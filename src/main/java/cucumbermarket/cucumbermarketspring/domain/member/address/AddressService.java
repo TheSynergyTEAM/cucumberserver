@@ -4,11 +4,9 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
-import org.json.JSONArray;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import com.github.cliftonlabs.json_simple.JsonObject;
 
 import java.util.*;
 import java.util.stream.Collectors;

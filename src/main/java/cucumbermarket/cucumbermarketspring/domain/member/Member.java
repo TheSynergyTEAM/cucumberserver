@@ -1,14 +1,9 @@
 package cucumbermarket.cucumbermarketspring.domain.member;
 
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
-<<<<<<< HEAD
-import cucumbermarket.cucumbermarketspring.domain.favourite.favouritelist.FavouriteList;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
-import cucumbermarket.cucumbermarketspring.domain.review.Review;
-=======
 import cucumbermarket.cucumbermarketspring.domain.favourite.domain.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.review.domain.Review;
->>>>>>> 542b833f949a4a026ad951075ec1e42e9cb04c76
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
