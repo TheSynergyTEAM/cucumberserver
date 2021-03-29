@@ -18,6 +18,7 @@ import java.util.List;
 @Entity
 @Table(name = "chatroom")
 public class ChatRoom extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chatroom_id")
@@ -33,7 +34,7 @@ public class ChatRoom extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "chatRoom")
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.PERSIST)
     private List<Message> messageList = new ArrayList<>();
 
     @Builder
@@ -42,7 +43,9 @@ public class ChatRoom extends BaseTimeEntity {
         this.member = member;
     }
 
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.PERSIST)
-    private List<Message> message = new ArrayList<>();
+    public void addMessage(Message message) {
+        this.messageList.add(message);
+    }
+
 
 }

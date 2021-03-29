@@ -33,7 +33,7 @@ public class MemberServiceTest {
     @Test
     public void createMemberTest() {
         //given
-        Member member = new Member("구형준", "1234", new Address(), LocalDate.now(), "abc@def.com", "010-1234-5678", 5);
+        Member member = new Member("구형준", "1234", new Address(), LocalDate.now(), "abc@def.com", "010-1234-5678", 5, "USER");
 
         //when
         Long member1 = memberService.createMember(member);
@@ -47,8 +47,8 @@ public class MemberServiceTest {
     public void duplicateMemberTest() throws Exception {
 
         //given
-        Member member1 = new Member("구형준1", "1234", new Address(), LocalDate.now(), "abc@def.com", "010-1234-5678", 5);
-        Member member2 = new Member("구형준2", "1234", new Address(), LocalDate.now(), "abc@def.com", "010-1234-5678", 5);
+        Member member1 = new Member("구형준1", "1234", new Address(), LocalDate.now(), "abc@def.com", "010-1234-5678", 5, "USER");
+        Member member2 = new Member("구형준2", "1234", new Address(), LocalDate.now(), "abc@def.com", "010-1234-5678", 5, "USER");
         //when
         Long member1Id = memberService.createMember(member1);
         entityManager.persist(member1);
@@ -58,7 +58,7 @@ public class MemberServiceTest {
             return;
         }
         //then
-        fail("Sould error be occured");
+        fail("Should error be occurred");
 
     }
 }
