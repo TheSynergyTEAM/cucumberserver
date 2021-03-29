@@ -1,6 +1,5 @@
 package cucumbermarket.cucumbermarketspring.domain.member.service;
 
-<<<<<<< HEAD
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.UpdateMemberDto;
@@ -82,21 +81,5 @@ public class MemberService implements UserDetailsService{
     public void deleteMember(Long memberId) {
         Member one = memberRepository.getOne(memberId);
         memberRepository.delete(one);
-=======
-import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
-import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberCreateRequestDto;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-@RequiredArgsConstructor
-@Service
-public class MemberService {
-    private final MemberRepository memberRepository;
-
-    @Transactional
-    public Long save(MemberCreateRequestDto requestDto){
-        return memberRepository.save(requestDto.toEntity()).getId();
->>>>>>> 542b833f949a4a026ad951075ec1e42e9cb04c76
     }
 }

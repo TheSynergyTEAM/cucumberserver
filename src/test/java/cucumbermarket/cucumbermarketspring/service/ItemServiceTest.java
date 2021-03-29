@@ -1,32 +1,31 @@
 package cucumbermarket.cucumbermarketspring.service;
 
+import cucumbermarket.cucumbermarketspring.domain.file.service.FileService;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.ItemRepository;
-import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
+import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
+import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
-import cucumbermarket.cucumbermarketspring.domain.member.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
-import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
+import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {
-        ItemService.class,
-        ItemRepository.class,
-        MemberRepository.class
-})
+@SpringBootTest
+@Transactional
 public class ItemServiceTest {
     @Autowired
     private ItemRepository itemRepository;
@@ -35,95 +34,165 @@ public class ItemServiceTest {
     private ItemService itemService;
 
     @Autowired
-    private MemberRepository memberRepository;
+    private FileService fileService;
+
+    @Autowired
+    EntityManager entityManager;
 
    // @After
    // public void tearDown() throws Exception{
    //     itemRepository.deleteAll();
    // }
 
-   @BeforeAll
-    public void createMember(){
-        Address address = Address.builder()
-                .state("충청북도")
-                .city("청주시")
-                .street1("흥덕구")
-                .street2("수곡2동")
-                .zipcode("19235")
-                .build();
-
-        LocalDate birthDate = LocalDate.of(1993,7,2);
-        memberRepository.save(Member.builder()
-                .name("김연아")
-                .password("sj1234")
-                .email("kya@gmail.com")
-                .contact("010-1111-1111")
-                .address(address)
-                .birthdate(birthDate)
-                .build());
-    }
+ //  @BeforeAll
+ //   public void createMember() throws Exception{
+  //     Address address = new Address();
+  //     member = new Member("홍길동", "sj1234", address, LocalDate.now(), "hgd@gmail.com", "010-1234-5678", 0, "USER");
+  //  }
 
     @Test
-    public void 상품등록(){
+    public void 상품등록() throws Exception{
         //given
-        List<Member> memberList = memberRepository.findAll();
-        Member member = memberList.get(0);
-        String title = "옷 팝니다";
-        Categories categories = Categories.WOMAN;
-        int price = 10000;
-        String spec = "떨이 판매합니다. 네고사절";
-        LocalDateTime created = LocalDateTime.now();
-
-        ItemCreateRequestDto requestDto = ItemCreateRequestDto.builder()
+        /*ItemCreateRequestDto requestDto = ItemCreateRequestDto.builder()
                 .member(member)
                 .title(title)
                 .categories(categories)
                 .price(price)
                 .spec(spec)
                 .sold(false)
+                .build();*/
+        Member member = new Member("홍길동", "sj1234", new Address(), LocalDate.now(),
+                "hgd@gmail.com", "010-1234-5678", 0, "USER");
+        Item item = new Item(
+                member, "싸게 팔아요", Categories.KID,
+                10000, "잔기스 있어요", null, false);
+
+        //when
+        Long itemId = itemService.save(item);
+        entityManager.persist(item);
+        //entityManager.flush();
+
+        //then
+       // List<Item> itemList = itemRepository.findAll();
+        assertEquals(item, itemRepository.getOne(itemId));
+    }
+
+    @Test
+    public void 상품수정() throws Exception{
+        //given
+        Member member = new Member("홍길동", "sj1234", new Address(), LocalDate.now(),
+                "hgd@gmail.com", "010-1234-5678", 0, "USER");
+        Item item = new Item(
+                member, "싸게 팔아요", Categories.KID,
+                10000, "잔기스 있어요", null, false);
+        Long itemId = itemService.save(item);
+        entityManager.persist(item);
+
+        System.out.println(item.getTitle());
+        System.out.println(item.getCategories());
+        System.out.println(item.getPrice());
+        System.out.println(item.getSpec());
+
+        String fixTitle = "싸게 팔아요(가격제시)";
+        Categories fixCategory = Categories.DIGIT;
+        int fixPrice = 5000;
+        String fixSpec = "잔기스 있지만 괜찮아요";
+
+        ItemUpdateRequestDto requestDto = ItemUpdateRequestDto.builder()
+                .title(fixTitle)
+                .categories(fixCategory)
+                .price(fixPrice)
+                .spec(fixSpec)
                 .build();
 
         //when
-        Long itemId = itemService.save(requestDto);
+        Long updateId = itemService.update(itemId, requestDto);
+        entityManager.flush();
 
         //then
-        List<Item> item = itemRepository.findAll();
-        assertThat(item.get(0).getMember().getId()).isEqualTo(member.getId());
-        assertThat(item.get(0).getTitle()).isEqualTo(title);
-        assertThat(item.get(0).getCategories()).isEqualTo(categories);
-        assertThat(item.get(0).getPrice()).isEqualTo(price);
-        assertThat(item.get(0).getSpec()).isEqualTo(spec);
-        assertThat(item.get(0).getSold()).isEqualTo(false);
+        assertThat(item.getId()).isEqualTo(updateId);
 
-        System.out.println(">>>>> created = " + item.get(1).getCreated());
-        assertThat(item.get(0).getCreated()).isAfter(created);
+        System.out.println(item.getTitle());
+        System.out.println(item.getCategories());
+        System.out.println(item.getPrice());
+        System.out.println(item.getSpec());
     }
 
     @Test
-    public void 상품수정(){
+    public void 상품삭제() throws Exception{
         //given
+        Member member = new Member("홍길동", "sj1234", new Address(), LocalDate.now(),
+                "hgd@gmail.com", "010-1234-5678", 0, "USER");
+        Item item = new Item(
+                member, "싸게 팔아요", Categories.KID,
+                10000, "잔기스 있어요", null, false);
+   //     Item item = Item.builder()
+   //             .member(member)
+   //             .categories(Categories.KID)
+   //             .price(10000)
+   //             .spec("잔기스 있어용")
+   //             .photo(null)
+   //             .sold(false)
+   //             .build();
+
+        Long itemId = itemService.save(item);
+
         //when
+        itemService.delete(itemId);
+
         //then
+        assertThat(itemRepository.count()).isEqualTo(0);
+        //assertThat(bookRepository.findAll(), IsEmptyCollection.empty());
     }
 
     @Test
-    public void 상품삭제(){
+    public void 상품_하나_조회() throws Exception{
         //given
-        //when
-        //then
-    }
+        Member member = new Member("홍길동", "sj1234", new Address(), LocalDate.now(),
+                "hgd@gmail.com", "010-1234-5678", 0, "USER");
+        Item item1 = new Item(
+                member, "싸게 팔아요", Categories.KID,
+                10000, "잔기스 있어요", null, false);
+        Item item2 = new Item(
+                member, "급처분해요", Categories.WOMAN,
+                20000, "A급 상품", null, false);
 
-    @Test
-    public void 상품_하나_조회(){
-        //given
+        Long itemId1 = itemService.save(item1);
+        Long itemId2 = itemService.save(item2);
+        entityManager.persist(item1);
+        entityManager.persist(item2);
+
         //when
+        ItemResponseDto itemResponseDto1 = itemService.findOne(itemId1);
+        ItemResponseDto itemResponseDto2 = itemService.findOne(itemId2);
+
         //then
+        assertThat(itemResponseDto1.getId()).isEqualTo(itemId1);
+        assertThat(itemResponseDto2.getId()).isEqualTo(itemId2);
     }
 
     @Test
     public void 상품_모두_조회(){
         //given
+        Member member = new Member("홍길동","sj1234", new Address(), LocalDate.now(),
+                "hgd@gmail.com", "010-1234-5678", 0, "USER");
+        Item item1 = new Item(
+                member, "싸게 팔아요", Categories.KID,
+                10000, "잔기스 있어요", null, false);
+        Item item2 = new Item(
+                member, "급처분해요", Categories.WOMAN,
+                20000, "A급 상품", null, false);
+
+        Long itemId1 = itemService.save(item1);
+        Long itemId2 = itemService.save(item2);
+        entityManager.persist(item1);
+        entityManager.persist(item2);
+
         //when
+        List<Item> itemList = itemService.findAll();
+
         //then
+        assertThat(itemList.get(0).getId()).isEqualTo(itemId1);
+        assertThat(itemList.get(1).getId()).isEqualTo(itemId2);
     }
 }
