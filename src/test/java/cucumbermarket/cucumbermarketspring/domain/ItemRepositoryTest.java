@@ -3,9 +3,9 @@ package cucumbermarket.cucumbermarketspring.domain;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.ItemRepository;
-import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
+import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +40,7 @@ public class ItemRepositoryTest {
     public void createMember(){
         String name = "홍길동";
         String password = "1234";
-        Address address = new Address("충청북도", "청주시", "흥덕구", "수곡동", "123456");
+        Address address = new Address("충청북도", "청주시", "흥덕구", "수곡동");
         LocalDate birthdate = LocalDate.of(2001, 10, 7);
         String email = "hkd@gmail.com";
         String contact = "010-4199-3000";

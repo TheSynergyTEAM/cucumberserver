@@ -3,6 +3,7 @@ import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import java.util.List;
 @Entity
 @Table(name = "chatroom")
 public class ChatRoom extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chatroom_id")
@@ -25,7 +27,6 @@ public class ChatRoom extends BaseTimeEntity {
     @ManyToOne(targetEntity = Item.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
-
     /**
      * 채팅 방을 만든 사용자 (연락을 시도한 유저)
      */
@@ -33,7 +34,7 @@ public class ChatRoom extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "chatRoom")
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.PERSIST)
     private List<Message> messageList = new ArrayList<>();
 
     @Builder
@@ -41,5 +42,10 @@ public class ChatRoom extends BaseTimeEntity {
         this.item = item;
         this.member = member;
     }
+
+    public void addMessage(Message message) {
+        this.messageList.add(message);
+    }
+
 
 }

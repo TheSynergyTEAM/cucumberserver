@@ -48,20 +48,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.logout().disable();
+        http.formLogin().disable();
         http
                 .csrf().disable()
-                .anonymous().and()
                 .authorizeRequests()
                 .antMatchers("/login", "/api/members", "/**").permitAll()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/")
-                .and()
-                .logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/login")
-                .invalidateHttpSession(true)
                 .and()
                 .exceptionHandling().accessDeniedPage("/403error");
         http

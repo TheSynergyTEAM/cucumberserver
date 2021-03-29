@@ -8,6 +8,7 @@ import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
+import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,12 +44,6 @@ public class ItemServiceTest {
    // public void tearDown() throws Exception{
    //     itemRepository.deleteAll();
    // }
-
- //  @BeforeAll
- //   public void createMember() throws Exception{
-  //     Address address = new Address();
-  //     member = new Member("홍길동", "sj1234", address, LocalDate.now(), "hgd@gmail.com", "010-1234-5678", 0, "USER");
-  //  }
 
     @Test
     public void 상품등록() throws Exception{

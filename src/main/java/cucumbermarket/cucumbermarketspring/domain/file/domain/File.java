@@ -38,4 +38,8 @@ public class File {
         this.fileName = fileName;
         this.filePath = filePath;
     }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
 }

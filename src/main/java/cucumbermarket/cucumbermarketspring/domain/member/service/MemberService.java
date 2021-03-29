@@ -3,6 +3,7 @@ package cucumbermarket.cucumbermarketspring.domain.member.service;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.UpdateMemberDto;
+import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberCreateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -81,5 +82,7 @@ public class MemberService implements UserDetailsService{
     public void deleteMember(Long memberId) {
         Member one = memberRepository.getOne(memberId);
         memberRepository.delete(one);
+
     }
 }
+
