@@ -1,8 +1,11 @@
 package cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service;
 
+import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoom;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoomRepository;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoomSearchDTO;
+import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
+import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,9 +32,15 @@ public class ChatRoomService {
         return chatRoomRepository.getOne(chatRoomId);
     }
 
-//    @Transactional(readOnly = true)
-//    public ChatRoom searchChatRoomByName(ChatRoomSearchDTO chatRoomSearchDTO) {
-//        ChatRoom byDTO = chatRoomRepository.findByDTO(chatRoomSearchDTO);
-//        return byDTO;
-//    }
+    @Transactional(readOnly = true)
+    public ChatRoom searchChatRoomByMemberAndItem(Member member, Item item) {
+        return chatRoomRepository.findByMemberAndItem(member, item);
+    }
+
+
+    @Transactional
+    public void addMessage(Member member, Item item, Message message) {
+        ChatRoom byMemberAndItem = chatRoomRepository.findByMemberAndItem(member, item);
+        byMemberAndItem.addMessage(message);
+    }
 }

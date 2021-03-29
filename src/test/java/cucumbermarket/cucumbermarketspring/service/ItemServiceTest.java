@@ -5,9 +5,9 @@ import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.ItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
-import cucumbermarket.cucumbermarketspring.domain.member.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
+import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
@@ -45,10 +45,9 @@ public class ItemServiceTest {
    @BeforeAll
     public void createMember(){
         Address address = Address.builder()
-                .state("충청북도")
-                .city("청주시")
-                .street1("흥덕구")
-                .street2("수곡2동")
+                .city("충청북도")
+                .street1("청주시")
+                .street2("흥덕구 수곡2동")
                 .zipcode("19235")
                 .build();
 
