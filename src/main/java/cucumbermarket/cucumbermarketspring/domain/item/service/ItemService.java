@@ -2,7 +2,6 @@ package cucumbermarket.cucumbermarketspring.domain.item.service;
 
 import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.ItemRepository;
-import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +16,12 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public Long save(ItemCreateRequestDto requestDto){
-        return itemRepository.save(requestDto.toEntity()).getId();
+    public Long save(Item item){
+        return itemRepository.save(item).getId();
     }
+  //  public Long save(ItemCreateRequestDto requestDto){
+  //      return itemRepository.save(requestDto.toEntity()).getId();
+  //  }
 
     @Transactional
     public Long update(Long id, ItemUpdateRequestDto requestDto){
@@ -33,8 +35,11 @@ public class ItemService {
     }
 
     @Transactional
-    public void remove(Long id){
-        itemRepository.deleteById(id);
+    public void delete(Long id){
+        Item item = itemRepository.findById(id)
+                .orElseThrow(()->new IllegalArgumentException("해당 상품이 존재하지 않습니다. id = " + id));
+
+        itemRepository.delete(item);
     }
 
     public ItemResponseDto findOne(Long id){
@@ -44,7 +49,7 @@ public class ItemService {
         return new ItemResponseDto(entity);
     }
 
-    public List<Item> findAll(Long id){
+    public List<Item> findAll(){
         return itemRepository.findAll();
     }
 }

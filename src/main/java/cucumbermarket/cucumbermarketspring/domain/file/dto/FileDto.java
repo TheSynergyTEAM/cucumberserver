@@ -20,10 +20,12 @@ public class FileDto {
     }
 
     public File toEntity(){
-        return File.builder()
+        File build = File.builder()
                 .origFileName(origFileName)
                 .fileName(fileName)
                 .filePath(filePath)
                 .build();
+
+        return build;
     }
 }
