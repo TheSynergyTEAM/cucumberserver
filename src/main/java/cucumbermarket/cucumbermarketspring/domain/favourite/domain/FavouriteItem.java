@@ -20,7 +20,7 @@ public class FavouriteItem extends BaseTimeEntity {
     @Column(name = "favouriteItem_id")
     private Long id;
 
-    @ManyToOne(targetEntity = Item.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Item.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "item_id")
     private Item item;
 

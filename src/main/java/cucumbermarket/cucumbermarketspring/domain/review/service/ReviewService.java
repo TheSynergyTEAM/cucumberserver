@@ -2,7 +2,6 @@ package cucumbermarket.cucumbermarketspring.domain.review.service;
 
 import cucumbermarket.cucumbermarketspring.domain.review.domain.Review;
 import cucumbermarket.cucumbermarketspring.domain.review.domain.ReviewRepository;
-import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewCreateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +16,12 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 
     @Transactional
-    public Long createReview(ReviewCreateRequestDto requestDto){
-        return reviewRepository.save(requestDto.toEntity()).getId();
+    public Long createReview(Review review){
+        return reviewRepository.save(review).getId();
     }
+  //  public Long createReview(ReviewCreateRequestDto requestDto){
+  //      return reviewRepository.save(requestDto.toEntity()).getId();
+  //  }
 
     @Transactional
     public Long updateReview(Long id, ReviewUpdateRequestDto requestDto){
@@ -31,6 +33,14 @@ public class ReviewService {
         return id;
     }
 
+    @Transactional
+    public void delete(Long id){
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(()->new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+
+        reviewRepository.delete(review);
+    }
+
     public ReviewResponseDto findOne(Long id){
         Review entity = reviewRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다. id = " + id));
@@ -38,7 +48,7 @@ public class ReviewService {
         return new ReviewResponseDto(entity);
     }
 
-    public List<Review> findAll(Long id){
+    public List<Review> findAll(){
         return reviewRepository.findAll();
     }
 
