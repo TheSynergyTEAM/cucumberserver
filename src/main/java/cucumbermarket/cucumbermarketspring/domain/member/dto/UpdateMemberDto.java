@@ -1,4 +1,4 @@
-package cucumbermarket.cucumbermarketspring.domain.member;
+package cucumbermarket.cucumbermarketspring.domain.member.dto;
 
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import lombok.Data;

@@ -3,6 +3,7 @@ package cucumbermarket.cucumbermarketspring.domain.member.service;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
+import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,21 @@ public class MemberServiceTest {
         }
         //then
         fail("Should error be occurred");
-
     }
+
+    @Test
+    public void profileTest() throws Exception {
+
+        Address address = new Address("서울", "123", "123", "123");
+        //given
+        Member member1 = new Member("구형준1", "1234", address, LocalDate.now(), "abc@def.com", "010-1234-5678", 5, "USER");
+        entityManager.persist(member1);
+
+        //when
+        MemberProfileDto memberProfile = memberService.getMemberProfile(10L);
+        System.out.println("memberProfile = " + memberProfile.getCity());
+        //then
+    }
+
+
 }
