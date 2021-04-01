@@ -2,14 +2,15 @@ package cucumbermarket.cucumbermarketspring.domain.member.service;
 
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
-import cucumbermarket.cucumbermarketspring.domain.member.UpdateMemberDto;
-import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberCreateRequestDto;
+import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
+import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
@@ -82,7 +83,21 @@ public class MemberService implements UserDetailsService{
     public void deleteMember(Long memberId) {
         Member one = memberRepository.getOne(memberId);
         memberRepository.delete(one);
-
     }
+
+    /**
+     * 회원 프로필 조회
+     */
+    @Transactional
+    public MemberProfileDto getMemberProfile(Long memberId) {
+        try {
+            Member member = memberRepository.getOne(memberId);
+            MemberProfileDto memberProfileDto = new MemberProfileDto(member.getName(), member.getAddress(), member.getBirthdate(), member.getEmail(), member.getContact(), member.getRatingScore());
+            return memberProfileDto;
+        } catch (EntityNotFoundException e) {
+            return new MemberProfileDto();
+        }
+    }
+
 }
 

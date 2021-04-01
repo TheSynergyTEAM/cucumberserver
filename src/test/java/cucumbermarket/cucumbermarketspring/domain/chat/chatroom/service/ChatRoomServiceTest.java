@@ -12,6 +12,7 @@ import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,7 +47,7 @@ public class ChatRoomServiceTest {
     public void createChatRoomTest() throws Exception {
 
 //        //given
-        Member member = getMember();
+        Member member = getMember("memberA", "1234", "abc@abc.com", "010-1234-1234");
         entityManager.persist(member);
 
         File file = new File("str1", "str2", "str3");
@@ -67,13 +68,9 @@ public class ChatRoomServiceTest {
         //then
     }
 
-    private ChatRoom getChatRoom(Member member, Item item) {
-        return new ChatRoom(item, member);
-    }
-
     @Test
     public void addMessageTest() throws Exception {
-        Member member = getMember();
+        Member member = getMember("memberA", "1234", "abc@abc.com", "010-1234-1234");
         entityManager.persist(member);
 
         File file = new File("str1", "str2", "str3");
@@ -95,12 +92,41 @@ public class ChatRoomServiceTest {
 
         assertEquals(chatRoom, chatRoomRepository.getOne(id));
 
-        ChatRoom byMemberAndItem = chatRoomRepository.findByMemberAndItem(member, item);
-        List<Message> messageList = byMemberAndItem.getMessageList();
+        List<Message> messageList = chatRoomService.getAllMessage(member, item);
         for (Message message : messageList) {
-            System.out.println("message.getContent() = " + message.getMember() + ": "+ message.getContent());
+            System.out.println("message.getContent() = " + message.getMember() + ": "+ message.getContent() + "created at " + message.getCreated());
         }
 
+    }
+
+    @Test
+    public void getAllChatRoomByItemTest() throws Exception {
+
+        //given
+        Member memberA = getMember("memberA", "1234", "abc@abc.com", "010-1234-1234");
+        entityManager.persist(memberA);
+        Member memberB = getMember("memberB", "1234", "def@abc.com", "010-1234-1234");
+        entityManager.persist(memberB);
+        Member memberC = getMember("memberC", "1234", "def@abc.com", "010-1234-1234");
+        entityManager.persist(memberC);
+
+        File file = new File("str1", "str2", "str3");
+        entityManager.persist(file);
+        List<File> fileList = new ArrayList<>();
+        fileList.add(file);
+        Item item = getItem(memberA, fileList);
+        entityManager.persist(item);
+        ChatRoom chatRoomA = getChatRoom(memberB, item);
+        entityManager.persist(chatRoomA);
+        ChatRoom chatRoomB = getChatRoom(memberC, item);
+        entityManager.persist(chatRoomB);
+
+        //when
+        List<ChatRoom> allChatRoom = chatRoomService.getAllChatRoom(item);
+
+
+        //then
+        Assertions.assertEquals(allChatRoom.size(), 2);
     }
 
     private Item getItem(Member member, List<File> fileList) {
@@ -108,21 +134,23 @@ public class ChatRoomServiceTest {
         return item;
     }
 
-    private Member getMember() {
+    private Member getMember(String name, String password, String email, String contact) {
         Member member = new Member(
-                "홍길동",
-                "1234",
+                name,
+                password,
                 new Address(),
                 LocalDate.now(),
-                "abc@abc.com",
-                "010-1010-1010",
+                email,
+                contact,
                 0,
                 "USER"
         );
         return member;
     }
 
-
+    private ChatRoom getChatRoom(Member member, Item item) {
+        return new ChatRoom(item, member);
+    }
 
 
 }
