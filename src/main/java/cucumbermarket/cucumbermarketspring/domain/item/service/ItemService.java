@@ -20,9 +20,9 @@ public class ItemService {
     public Long save(ItemCreateRequestDto requestDto){
         return itemRepository.save(requestDto.toEntity()).getId();
     }
-  //  public Long save(Item item){
-  //      return itemRepository.save(item).getId();
-  //  }
+    /*public Long save(ItemCreateRequestDto requestDto){
+        return itemRepository.save(requestDto.toEntity()).getId();
+    }*/
 
     @Transactional
     public Long update(Long id, ItemUpdateRequestDto requestDto){

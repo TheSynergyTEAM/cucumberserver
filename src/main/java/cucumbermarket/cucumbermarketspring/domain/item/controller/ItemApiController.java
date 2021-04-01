@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 public class ItemApiController {
-    private final ItemService itemService;
+   /* private final ItemService itemService;
 
     @PostMapping("/api/item")
     public Long save(@RequestBody ItemCreateRequestDto requestDto){
@@ -39,5 +39,6 @@ public class ItemApiController {
     @GetMapping("/item/{id}")
     public List<Item> findAll(@PathVariable Long id){
         return itemService.findAll();
-    }
+    }*/
+
 }
