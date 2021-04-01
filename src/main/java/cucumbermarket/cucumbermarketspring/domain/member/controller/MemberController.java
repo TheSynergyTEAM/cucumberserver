@@ -1,13 +1,17 @@
 package cucumbermarket.cucumbermarketspring.domain.member.controller;
 
-import cucumbermarket.cucumbermarketspring.domain.member.Member;
-import cucumbermarket.cucumbermarketspring.domain.member.MemberDto;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
+import cucumbermarket.cucumbermarketspring.domain.member.Member;
+import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberDto;
+import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberDetailServiceImpl;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
+import cucumbermarket.cucumbermarketspring.exception.ForbiddenException;
 import cucumbermarket.cucumbermarketspring.exception.NotCorrectPasswordException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -93,11 +97,28 @@ public class MemberController {
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
     }
 
+    /**
+     * 프로필 조회
+     */
+    @CrossOrigin
+    @GetMapping("/member/{id}")
+    public MemberProfileDto getMemberProfile(@PathVariable("id") Long id) {
+        MemberProfileDto memberProfile = memberService.getMemberProfile(id);
+        System.out.println("memberProfile = " + memberProfile);
+        if (memberProfile.getName() == null) {
+            System.out.println("here");
+            throw new ForbiddenException();
+        }
+        return memberProfile;
+    }
+
+
     @Data
-    static class CreateMemberResponse{
+    static class CreateMemberResponse {
         private Long id;
+
         public CreateMemberResponse(Long id) {
-            this.id=id;
+            this.id = id;
         }
     }
     @Data

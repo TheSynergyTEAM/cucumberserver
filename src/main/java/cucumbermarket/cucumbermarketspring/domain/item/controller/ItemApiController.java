@@ -1,12 +1,19 @@
 package cucumbermarket.cucumbermarketspring.domain.item.controller;
 
+import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
+import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
+import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
+import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 public class ItemApiController {
-    /*private final ItemService itemService;
+   /* private final ItemService itemService;
 
     @PostMapping("/api/item")
     public Long save(@RequestBody ItemCreateRequestDto requestDto){
@@ -30,8 +37,8 @@ public class ItemApiController {
     }
 
     @GetMapping("/item/{id}")
-    public ItemResponseDto findAll(@PathVariable Long id){
-        return itemService.findOne(id);
+    public List<Item> findAll(@PathVariable Long id){
+        return itemService.findAll();
     }*/
 
 }

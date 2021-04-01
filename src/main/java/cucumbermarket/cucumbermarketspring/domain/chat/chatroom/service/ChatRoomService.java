@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -37,10 +38,20 @@ public class ChatRoomService {
         return chatRoomRepository.findByMemberAndItem(member, item);
     }
 
-
     @Transactional
     public void addMessage(Member member, Item item, Message message) {
         ChatRoom byMemberAndItem = chatRoomRepository.findByMemberAndItem(member, item);
         byMemberAndItem.addMessage(message);
+    }
+
+    @Transactional
+    public List<Message> getAllMessage(Member member, Item item) {
+        ChatRoom chatRoom = chatRoomRepository.findByMemberAndItem(member, item);
+        return chatRoom.getMessageList();
+    }
+
+    @Transactional
+    public List<ChatRoom> getAllChatRoom(Item item) {
+        return chatRoomRepository.findAllByItem(item);
     }
 }

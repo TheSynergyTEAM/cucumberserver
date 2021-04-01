@@ -28,5 +28,12 @@ public class MessageService {
         return messageRepository.getOne(messageId);
     }
 
+    /**
+     * 메세지 삭제
+     */
+    @Transactional
+    public void deleteMessage(Long messageId) {
+        messageRepository.deleteById(messageId);
+    }
 
 }
