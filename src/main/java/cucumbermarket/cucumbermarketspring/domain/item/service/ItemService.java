@@ -2,7 +2,6 @@ package cucumbermarket.cucumbermarketspring.domain.item.service;
 
 import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.ItemRepository;
-import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +16,12 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public Long save(ItemCreateRequestDto requestDto){
-        return itemRepository.save(requestDto.toEntity()).getId();
+    public Long save(Item item){
+        return itemRepository.save(item).getId();
     }
-  //  public Long save(Item item){
-  //      return itemRepository.save(item).getId();
-  //  }
+    /*public Long save(ItemCreateRequestDto requestDto){
+        return itemRepository.save(requestDto.toEntity()).getId();
+    }*/
 
     @Transactional
     public Long update(Long id, ItemUpdateRequestDto requestDto){

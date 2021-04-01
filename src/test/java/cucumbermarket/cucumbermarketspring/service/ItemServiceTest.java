@@ -8,7 +8,6 @@ import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
-import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,19 +47,20 @@ public class ItemServiceTest {
     @Test
     public void 상품등록() throws Exception{
         //given
-        /*ItemCreateRequestDto requestDto = ItemCreateRequestDto.builder()
-                .member(member)
-                .title(title)
-                .categories(categories)
-                .price(price)
-                .spec(spec)
-                .sold(false)
-                .build();*/
         Member member = new Member("홍길동", "sj1234", new Address(), LocalDate.now(),
                 "hgd@gmail.com", "010-1234-5678", 0, "USER");
         Item item = new Item(
                 member, "싸게 팔아요", Categories.KID,
                 10000, "잔기스 있어요", null, false);
+    /*    ItemCreateRequestDto requestDto = ItemCreateRequestDto.builder()
+                .member(member)
+                .title("싸게 팔아요")
+                .categories(Categories.KID)
+                .price(10000)
+                .spec("잔기스 있어요")
+                .photo(null)
+                .sold(Boolean.FALSE)
+                .build();*/
 
         //when
         Long itemId = itemService.save(item);
