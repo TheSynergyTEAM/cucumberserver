@@ -1,11 +1,15 @@
 package cucumbermarket.cucumbermarketspring.domain.item.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
 import cucumbermarket.cucumbermarketspring.domain.favourite.domain.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.file.domain.File;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.review.domain.Review;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -22,8 +26,10 @@ public class Item extends BaseTimeEntity {
     @Column(name = "item_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "member_id")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE, targetEntity = Member.class)
+    @JoinColumn(name = "member_id", updatable = false)
+    //@JsonIgnoreProperties(value = {"item"})
+    @JsonBackReference
     private Member member;
 
     @Column(nullable = false)
@@ -40,10 +46,8 @@ public class Item extends BaseTimeEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<File> photo = new ArrayList<>();
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<FavouriteItem> favouriteItem = new ArrayList<>();
-
-    //private Long photoId;
 
     private Boolean sold;
 
@@ -52,22 +56,20 @@ public class Item extends BaseTimeEntity {
 
     //빌더
     @Builder
-    public Item(Member member, String title, Categories categories, int price, String spec, List<File> photo, Boolean sold){
+    public Item(Member member, String title, Categories categories, int price, String spec, Boolean sold){
         this.member = member;
         this.title = title;
         this.categories = categories;
         this.price = price;
         this.spec = spec;
-        this.photo = photo;
         this.sold = sold;
     }
 
-    public void update(String title, Categories categories, int price, String spec, List<File> photo, Boolean sold){
+    public void update(String title, Categories categories, int price, String spec, Boolean sold){
         this.title = title;
         this.categories = categories;
         this.price = price;
         this.spec = spec;
-        this.photo = photo;
         this.sold = sold;
     }
 }

@@ -1,7 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.member;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
-import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.favourite.domain.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
@@ -26,7 +26,7 @@ public class Member implements UserDetails {
     //필드
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
+    @Column(name = "member_id", unique = true, nullable = false)
     private Long id;
 
     @Column(length = 15, nullable = false, unique = true)
@@ -50,7 +50,8 @@ public class Member implements UserDetails {
     @Column(columnDefinition = "int default 0")
     private int ratingScore;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonManagedReference
     private List<Item> item = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,6 +1,5 @@
 package cucumbermarket.cucumbermarketspring.domain.item.controller;
 
-import cucumbermarket.cucumbermarketspring.domain.file.domain.File;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.ItemRepository;
@@ -19,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,9 +46,6 @@ public class ItemControllerTest {
         String title = "급처분합니다.";
         Categories categories = Categories.CULTURAL;
         int price = 20000;
-        File file = new File("data1", "data2", "data3");
-        List<File> photoList = new ArrayList<>();
-        photoList.add(file);
         String spec = "돈이 급해서 싸게 내놔요";
 
         ItemCreateRequestDto requestDto = ItemCreateRequestDto.builder()
@@ -58,7 +53,6 @@ public class ItemControllerTest {
                 .title(title)
                 .categories(categories)
                 .price(price)
-                .photo(photoList)
                 .spec(spec)
                 .sold(Boolean.FALSE)
                 .build();
