@@ -13,8 +13,8 @@ Before you continue, ensure you have met the following requirements:
 
 ## How to install
 > $ git clone https://github.com/TheSynergyTEAM/cucumberserver.git <br>
-> $ cd build/libs <br>
-> $ java -jar cucumbermarket-spring-0.0.1-SNAPSHOT.jar
+> $ cd ~/cucumbersever <br>
+> $ java -jar cucumbermarket-spring-0.0.1s-SNAPSHOT.jar
 > 
 
 ## Application

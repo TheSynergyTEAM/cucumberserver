@@ -54,7 +54,7 @@ public class MemberController {
      *
      * 회원가입
      */
-   @CrossOrigin
+    @CrossOrigin
     @PostMapping("/api/members")
     public CreateMemberResponse saveMember(@RequestBody @Valid CreateMemberRequest request) {
         Address address = new Address(request.city, request.street1, request.street2, request.zipcode);
