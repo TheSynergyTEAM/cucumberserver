@@ -1,16 +1,16 @@
 package cucumbermarket.cucumbermarketspring.domain.member;
 
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.favourite.domain.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
 import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.review.domain.Review;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.Proxy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,11 +18,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @Getter
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity
 @Table(name = "member")
+@Builder
+@Proxy(lazy = false)
 public class Member implements UserDetails {
     //필드
     @Id
@@ -64,12 +67,12 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
     private List<Message> messageList = new ArrayList<>();
 
-    @Column(name = "auth")
-    private String auth;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles = new ArrayList<>();
 
     //빌더
     @Builder
-    public Member(String name, String password, Address address, LocalDate birthdate, String email, String contact, int ratingScore, String auth) {
+    public Member(String name, String password, Address address, LocalDate birthdate, String email, String contact, int ratingScore, String role) {
         this.name = name;
         this.password = password;
         this.address = address;
@@ -77,7 +80,11 @@ public class Member implements UserDetails {
         this.email = email;
         this.contact = contact;
         this.ratingScore = ratingScore;
-        this.auth = auth;
+        this.roles.add(role);
+    }
+
+    public Member() {
+
     }
 
     /**
@@ -96,33 +103,38 @@ public class Member implements UserDetails {
     // 사용자 권한 콜렉션 형태로 반환
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> roles = new HashSet<>();
-        for (String role : auth.split(",")) {
-            roles.add(new SimpleGrantedAuthority(role));
-        }
-        return roles;
+        return this.roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
+    @JsonIgnore
     @Override
     public String getUsername() {
         return name;
     }
+
     //계정 만료 여부
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
+
     //계정 잠금 여부
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
+
     //패스워드 만료 여부
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
+
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }
