@@ -51,7 +51,7 @@ public class Member implements UserDetails {
     @Column(columnDefinition = "int default 0")
     private int ratingScore;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
     private List<Item> item = new ArrayList<>();
 

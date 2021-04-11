@@ -5,6 +5,7 @@ import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
 import cucumbermarket.cucumbermarketspring.domain.favourite.domain.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.file.domain.File;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
+import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.review.domain.Review;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -32,6 +33,9 @@ public class Item extends BaseTimeEntity {
     @JsonBackReference
     private Member member;
 
+    @Embedded
+    private Address address;
+
     @Column(nullable = false)
     private String title;
 
@@ -56,20 +60,23 @@ public class Item extends BaseTimeEntity {
 
     //빌더
     @Builder
-    public Item(Member member, String title, Categories categories, int price, String spec, Boolean sold){
+    public Item(Member member, String title, Categories categories, int price, String spec, Address address, Boolean sold){
         this.member = member;
         this.title = title;
+        this.categories = categories;
+        this.price = price;
+        this.spec = spec;
+        this.address = address;
+        this.sold = sold;
+    }
+
+    public void update(String title, Categories categories, int price, String spec, Address address, Boolean sold){
+        this.title = title;
+        this.address = address;
         this.categories = categories;
         this.price = price;
         this.spec = spec;
         this.sold = sold;
     }
 
-    public void update(String title, Categories categories, int price, String spec, Boolean sold){
-        this.title = title;
-        this.categories = categories;
-        this.price = price;
-        this.spec = spec;
-        this.sold = sold;
-    }
 }

@@ -1,7 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.member.controller;
 
-import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
+import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberDto;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberDetailServiceImpl;
@@ -10,8 +10,6 @@ import cucumbermarket.cucumbermarketspring.exception.ForbiddenException;
 import cucumbermarket.cucumbermarketspring.exception.NotCorrectPasswordException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
