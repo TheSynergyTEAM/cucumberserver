@@ -19,6 +19,10 @@ public class File {
     @Column(name = "file_id")
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
+
     @Column(nullable = false)
     private String origFileName;
 
@@ -28,18 +32,15 @@ public class File {
     @Column(nullable = false)
     private String filePath;
 
-    @ManyToOne
-    @JoinColumn(name = "item_id")
-    private Item item;
-
     @Builder
-    public File(String origFileName, String fileName, String filePath){
+    public File(String origFileName, String fileName, String filePath, Item item){
         this.origFileName = origFileName;
         this.fileName = fileName;
         this.filePath = filePath;
-    }
-
-    public void setItem(Item item) {
         this.item = item;
     }
+
+    /* public void setItem(Item item) {
+        this.item = item;
+    }*/
 }
