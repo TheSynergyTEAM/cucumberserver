@@ -1,4 +1,6 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   h2:
     console:
       enabled: true
@@ -10,7 +12,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
@@ -20,6 +22,11 @@ spring:
     level:
       org.hibernate.SQL: debug
       org.hibernate.type: trace
+
+  servlet:
+    multipart:
+      maxFileSize: 10MB
+      maxRequestSize: 10MB
 
   consumer_key:
     key: 72a176d718cc486a8cef

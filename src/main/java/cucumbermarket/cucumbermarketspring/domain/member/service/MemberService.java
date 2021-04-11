@@ -5,12 +5,18 @@ import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -57,16 +63,13 @@ public class MemberService implements UserDetailsService{
     }
 
     @Override
-    public Member loadUserByUsername (String email) throws UsernameNotFoundException {
-        try {
-            Member byEmail = memberRepository.findByEmail(email);
-            return byEmail;
-        } catch (UsernameNotFoundException e) {
-            throw new UsernameNotFoundException((email));
-        }
-
-
+    public UserDetails loadUserByUsername (String email) throws UsernameNotFoundException {
+        Member member = memberRepository.findByEmail(email);
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("USER"));
+        return new User(member.getEmail(), member.getPassword(), authorities);
     }
+
     /**
      * 회원 수정
      */
