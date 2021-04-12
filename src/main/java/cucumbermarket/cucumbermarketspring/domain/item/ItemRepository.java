@@ -1,4 +1,4 @@
-package cucumbermarket.cucumbermarketspring.domain.item.domain;
+package cucumbermarket.cucumbermarketspring.domain.item;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

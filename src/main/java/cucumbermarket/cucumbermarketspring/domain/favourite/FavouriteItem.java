@@ -1,7 +1,7 @@
-package cucumbermarket.cucumbermarketspring.domain.favourite.domain;
+package cucumbermarket.cucumbermarketspring.domain.favourite;
 
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,11 +20,11 @@ public class FavouriteItem extends BaseTimeEntity {
     @Column(name = "favouriteItem_id")
     private Long id;
 
-    @ManyToOne(targetEntity = Item.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Item.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Member.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id")
     private Member member;
 

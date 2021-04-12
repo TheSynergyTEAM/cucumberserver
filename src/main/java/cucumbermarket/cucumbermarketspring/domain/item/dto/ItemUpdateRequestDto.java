@@ -1,6 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.item.dto;
 
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Categories;
+import cucumbermarket.cucumbermarketspring.domain.item.Categories;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import lombok.Builder;
 import lombok.Getter;

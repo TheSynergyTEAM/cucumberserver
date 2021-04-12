@@ -1,8 +1,8 @@
 package cucumbermarket.cucumbermarketspring.domain;
 
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Categories;
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
-import cucumbermarket.cucumbermarketspring.domain.item.domain.ItemRepository;
+import cucumbermarket.cucumbermarketspring.domain.item.Categories;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;

@@ -1,11 +1,11 @@
 package cucumbermarket.cucumbermarketspring.service;
 
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Categories;
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.Categories;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
-import cucumbermarket.cucumbermarketspring.domain.review.domain.Review;
-import cucumbermarket.cucumbermarketspring.domain.review.domain.ReviewRepository;
+import cucumbermarket.cucumbermarketspring.domain.review.Review;
+import cucumbermarket.cucumbermarketspring.domain.review.ReviewRepository;
 import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewUpdateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.review.service.ReviewService;

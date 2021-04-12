@@ -1,7 +1,7 @@
-package cucumbermarket.cucumbermarketspring.domain.review.domain;
+package cucumbermarket.cucumbermarketspring.domain.review;
 
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import lombok.AccessLevel;
 import lombok.Builder;

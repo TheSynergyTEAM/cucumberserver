@@ -4,11 +4,11 @@ package cucumbermarket.cucumbermarketspring.domain.member;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
-import cucumbermarket.cucumbermarketspring.domain.favourite.domain.FavouriteItem;
+import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
-import cucumbermarket.cucumbermarketspring.domain.review.domain.Review;
+import cucumbermarket.cucumbermarketspring.domain.review.Review;
 import lombok.*;
 import org.hibernate.annotations.Proxy;
 import org.springframework.security.core.GrantedAuthority;
@@ -54,7 +54,7 @@ public class Member implements UserDetails {
     @Column(columnDefinition = "int default 0")
     private int ratingScore;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
     @JsonManagedReference
     private List<Item> item = new ArrayList<>();
 
