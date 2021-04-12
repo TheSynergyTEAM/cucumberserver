@@ -1,6 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.item.controller;
 
-import cucumbermarket.cucumbermarketspring.domain.file.service.FileService;
+import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemListResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
@@ -15,13 +15,13 @@ import java.util.List;
 @RestController
 public class ItemController {
     private final ItemService itemService;
-    private FileService fileService;
+    private PhotoService fileService;
 
     /**
      * 물품등록
      */
     //  public Long save(@RequestParam("file") List<MultipartFile> files, @RequestParam("requestParam") ItemCreateRequestDto requestDto){
-    @PostMapping("/api/item")
+    @PostMapping("/item")
     public Long save(@RequestBody ItemCreateRequestDto requestDto){
    /*     Long itemId = itemService.save(requestDto);
         Item item = new Item(requestDto.getMember(), requestDto.getTitle(), requestDto.getCategories(),
@@ -64,7 +64,7 @@ public class ItemController {
     /**
      * 물품수정
      */
-   @PutMapping("/api/item/{id}")
+   @PutMapping("/item/{id}")
     public Long update(@PathVariable Long id, @RequestBody ItemUpdateRequestDto requestDto){
         return itemService.update(id, requestDto);
     }
@@ -72,7 +72,7 @@ public class ItemController {
     /**
      * 물품삭제
      */
-    @DeleteMapping("/api/item/{id}")
+    @DeleteMapping("/item/{id}")
     public void delete(@PathVariable Long id){
         itemService.delete(id);
     }
@@ -80,7 +80,7 @@ public class ItemController {
     /**
      * 물품하나조회
      */
-    @GetMapping("/api/item/{id}")
+    @GetMapping("/item/{id}")
     public ItemResponseDto findById(@PathVariable("id") Long id){
         return itemService.findOne(id);
     }
@@ -99,7 +99,7 @@ public class ItemController {
     /**
      * 물품모두조회
      */
-    @GetMapping("/api/item")
+    @GetMapping("/item")
     public List<ItemListResponseDto> findAll(){
         return itemService.findAll();
     }

@@ -1,7 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.review.service;
 
-import cucumbermarket.cucumbermarketspring.domain.review.domain.Review;
-import cucumbermarket.cucumbermarketspring.domain.review.domain.ReviewRepository;
+import cucumbermarket.cucumbermarketspring.domain.review.Review;
+import cucumbermarket.cucumbermarketspring.domain.review.ReviewRepository;
 import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewUpdateRequestDto;
 import lombok.RequiredArgsConstructor;

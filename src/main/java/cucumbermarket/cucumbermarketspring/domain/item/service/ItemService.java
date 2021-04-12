@@ -1,7 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.item.service;
 
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
-import cucumbermarket.cucumbermarketspring.domain.item.domain.ItemRepository;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemListResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;

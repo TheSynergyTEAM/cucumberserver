@@ -1,8 +1,8 @@
 package cucumbermarket.cucumbermarketspring.service;
 
-import cucumbermarket.cucumbermarketspring.domain.file.domain.FileRepository;
-import cucumbermarket.cucumbermarketspring.domain.file.dto.FileDto;
-import cucumbermarket.cucumbermarketspring.domain.file.service.FileService;
+import cucumbermarket.cucumbermarketspring.domain.file.PhotoRepository;
+import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoDto;
+import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
 import cucumbermarket.cucumbermarketspring.domain.item.util.MD5Generator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,11 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
-public class FileServiceTest {
+public class PhotoServiceTest {
     @Autowired
-    private FileRepository fileRepository;
+    private PhotoRepository fileRepository;
     @Autowired
-    private FileService fileService;
+    private PhotoService fileService;
 
     @Test
     public void fileUploadTest() throws Exception {
@@ -53,14 +53,14 @@ public class FileServiceTest {
         String filePath = savePath + "\\" + filename;
         file.transferTo(new File(filePath));
 
-        FileDto fileDto = FileDto.builder()
+        PhotoDto fileDto = PhotoDto.builder()
                 .origFileName(origFileName)
                 .fileName(fileName)
                 .filePath(filePath)
                 .build();
 
         //when
-        Long sFileId = fileService.saveFile(fileDto);
+        Long sFileId = fileService.savePhoto(fileDto);
 
         //then
         assertThat(fileRepository.findAll()).isNotNull();

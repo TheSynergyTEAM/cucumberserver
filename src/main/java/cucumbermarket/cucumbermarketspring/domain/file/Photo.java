@@ -1,6 +1,6 @@
-package cucumbermarket.cucumbermarketspring.domain.file.domain;
+package cucumbermarket.cucumbermarketspring.domain.file;
 
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "file")
-public class File {
+public class Photo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +33,7 @@ public class File {
     private String filePath;
 
     @Builder
-    public File(String origFileName, String fileName, String filePath, Item item){
+    public Photo(String origFileName, String fileName, String filePath, Item item){
         this.origFileName = origFileName;
         this.fileName = fileName;
         this.filePath = filePath;

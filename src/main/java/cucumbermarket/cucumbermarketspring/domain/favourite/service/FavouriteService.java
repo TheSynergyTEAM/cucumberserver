@@ -1,7 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.favourite.service;
 
-import cucumbermarket.cucumbermarketspring.domain.favourite.domain.FavouriteItem;
-import cucumbermarket.cucumbermarketspring.domain.favourite.domain.FavouriteItemRepository;
+import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItem;
+import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.favourite.dto.FavItemSearchDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
