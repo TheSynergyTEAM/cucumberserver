@@ -1,11 +1,11 @@
 package cucumbermarket.cucumbermarketspring.service;
 
-import cucumbermarket.cucumbermarketspring.domain.favourite.domain.FavouriteItem;
-import cucumbermarket.cucumbermarketspring.domain.favourite.domain.FavouriteItemRepository;
+import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItem;
+import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.favourite.dto.FavItemSearchDto;
 import cucumbermarket.cucumbermarketspring.domain.favourite.service.FavouriteService;
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Categories;
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.Categories;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import org.junit.Test;

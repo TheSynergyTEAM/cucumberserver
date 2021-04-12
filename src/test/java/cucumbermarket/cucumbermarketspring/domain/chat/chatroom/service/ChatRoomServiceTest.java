@@ -49,23 +49,23 @@ public class ChatRoomServiceTest {
 //        //given
         Member member = getMember("memberA", "1234", "abc@abc.com", "010-1234-1234");
         entityManager.persist(member);
-
-        File file = new File("str1", "str2", "str3");
+        Item item1 = getItem1(member);
+        File file = new File("str1", "str2", "str3", item1);
         entityManager.persist(file);
-        List<File> fileList = new ArrayList<>();
-        fileList.add(file);
-        Item item = getItem(member, fileList);
-        entityManager.persist(item);
-        ChatRoom chatRoom = getChatRoom(member, item);
+        ChatRoom chatRoom = getChatRoom(member, item1);
         chatRoomRepository.save(chatRoom);
         System.out.println("here");
         entityManager.flush();
         //when
-        ChatRoom chatRoom1 = chatRoomService.searchChatRoomByMemberAndItem(member, item);
+        ChatRoom chatRoom1 = chatRoomService.searchChatRoomByMemberAndItem(member, item1);
 
         assertEquals(chatRoom1.getMember(), member);
 
         //then
+    }
+
+    private Item getItem1(Member member) {
+        return new Item(member, "", Categories.BEAUTY, 1, "", new Address(), Boolean.FALSE);
     }
 
     @Test
@@ -79,6 +79,9 @@ public class ChatRoomServiceTest {
         fileList.add(file);
         Item item = getItem(member, fileList);
         entityManager.persist(item);
+        File file = new File("str1", "str2", "str3", item);
+        entityManager.persist(file);
+
         ChatRoom chatRoom = getChatRoom(member, item);
         entityManager.persist(chatRoom);
         Message message1 = new Message(member, "Hello");
@@ -110,12 +113,9 @@ public class ChatRoomServiceTest {
         Member memberC = getMember("memberC", "1234", "def@abc.com", "010-1234-1234");
         entityManager.persist(memberC);
 
-        File file = new File("str1", "str2", "str3");
+        Photo file = new Photo();
         entityManager.persist(file);
-        List<File> fileList = new ArrayList<>();
-        fileList.add(file);
-        Item item = getItem(memberA, fileList);
-        entityManager.persist(item);
+
         ChatRoom chatRoomA = getChatRoom(memberB, item);
         entityManager.persist(chatRoomA);
         ChatRoom chatRoomB = getChatRoom(memberC, item);
@@ -129,8 +129,8 @@ public class ChatRoomServiceTest {
         Assertions.assertEquals(allChatRoom.size(), 2);
     }
 
-    private Item getItem(Member member, List<File> fileList) {
-        Item item = new Item(member, "title", Categories.BEAUTY, 1000, "spec", fileList, Boolean.FALSE);
+    private Item getItem(Member member, List<Photo> fileList) {
+        Item item = new Item();
         return item;
     }
 
