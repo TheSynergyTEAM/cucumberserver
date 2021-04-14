@@ -74,9 +74,19 @@ public class MemberService implements UserDetailsService{
      * 회원 수정
      */
     @Transactional
-    public void updateMember(UpdateMemberDto updateMemberDto){
+    public UpdateMemberDto updateMember(UpdateMemberDto updateMemberDto){
         Member one = memberRepository.getOne(updateMemberDto.getId());
         one.change(updateMemberDto);
+        UpdateMemberDto updatedMemberDTO = new UpdateMemberDto();
+        updatedMemberDTO.setName(one.getName());
+        updatedMemberDTO.setId(one.getId());
+        updatedMemberDTO.setEmail(one.getEmail());
+        updatedMemberDTO.setCity(one.getAddress().getCity());
+        updatedMemberDTO.setStreet1(one.getAddress().getStreet1());
+        updatedMemberDTO.setStreet2(one.getAddress().getStreet2());
+        updatedMemberDTO.setZipcode(one.getAddress().getZipcode());
+        updatedMemberDTO.setContact(one.getContact());
+        return updatedMemberDTO;
     }
 
     /**
