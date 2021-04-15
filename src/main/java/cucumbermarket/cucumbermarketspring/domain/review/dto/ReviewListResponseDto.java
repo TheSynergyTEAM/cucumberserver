@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class ReviewResponseDto {
+public class ReviewListResponseDto {
     private Long id;
     private String item;
     private String seller;
@@ -14,8 +14,9 @@ public class ReviewResponseDto {
     private int ratingScore;
     private String content;
     private LocalDateTime created;
+    private LocalDateTime updated;
 
-    public ReviewResponseDto(Review entity){
+    public ReviewListResponseDto(Review entity){
         this.id = entity.getId();
         this.item = entity.getItem().getTitle();
         this.seller = entity.getItem().getMember().getName();
@@ -23,5 +24,6 @@ public class ReviewResponseDto {
         this.ratingScore = entity.getRatingScore();
         this.content = entity.getContent();
         this.created = entity.getCreated();
+        this.updated = entity.getModified();
     }
 }

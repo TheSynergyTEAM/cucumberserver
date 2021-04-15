@@ -6,6 +6,7 @@ import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemListResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
+import cucumbermarket.cucumbermarketspring.domain.member.address.AddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
     private PhotoService fileService;
+    private AddressService addressService;
 
     /**
      * 물품등록
@@ -23,11 +25,13 @@ public class ItemController {
     //  public Long save(@RequestParam("file") List<MultipartFile> files, @RequestParam("requestParam") ItemCreateRequestDto requestDto){
     @PostMapping("/item")
     public Long save(@RequestBody ItemCreateRequestDto requestDto){
+   // public Long save(@RequestParam("file") List<MultipartFile> files, @RequestParam("requestParam") ItemCreateRequestDto requestDto){
    /*     Long itemId = itemService.save(requestDto);
         Item item = new Item(requestDto.getMember(), requestDto.getTitle(), requestDto.getCategories(),
                 requestDto.getPrice(),  requestDto.getSpec(), requestDto.getAddress(), requestDto.getSold());*/
+    /*    Long itemId = itemService.save(requestDto);
 
-       /* try {
+        try {
             for(MultipartFile file : files){
                 String origFilename = file.getOriginalFilename();
                 String filename = new MD5Generator(origFilename).toString();
@@ -45,19 +49,22 @@ public class ItemController {
                 String filePath = savePath + "\\" + filename;
                 file.transferTo(new File(filePath));
 
-                FileDto fileDto = FileDto.builder()
+                PhotoDto fileDto = PhotoDto.builder()
                         .origFileName(origFilename)
                         .fileName(filename)
                         .filePath(filePath)
-                        .item(item)
                         .build();
 
-                Long fileId = fileService.saveFile(fileDto);
-                FileDto photo = fileService.getFile(fileId);
+                Long fileId = fileService.savePhoto(fileDto);
+
+                PhotoDto photoDto = fileService.getPhoto(fileId);
+
+            //    Photo photo = new Photo(photoDto.getOrigFileName(), photoDto.getFileName(), photoDto.getFilePath());
+
             }
         } catch(Exception e) {
             e.printStackTrace();
-        } */
+        }*/
         return itemService.save(requestDto);
     }
 
@@ -90,17 +97,17 @@ public class ItemController {
      */
    /* @GetMapping("/api/item")
     public List<ItemListResponseDto> findByArea(
-            @RequestParam(value = "city", required = true) String param1,
-            @RequestParam(value = "street", required = true) String param2) {
-        String city = addressService.requestCity();
-        return itemService.findByArea();
+            @RequestParam(value = "city", required = true) String city,
+            @RequestParam(value = "street", required = true) String street) {
+
+        return itemService.findByArea(city, street);
     }*/
 
     /**
      * 물품모두조회
      */
     @GetMapping("/item")
-    public List<ItemListResponseDto> findAll(){
+    public List<ItemListResponseDto> findAll() {
         return itemService.findAll();
     }
 

@@ -21,7 +21,9 @@ import java.util.List;
 @Entity
 @Table(name = "item")
 public class Item extends BaseTimeEntity {
-    //칼럼
+    /**
+     * 칼럼
+     * */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
@@ -30,7 +32,7 @@ public class Item extends BaseTimeEntity {
     @ManyToOne(cascade = CascadeType.MERGE, targetEntity = Member.class)
     @JoinColumn(name = "member_id", updatable = false)
     @JsonBackReference
-    private Member member;
+    private Member member;  // 판매자
 
     @Embedded
     private Address address;
@@ -46,10 +48,11 @@ public class Item extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String spec;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name="photo_id")
     private List<Photo> photo = new ArrayList<>();
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "item", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<FavouriteItem> favouriteItem = new ArrayList<>();
 
     private Boolean sold;
@@ -57,7 +60,9 @@ public class Item extends BaseTimeEntity {
     @OneToOne(mappedBy = "item")
     private Review review;
 
-    //빌더
+    /**
+     * 빌더
+     * */
     @Builder
     public Item(Member member, String title, Categories categories, int price, String spec, Address address, Boolean sold){
         this.member = member;
