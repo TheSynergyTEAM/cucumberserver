@@ -1,6 +1,5 @@
 package cucumbermarket.cucumbermarketspring.service;
 
-
 import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
 import cucumbermarket.cucumbermarketspring.domain.item.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;

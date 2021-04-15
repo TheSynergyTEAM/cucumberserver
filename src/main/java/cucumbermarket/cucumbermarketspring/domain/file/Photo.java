@@ -37,10 +37,10 @@ public class Photo {
         this.origFileName = origFileName;
         this.fileName = fileName;
         this.filePath = filePath;
-        this.item = item;
+        this.setItem(item);
     }
 
-    /* public void setItem(Item item) {
+    public void setItem(Item item) {
         this.item = item;
-    }*/
+    }
 }
