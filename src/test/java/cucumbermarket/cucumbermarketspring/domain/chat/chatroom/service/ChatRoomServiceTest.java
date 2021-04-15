@@ -1,9 +1,18 @@
 package cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service;
 
+import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
+import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoom;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoomRepository;
+import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoomSearchDTO;
+import cucumbermarket.cucumbermarketspring.domain.file.domain.File;
+import cucumbermarket.cucumbermarketspring.domain.item.domain.Categories;
+import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
+import cucumbermarket.cucumbermarketspring.domain.member.Member;
+import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +20,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -32,25 +47,25 @@ public class ChatRoomServiceTest {
     public void createChatRoomTest() throws Exception {
 
 //        //given
-     /*   Member member = getMember("memberA", "1234", "abc@abc.com", "010-1234-1234");
+        Member member = getMember("memberA", "1234", "abc@abc.com", "010-1234-1234");
         entityManager.persist(member);
-
-        Photo file = new Photo();
+        Item item1 = getItem1(member);
+        File file = new File("str1", "str2", "str3", item1);
         entityManager.persist(file);
-        List<Photo> fileList = new ArrayList<>();
-        fileList.add(file);
-        Item item = getItem(member, fileList);
-        entityManager.persist(item);
-        ChatRoom chatRoom = getChatRoom(member, item);
+        ChatRoom chatRoom = getChatRoom(member, item1);
         chatRoomRepository.save(chatRoom);
         System.out.println("here");
         entityManager.flush();
         //when
-        ChatRoom chatRoom1 = chatRoomService.searchChatRoomByMemberAndItem(member, item);
+        ChatRoom chatRoom1 = chatRoomService.searchChatRoomByMemberAndItem(member, item1);
 
         assertEquals(chatRoom1.getMember(), member);
 
         //then
+    }
+
+    private Item getItem1(Member member) {
+        return new Item(member, "", Categories.BEAUTY, 1, "", new Address(), Boolean.FALSE);
     }
 
     @Test
@@ -58,12 +73,15 @@ public class ChatRoomServiceTest {
         Member member = getMember("memberA", "1234", "abc@abc.com", "010-1234-1234");
         entityManager.persist(member);
 
-        Photo file = new Photo();
+        File file = new File("str1", "str2", "str3");
         entityManager.persist(file);
-        List<Photo> fileList = new ArrayList<>();
+        List<File> fileList = new ArrayList<>();
         fileList.add(file);
         Item item = getItem(member, fileList);
         entityManager.persist(item);
+        File file = new File("str1", "str2", "str3", item);
+        entityManager.persist(file);
+
         ChatRoom chatRoom = getChatRoom(member, item);
         entityManager.persist(chatRoom);
         Message message1 = new Message(member, "Hello");
@@ -97,10 +115,7 @@ public class ChatRoomServiceTest {
 
         Photo file = new Photo();
         entityManager.persist(file);
-        List<Photo> fileList = new ArrayList<>();
-        fileList.add(file);
-        Item item = getItem(memberA, fileList);
-        entityManager.persist(item);
+
         ChatRoom chatRoomA = getChatRoom(memberB, item);
         entityManager.persist(chatRoomA);
         ChatRoom chatRoomB = getChatRoom(memberC, item);
@@ -135,7 +150,7 @@ public class ChatRoomServiceTest {
 
     private ChatRoom getChatRoom(Member member, Item item) {
         return new ChatRoom(item, member);
-    }*/
-
     }
+
+
 }
