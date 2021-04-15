@@ -20,6 +20,7 @@ public class ItemService {
 
     @Transactional
     public Long save(ItemCreateRequestDto requestDto){
+
         return itemRepository.save(requestDto.toEntity()).getId();
     }
     /*public Long save(Item item){
@@ -53,23 +54,12 @@ public class ItemService {
         return new ItemResponseDto(entity);
     }
 
-   /* @Transactional(readOnly = true)
+ /*  @Transactional(readOnly = true)
     public List<ItemListResponseDto> findByArea(String city, String street){
-        //Member one = memberRepository.getOne(updateMemberDto.getId());
-        one.change(updateMemberDto);//
-        List<Item> itemList = itemRepository.findByAddress(city, street);
-
-        return itemRepository.findByArea().stream()
+       // Address address = ;
+        return itemRepository.findByAddress_CityAndAddress_Street1(city, street).stream()
                 .map(ItemListResponseDto::new)
                 .collect(Collectors.toList());
-    }*/
-
-    /*private void validateDuplicateMember(Member member) {
-
-        Member memberByEmail = memberRepository.findByEmail(member.getEmail());
-        if (memberByEmail != null) {
-            throw new IllegalStateException("중복 회원 존재");
-        }
     }*/
 
     @Transactional(readOnly = true)

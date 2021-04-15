@@ -1,6 +1,6 @@
 package cucumbermarket.cucumbermarketspring.service;
 
-import cucumbermarket.cucumbermarketspring.domain.file.service.FileService;
+import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
 import cucumbermarket.cucumbermarketspring.domain.item.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
@@ -28,7 +28,7 @@ public class ItemServiceTest {
     private ItemService itemService;
 
     @Autowired
-    private FileService fileService;
+    private PhotoService fileService;
 
     @Autowired
     EntityManager entityManager;
