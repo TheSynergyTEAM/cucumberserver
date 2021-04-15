@@ -10,10 +10,10 @@ import java.time.LocalDate;
 public class UpdateMemberDto {
     private Long id;
     private String name;
-    private String password;
-    @Embedded
-    private Address address;
-    private LocalDate birthdate;
+    private String city;
+    private String street1;
+    private String street2;
+    private String zipcode;
     private String email;
     private String contact;
 }

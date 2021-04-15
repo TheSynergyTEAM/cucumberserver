@@ -5,6 +5,7 @@ import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
 
+import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class MemberServiceTest {
     @Test
     public void createMemberTest() {
         //given
-        Member member = new Member("구형준", "1234", new Address(), LocalDate.now(), "abc@def.com", "010-1234-5678", 5, "USER");
+        Member member = getMember(new Address(), "구형준");
 
         //when
         Long member1 = memberService.createMember(member);
@@ -49,8 +50,8 @@ public class MemberServiceTest {
     public void duplicateMemberTest() throws Exception {
 
         //given
-        Member member1 = new Member("구형준1", "1234", new Address(), LocalDate.now(), "abc@def.com", "010-1234-5678", 5, "USER");
-        Member member2 = new Member("구형준2", "1234", new Address(), LocalDate.now(), "abc@def.com", "010-1234-5678", 5, "USER");
+        Member member1 = getMember(new Address(), "구형준1");
+        Member member2 = getMember(new Address(), "구형준2");
         //when
         Long member1Id = memberService.createMember(member1);
         entityManager.persist(member1);
@@ -66,9 +67,9 @@ public class MemberServiceTest {
     @Test
     public void profileTest() throws Exception {
 
-        Address address = new Address("서울", "123", "123", "123");
+        Address address = getAddress();
         //given
-        Member member1 = new Member("구형준1", "1234", address, LocalDate.now(), "abc@def.com", "010-1234-5678", 5, "USER");
+        Member member1 = getMember(address, "구형준1");
         entityManager.persist(member1);
 
         //when
@@ -77,5 +78,11 @@ public class MemberServiceTest {
         //then
     }
 
+    private Address getAddress() {
+        return new Address("서울", "123", "123", "123");
+    }
 
+    private Member getMember(Address address, String name) {
+        return new Member(name, "1234", address, LocalDate.now(), "abc@def.com", "010-1234-5678", 5, "USER");
+    }
 }
