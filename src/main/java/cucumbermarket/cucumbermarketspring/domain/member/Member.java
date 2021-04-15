@@ -33,7 +33,7 @@ public class Member implements UserDetails {
     @Column(name = "member_id", unique = true, nullable = false)
     private Long id;
 
-    @Column(length = 15, nullable = false, unique = true)
+    @Column(length = 15, nullable = false)
     private String name;
 
     @Column(length = 100, nullable = false)
