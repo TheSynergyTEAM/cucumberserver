@@ -95,9 +95,7 @@ public class Member implements UserDetails {
     public void change(UpdateMemberDto updateMemberDto) {
         this.id = updateMemberDto.getId();
         this.name = updateMemberDto.getName();
-        this.password = updateMemberDto.getPassword();
-        this.address = updateMemberDto.getAddress();
-        this.birthdate = updateMemberDto.getBirthdate();
+        this.address = new Address(updateMemberDto.getCity(), updateMemberDto.getStreet1(), updateMemberDto.getStreet2(), updateMemberDto.getZipcode());
         this.email = updateMemberDto.getEmail();
         this.contact = updateMemberDto.getContact();
     }

@@ -28,7 +28,7 @@ public class ItemServiceTest {
     private ItemService itemService;
 
     @Autowired
-    private PhotoService fileService;
+    private PhotoService photoService;
 
     @Autowired
     EntityManager entityManager;

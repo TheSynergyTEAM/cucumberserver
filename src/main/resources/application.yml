@@ -12,8 +12,9 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
       use-new-id-generator-mappings: false
+      ddl-auto: create
+
     properties:
       hibernate:
         show_sql: true
