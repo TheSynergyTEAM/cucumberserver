@@ -81,7 +81,7 @@ public class ItemService {
 
        List<Item> itemList = queryFactory
                .selectFrom(item)
-               .on(item.address.city.eq(city).and(item.address.street1.eq(street)))
+               .where(item.address.city.eq(city).and(item.address.street1.eq(street)))
                .fetch();
 
        return itemList.stream()
