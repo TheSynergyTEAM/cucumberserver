@@ -2,7 +2,7 @@ package cucumbermarket.cucumbermarketspring.service;
 
 import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItemRepository;
-import cucumbermarket.cucumbermarketspring.domain.favourite.dto.FavItemSearchDto;
+import cucumbermarket.cucumbermarketspring.domain.favourite.dto.FavItemResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.favourite.service.FavouriteService;
 import cucumbermarket.cucumbermarketspring.domain.item.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
@@ -93,8 +93,8 @@ public class FavouriteServiceTest {
         entityManager.persist(favItem2);
 
         //when
-        FavItemSearchDto favSearchDto1 = favService.findOne(favId1);
-        FavItemSearchDto favSearchDto2 = favService.findOne(favId2);
+        FavItemResponseDto favSearchDto1 = favService.findOne(favId1);
+        FavItemResponseDto favSearchDto2 = favService.findOne(favId2);
 
         //then
         assertThat(favSearchDto1.getId()).isEqualTo(favId1);
