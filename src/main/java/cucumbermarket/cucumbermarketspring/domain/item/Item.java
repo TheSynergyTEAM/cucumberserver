@@ -1,6 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.item;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
 import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.file.Photo;
@@ -53,6 +54,7 @@ public class Item extends BaseTimeEntity {
     private List<Photo> photo = new ArrayList<>();
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @JsonManagedReference("item")
     private List<FavouriteItem> favouriteItem = new ArrayList<>();
 
     private Boolean sold;

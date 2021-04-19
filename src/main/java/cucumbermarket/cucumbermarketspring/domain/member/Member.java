@@ -33,7 +33,7 @@ public class Member implements UserDetails {
     @Column(name = "member_id", unique = true, nullable = false)
     private Long id;
 
-    @Column(length = 15, nullable = false, unique = true)
+    @Column(length = 15, nullable = false)
     private String name;
 
     @Column(length = 100, nullable = false)
@@ -58,7 +58,8 @@ public class Member implements UserDetails {
     @JsonManagedReference
     private List<Item> item = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @JsonManagedReference("member")
     private List<FavouriteItem> favouriteItem = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.MERGE, orphanRemoval = true)

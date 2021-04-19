@@ -1,11 +1,15 @@
 package cucumbermarket.cucumbermarketspring.domain.review.controller;
 
 import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewCreateRequestDto;
+import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewListResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewUpdateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.review.service.ReviewService;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -16,15 +20,16 @@ public class ReviewController {
      * 리뷰 생성
      * */
     @PostMapping("/review")
-    public Long save(@RequestBody ReviewCreateRequestDto requestDto){
-        return reviewService.createReview(requestDto);
+    public CreateReviewResponse save(@RequestBody ReviewCreateRequestDto requestDto){
+        Long id = reviewService.createReview(requestDto);
+        return new CreateReviewResponse(id);
     }
 
     /**
      * 리뷰 수정
      * */
     @PutMapping("/review/{id}")
-    public Long update(@PathVariable Long id, @RequestBody ReviewUpdateRequestDto requestDto){
+    public ReviewResponseDto update(@PathVariable Long id, @RequestBody ReviewUpdateRequestDto requestDto){
         return reviewService.updateReview(id, requestDto);
     }
 
@@ -37,34 +42,44 @@ public class ReviewController {
     }
 
     /**
-     * 리뷰 조회
+     * 리뷰 개별 조회
      * */
     @GetMapping("/review/{id}")
-    public ReviewResponseDto findOne(@PathVariable Long id){
+    public ReviewResponseDto searchOne(@PathVariable Long id){
         return reviewService.findOne(id);
     }
 
     /**
      * 리뷰 전체 조회
      * */
-   /* @GetMapping("/review")
-    public List<ReviewListResponseDto> findAll(){
-        return reviewService.findAll();
-    }*/
+    @GetMapping("/review")
+    public List<ReviewListResponseDto> searchAll(@RequestParam("user") Long id){
+        return reviewService.findAll(id);
+    }
 
     /**
      * 판매 리뷰 전체 조회
      * */
- /*   @GetMapping("/review/sell")
-    public List<ReviewListResponseDto> searchAllSold(@RequestParam("name") String name){
-        return reviewService.findAllBySeller(name);
-    }*/
+    @GetMapping("/review/sell")
+    public List<ReviewListResponseDto> searchAllSold(@RequestParam("user") Long id){
+        return reviewService.findAllBySeller(id);
+    }
 
     /**
      * 구매 리뷰 전체 조회
      * */
- /*   @GetMapping("/review/buy")
-    public List<ReviewListResponseDto> searchAllBought(@RequestParam("name") String name){
-        return reviewService.findAllByBuyer(name);
-    }*/
+    @GetMapping("/review/buy")
+    public List<ReviewListResponseDto> searchAllBought(@RequestParam("user") Long id){
+        return reviewService.findAllByBuyer(id);
+    }
+
+
+    @Data
+    static class CreateReviewResponse {
+        private Long id;
+
+        public CreateReviewResponse(Long id) {
+            this.id = id;
+        }
+    }
 }
