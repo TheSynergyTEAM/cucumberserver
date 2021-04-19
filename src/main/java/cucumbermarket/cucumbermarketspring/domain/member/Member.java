@@ -4,11 +4,11 @@ package cucumbermarket.cucumbermarketspring.domain.member;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
-import cucumbermarket.cucumbermarketspring.domain.favourite.domain.FavouriteItem;
+import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
-import cucumbermarket.cucumbermarketspring.domain.review.domain.Review;
+import cucumbermarket.cucumbermarketspring.domain.review.Review;
 import lombok.*;
 import org.hibernate.annotations.Proxy;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,7 +33,7 @@ public class Member implements UserDetails {
     @Column(name = "member_id", unique = true, nullable = false)
     private Long id;
 
-    @Column(length = 15, nullable = false, unique = true)
+    @Column(length = 15, nullable = false)
     private String name;
 
     @Column(length = 100, nullable = false)
@@ -54,15 +54,16 @@ public class Member implements UserDetails {
     @Column(columnDefinition = "int default 0")
     private int ratingScore;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.MERGE, orphanRemoval = true)
     @JsonManagedReference
     private List<Item> item = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FavouriteItem> favouriteItem = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Review> reviewList = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Review> review = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
     private List<Message> messageList = new ArrayList<>();
@@ -93,9 +94,7 @@ public class Member implements UserDetails {
     public void change(UpdateMemberDto updateMemberDto) {
         this.id = updateMemberDto.getId();
         this.name = updateMemberDto.getName();
-        this.password = updateMemberDto.getPassword();
-        this.address = updateMemberDto.getAddress();
-        this.birthdate = updateMemberDto.getBirthdate();
+        this.address = new Address(updateMemberDto.getCity(), updateMemberDto.getStreet1(), updateMemberDto.getStreet2(), updateMemberDto.getZipcode());
         this.email = updateMemberDto.getEmail();
         this.contact = updateMemberDto.getContact();
     }

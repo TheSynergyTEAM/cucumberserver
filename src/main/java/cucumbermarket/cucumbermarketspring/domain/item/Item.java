@@ -1,12 +1,12 @@
-package cucumbermarket.cucumbermarketspring.domain.item.domain;
+package cucumbermarket.cucumbermarketspring.domain.item;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
-import cucumbermarket.cucumbermarketspring.domain.favourite.domain.FavouriteItem;
-import cucumbermarket.cucumbermarketspring.domain.file.domain.File;
+import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItem;
+import cucumbermarket.cucumbermarketspring.domain.file.Photo;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
-import cucumbermarket.cucumbermarketspring.domain.review.domain.Review;
+import cucumbermarket.cucumbermarketspring.domain.review.Review;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,21 +17,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity
 @Table(name = "item")
 public class Item extends BaseTimeEntity {
-    //칼럼
+    /**
+     * 칼럼
+     * */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE, targetEntity = Member.class)
+    @ManyToOne(cascade = CascadeType.MERGE, targetEntity = Member.class)
     @JoinColumn(name = "member_id", updatable = false)
-    //@JsonIgnoreProperties(value = {"item"})
     @JsonBackReference
-    private Member member;
+    private Member member;  // 판매자
 
     @Embedded
     private Address address;
@@ -47,10 +48,11 @@ public class Item extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String spec;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<File> photo = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name="photo_id")
+    private List<Photo> photo = new ArrayList<>();
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "item", cascade = CascadeType.MERGE, orphanRemoval = true)
     private List<FavouriteItem> favouriteItem = new ArrayList<>();
 
     private Boolean sold;
@@ -58,7 +60,9 @@ public class Item extends BaseTimeEntity {
     @OneToOne(mappedBy = "item")
     private Review review;
 
-    //빌더
+    /**
+     * 빌더
+     * */
     @Builder
     public Item(Member member, String title, Categories categories, int price, String spec, Address address, Boolean sold){
         this.member = member;

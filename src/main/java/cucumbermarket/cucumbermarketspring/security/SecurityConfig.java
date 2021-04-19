@@ -26,7 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final MemberService memberService;
 
     private static final String[] PUBLIC_URI = {
-            "/", "/login", "/address/city/**", "/members"
+            "/", "/login", "/address/city/**", "/members", "/item/**","/item"
     };
 
     @Bean
@@ -55,6 +55,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(PUBLIC_URI).permitAll()
+                .antMatchers("/item").hasAuthority("USER")
+                .antMatchers("/item/**").hasAuthority("USER")
+                .antMatchers("/review").hasAuthority("USER")
+                .antMatchers("/review/**").hasAuthority("USER")
                 .anyRequest()
                 .authenticated()
                 .and()

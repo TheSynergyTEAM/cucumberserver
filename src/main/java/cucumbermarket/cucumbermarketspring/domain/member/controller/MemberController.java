@@ -5,12 +5,14 @@ import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberDto;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
+import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import cucumbermarket.cucumbermarketspring.exception.ForbiddenException;
 import cucumbermarket.cucumbermarketspring.exception.NotCorrectPasswordException;
 import cucumbermarket.cucumbermarketspring.security.JwtAuthenticationTokenProvider;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Update;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -106,6 +108,18 @@ public class MemberController {
         return memberProfile;
     }
 
+    /**
+     * 회원 정보 수정
+     */
+    @CrossOrigin
+    @PatchMapping("/member/{id}")
+    public ResponseEntity<UpdateMemberDto> updateMember(@PathVariable("id") Long id, @RequestBody @Valid UpdateMemberDto request) {
+
+        Member member = memberRepository.getOne(id);
+        UpdateMemberDto updateMember = memberService.updateMember(request);
+        return ResponseEntity.ok()
+                .body(updateMember);
+    }
 
     @Data
     static class CreateMemberResponse {

@@ -1,8 +1,8 @@
 package cucumbermarket.cucumbermarketspring.domain.review.dto;
 
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
-import cucumbermarket.cucumbermarketspring.domain.review.domain.Review;
+import cucumbermarket.cucumbermarketspring.domain.review.Review;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +18,7 @@ public class ReviewCreateRequestDto {
     @Builder
     public ReviewCreateRequestDto(Item item, Member member, int ratingScore, String content){
         this.item = item;
-        this.member = member;
+        this.member = member;   // 구매자
         this.ratingScore = ratingScore;
         this.content = content;
     }

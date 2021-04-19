@@ -2,7 +2,7 @@ package cucumbermarket.cucumbermarketspring.domain.chat.chatroom;
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
 
 import lombok.AccessLevel;
 import lombok.Builder;

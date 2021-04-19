@@ -1,6 +1,5 @@
-package cucumbermarket.cucumbermarketspring.domain.item.domain;
+package cucumbermarket.cucumbermarketspring.domain.item;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

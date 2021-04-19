@@ -1,8 +1,10 @@
 package cucumbermarket.cucumbermarketspring.domain.item.dto;
 
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Categories;
-import cucumbermarket.cucumbermarketspring.domain.item.domain.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.Categories;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import lombok.Getter;
+
+import java.time.LocalDateTime;
 
 @Getter
 public class ItemResponseDto {
@@ -15,6 +17,7 @@ public class ItemResponseDto {
     private String city;
     private String street;
     private Boolean sold;
+    private LocalDateTime created;
 
     public ItemResponseDto(Item entity){
         this.id = entity.getId();
@@ -26,5 +29,6 @@ public class ItemResponseDto {
         this.city = entity.getAddress().getCity();
         this.street = entity.getAddress().getStreet1();
         this.sold = entity.getSold();
+        this.created = entity.getCreated();
     }
 }
