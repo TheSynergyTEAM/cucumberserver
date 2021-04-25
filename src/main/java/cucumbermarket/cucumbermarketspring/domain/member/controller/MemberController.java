@@ -36,7 +36,7 @@ public class MemberController {
     private final JwtAuthenticationTokenProvider jwtAuthenticationTokenProvider;
     private final AuthenticationManager authenticationManager;
 
-    @GetMapping("/api/members")
+    @GetMapping("/api/member")
     public List<Member> members() {
         return memberService.searchAllMember();
     }
