@@ -91,7 +91,7 @@ public class MemberController {
         Long userId = memberbyEmail.getId();
         LoginResponseDto loginResponseDTO = new LoginResponseDto(
                 userId,
-                userDetails.getUsername(),
+                memberbyEmail.getName(),
                 memberbyEmail.getAddress(),
                 memberbyEmail.getBirthdate(),
                 memberbyEmail.getEmail(),
