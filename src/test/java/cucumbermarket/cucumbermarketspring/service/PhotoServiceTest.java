@@ -3,7 +3,7 @@ package cucumbermarket.cucumbermarketspring.service;
 import cucumbermarket.cucumbermarketspring.domain.file.PhotoRepository;
 import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoDto;
 import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
-import cucumbermarket.cucumbermarketspring.domain.item.util.MD5Generator;
+import cucumbermarket.cucumbermarketspring.domain.file.util.MD5Generator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

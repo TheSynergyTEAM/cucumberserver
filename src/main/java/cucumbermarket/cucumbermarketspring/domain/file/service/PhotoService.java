@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class PhotoService {
-    private PhotoRepository photoRepository;
+    private final PhotoRepository photoRepository;
 
     @Transactional
     public Long savePhoto(PhotoDto photoDto){

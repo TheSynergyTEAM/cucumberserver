@@ -8,10 +8,7 @@ import cucumbermarket.cucumbermarketspring.domain.file.Photo;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.review.Review;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -85,4 +82,10 @@ public class Item extends BaseTimeEntity {
         this.sold = sold;
     }
 
+    public void addPhoto(Photo photo){
+        this.photo.add(photo);
+
+        if(photo.getItem() != this)
+            photo.setItem(this);
+    }
 }

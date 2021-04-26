@@ -1,14 +1,21 @@
 package cucumbermarket.cucumbermarketspring.domain.item.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import cucumbermarket.cucumbermarketspring.domain.file.Photo;
+import cucumbermarket.cucumbermarketspring.domain.file.PhotoRepository;
+import cucumbermarket.cucumbermarketspring.domain.file.util.FileHandler;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.item.QItem;
-import cucumbermarket.cucumbermarketspring.domain.item.dto.*;
+import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
+import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemListResponseDto;
+import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
+import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.member.address.QAddress;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,6 +26,8 @@ import java.util.stream.Collectors;
 @Service
 public class ItemService {
     private final ItemRepository itemRepository;
+    private final PhotoRepository photoRepository;
+    private final FileHandler fileHandler;
 
     @PersistenceContext
     private EntityManager em;
@@ -27,9 +36,28 @@ public class ItemService {
      * 상품등록
      * */
     @Transactional
-    public Long save(ItemCreateRequestDto requestDto){
+    public Long save(
+            ItemCreateRequestDto requestDto,
+            List<MultipartFile> files)
+            throws Exception {
 
-        return itemRepository.save(requestDto.toEntity()).getId();
+        Item item = new Item(
+                requestDto.getMember(),
+                requestDto.getTitle(),
+                requestDto.getCategories(),
+                requestDto.getPrice(),
+                requestDto.getSpec(),
+                requestDto.getAddress(),
+                requestDto.getSold());
+
+        List<Photo> photoList = fileHandler.parseFileInfo(item, files);
+
+        if(!photoList.isEmpty()){
+            for(Photo photo : photoList)
+                item.addPhoto(photoRepository.save(photo));
+        }
+
+        return itemRepository.save(item).getId();
     }
 
     /**
