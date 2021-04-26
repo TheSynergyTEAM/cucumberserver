@@ -1,15 +1,12 @@
 package cucumbermarket.cucumbermarketspring.domain.file;
 
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity
 @Table(name = "file")
 public class Photo {
@@ -32,15 +29,19 @@ public class Photo {
     @Column(nullable = false)
     private String filePath;
 
+    private long file_size;
+
     @Builder
-    public Photo(String origFileName, String fileName, String filePath, Item item){
+    public Photo(String origFileName, String fileName, String filePath){
         this.origFileName = origFileName;
         this.fileName = fileName;
         this.filePath = filePath;
-        this.setItem(item);
     }
 
-    public void setItem(Item item) {
+    public void setItem(Item item){
         this.item = item;
+
+        if(!item.getPhoto().contains(this))
+            item.getPhoto().add(this);
     }
 }

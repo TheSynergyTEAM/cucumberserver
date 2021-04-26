@@ -22,6 +22,8 @@ public class QPhoto extends EntityPathBase<Photo> {
 
     public static final QPhoto photo = new QPhoto("photo");
 
+    public final NumberPath<Long> file_size = createNumber("file_size", Long.class);
+
     public final StringPath fileName = createString("fileName");
 
     public final StringPath filePath = createString("filePath");
