@@ -1,6 +1,8 @@
 package cucumbermarket.cucumbermarketspring.domain.item.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemListResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
@@ -10,7 +12,9 @@ import cucumbermarket.cucumbermarketspring.domain.member.address.AddressService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,49 +29,34 @@ public class ItemController {
      */
     //  public Long save(@RequestParam("file") List<MultipartFile> files, @RequestParam("requestParam") ItemCreateRequestDto requestDto){
     @PostMapping("/item")
-    public CreateItemResponse save(@RequestBody ItemCreateRequestDto requestDto){
-   // public Long save(@RequestParam("file") List<MultipartFile> files, @RequestParam("requestParam") ItemCreateRequestDto requestDto){
-   /*     Long itemId = itemService.save(requestDto);
-        Item item = new Item(requestDto.getMember(), requestDto.getTitle(), requestDto.getCategories(),
-                requestDto.getPrice(),  requestDto.getSpec(), requestDto.getAddress(), requestDto.getSold());*/
-    /*    Long itemId = itemService.save(requestDto);
+    @CrossOrigin
+    public CreateItemResponse create(
+   // public ResponseEntity create(
+    /*        @Valid @RequestParam("member") Member member,
+            @Valid @RequestParam("address") Address address,
+            @Valid @RequestParam("title") String title,
+            @Valid @RequestParam("categories") Categories categories,
+            @Valid @RequestParam("spec") String spec,
+            @Valid @RequestParam("sold") Boolean sold,*/
+            @Valid @RequestParam("requestDto") String requestDto,
+            @Valid @RequestParam("files") List<MultipartFile> files
+    ) throws Exception {
 
-        try {
-            for(MultipartFile file : files){
-                String origFilename = file.getOriginalFilename();
-                String filename = new MD5Generator(origFilename).toString();
-
-                String savePath = System.getProperty("user.dir") + "\\files";
-
-                if (!new File(savePath).exists()) {
-                    try{
-                        new File(savePath).mkdir();
-                    }
-                    catch(Exception e){
-                        e.getStackTrace();
-                    }
-                }
-                String filePath = savePath + "\\" + filename;
-                file.transferTo(new File(filePath));
-
-                PhotoDto fileDto = PhotoDto.builder()
-                        .origFileName(origFilename)
-                        .fileName(filename)
-                        .filePath(filePath)
+        Item item = new ObjectMapper().readValue(requestDto, Item.class);
+        ItemCreateRequestDto ItemRequestDto =
+                ItemCreateRequestDto.builder()
+                        .member(item.getMember())
+                        .address(item.getAddress())
+                        .title(item.getTitle())
+                        .categories(item.getCategories())
+                        .spec(item.getSpec())
+                        .sold(item.getSold())
                         .build();
 
-                Long fileId = fileService.savePhoto(fileDto);
 
-                PhotoDto photoDto = fileService.getPhoto(fileId);
-
-            //    Photo photo = new Photo(photoDto.getOrigFileName(), photoDto.getFileName(), photoDto.getFilePath());
-
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
-        }*/
-        Long id = itemService.save(requestDto);
+        Long id = itemService.save(ItemRequestDto, files);
         return new CreateItemResponse(id);
+       // return ResponseEntity.created(linkTo(ItemController.class).slash(id).toUri()).build();
     }
 
     /**
