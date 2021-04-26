@@ -3,7 +3,9 @@ package cucumbermarket.cucumbermarketspring.domain.member.controller;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
+import cucumbermarket.cucumbermarketspring.domain.member.dto.LoginResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberDto;
+//import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
@@ -12,13 +14,14 @@ import cucumbermarket.cucumbermarketspring.exception.NotCorrectPasswordException
 import cucumbermarket.cucumbermarketspring.security.JwtAuthenticationTokenProvider;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.Update;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
@@ -33,7 +36,7 @@ public class MemberController {
     private final JwtAuthenticationTokenProvider jwtAuthenticationTokenProvider;
     private final AuthenticationManager authenticationManager;
 
-    @GetMapping("/api/members")
+    @GetMapping("/api/member")
     public List<Member> members() {
         return memberService.searchAllMember();
     }
@@ -54,16 +57,20 @@ public class MemberController {
      * 회원가입
      */
     @CrossOrigin
-    @PostMapping("/members")
-    public CreateMemberResponse saveMember(@RequestBody @Valid CreateMemberRequest request) {
-        Address address = new Address(request.city, request.street1, request.street2, request.zipcode);
-        LocalDate birthDate = LocalDate.parse(request.birthDate);
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        String hashedPassword = bCryptPasswordEncoder.encode(request.password);
-        Member member = new Member(request.name, hashedPassword, address, birthDate,request.email, request.contact, 0, "USER");
+    @PostMapping("/member")
+    public ResponseEntity<?> saveMember(@RequestBody @Valid CreateMemberRequestDto request) {
+        try {
+            Address address = new Address(request.city, request.street1, request.street2, request.zipcode);
+            LocalDate birthDate = LocalDate.parse(request.birthdate);
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            String hashedPassword = bCryptPasswordEncoder.encode(request.password);
+            Member member = new Member(request.name, hashedPassword, address, birthDate, request.email, request.contact, 0, "USER");
 
-        Long id = memberService.createMember(member);
-        return new CreateMemberResponse(id);
+            Long id = memberService.createMember(member);
+            return ResponseEntity.ok().body(new CreateMemberResponseDto(id));
+        } catch (NullPointerException e){
+            return ResponseEntity.badRequest().body("Contents name is not correct");
+        }
     }
 
     /**
@@ -71,25 +78,34 @@ public class MemberController {
      */
     @CrossOrigin
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> loginMember(@RequestBody @Valid LoginRequestDTO loginRequest) {
+    public ResponseEntity<?> loginMember(@RequestBody @Valid LoginRequestDTO loginRequest) {
         String email = loginRequest.getEmail();
         UserDetails userDetails = memberService.loadUserByUsername(email);
         String password = loginRequest.getPassword();
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         if (!bCryptPasswordEncoder.matches(password, userDetails.getPassword())) {
-            throw new NotCorrectPasswordException("비밀번호가 일치하지 않습니다");
+            return ResponseEntity.badRequest().body("Password is not correct");
         }
+
         Member memberbyEmail = memberRepository.findByEmail(email);
         Long userId = memberbyEmail.getId();
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-        loginResponseDTO.setName(userDetails.getUsername());
+        LoginResponseDto loginResponseDTO = new LoginResponseDto(
+                userId,
+                memberbyEmail.getName(),
+                memberbyEmail.getAddress(),
+                memberbyEmail.getBirthdate(),
+                memberbyEmail.getEmail(),
+                memberbyEmail.getContact(),
+                memberbyEmail.getRatingScore()
+        );
+
         String token = jwtAuthenticationTokenProvider.issue(userId).getToken();
         System.out.println("token = " + token);
         return ResponseEntity.ok()
                 .header(
                         HttpHeaders.AUTHORIZATION,
                         token
-                )
+                        )
                 .body(loginResponseDTO);
     }
 
@@ -122,15 +138,15 @@ public class MemberController {
     }
 
     @Data
-    static class CreateMemberResponse {
+    static class CreateMemberResponseDto {
         private Long id;
 
-        public CreateMemberResponse(Long id) {
+        public CreateMemberResponseDto(Long id) {
             this.id = id;
         }
     }
     @Data
-    static class CreateMemberRequest{
+    static class CreateMemberRequestDto{
         @NotEmpty
         private String name;
         private String password;
@@ -139,7 +155,7 @@ public class MemberController {
         private String street2;
         private String zipcode;
         private String email;
-        private String birthDate;
+        private String birthdate;
         private String contact;
     }
 
@@ -147,11 +163,6 @@ public class MemberController {
     static class LoginRequestDTO {
         private String email;
         private String password;
-    }
-
-    @Data
-    static class LoginResponseDTO {
-        private String name;
     }
 
 }

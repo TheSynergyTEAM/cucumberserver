@@ -1,15 +1,24 @@
 package cucumbermarket.cucumbermarketspring.domain.item.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import cucumbermarket.cucumbermarketspring.domain.file.Photo;
+import cucumbermarket.cucumbermarketspring.domain.file.PhotoRepository;
+import cucumbermarket.cucumbermarketspring.domain.file.util.FileHandler;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
+import cucumbermarket.cucumbermarketspring.domain.item.QItem;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemListResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
+import cucumbermarket.cucumbermarketspring.domain.member.address.QAddress;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,27 +26,58 @@ import java.util.stream.Collectors;
 @Service
 public class ItemService {
     private final ItemRepository itemRepository;
+    private final PhotoRepository photoRepository;
+    private final FileHandler fileHandler;
 
+    @PersistenceContext
+    private EntityManager em;
+
+    /**
+     * 상품등록
+     * */
     @Transactional
-    public Long save(ItemCreateRequestDto requestDto){
+    public Long save(
+            ItemCreateRequestDto requestDto,
+            List<MultipartFile> files)
+            throws Exception {
 
-        return itemRepository.save(requestDto.toEntity()).getId();
-    }
-    /*public Long save(Item item){
+        Item item = new Item(
+                requestDto.getMember(),
+                requestDto.getTitle(),
+                requestDto.getCategories(),
+                requestDto.getPrice(),
+                requestDto.getSpec(),
+                requestDto.getAddress(),
+                requestDto.getSold());
+
+        List<Photo> photoList = fileHandler.parseFileInfo(item, files);
+
+        if(!photoList.isEmpty()){
+            for(Photo photo : photoList)
+                item.addPhoto(photoRepository.save(photo));
+        }
+
         return itemRepository.save(item).getId();
-    }*/
+    }
 
+    /**
+     * 상품수정
+     * */
     @Transactional
-    public Long update(Long id, ItemUpdateRequestDto requestDto){
+    public ItemResponseDto update(Long id, ItemUpdateRequestDto requestDto){
         Item item = itemRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
 
         item.update(requestDto.getTitle(), requestDto.getCategories(), requestDto.getPrice(),
                 requestDto.getSpec(), requestDto.getAddress(), requestDto.getSold());
 
-        return id;
+        ItemResponseDto itemResponseDto = this.findOne(id);
+        return itemResponseDto;
     }
 
+    /**
+     * 상품삭제
+     * */
     @Transactional
     public void delete(Long id){
         Item item = itemRepository.findById(id)
@@ -46,6 +86,9 @@ public class ItemService {
         itemRepository.delete(item);
     }
 
+    /**
+     * 상품 개별 조회
+     * */
     @Transactional(readOnly = true)
     public ItemResponseDto findOne(Long id){
         Item entity = itemRepository.findById(id).orElseThrow(()
@@ -54,14 +97,29 @@ public class ItemService {
         return new ItemResponseDto(entity);
     }
 
- /*  @Transactional(readOnly = true)
+    /**
+     * 상품 전체 조회(구 기준)
+     * */
+   @Transactional(readOnly = true)
     public List<ItemListResponseDto> findByArea(String city, String street){
-       // Address address = ;
-        return itemRepository.findByAddress_CityAndAddress_Street1(city, street).stream()
-                .map(ItemListResponseDto::new)
-                .collect(Collectors.toList());
-    }*/
+       JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
+       QItem item = QItem.item;
+       QAddress address = QAddress.address;
+
+       List<Item> itemList = queryFactory
+               .selectFrom(item)
+               .where(item.address.city.eq(city).and(item.address.street1.eq(street)))
+               .fetch();
+
+       return itemList.stream()
+               .map(ItemListResponseDto::new)
+               .collect(Collectors.toList());
+    }
+
+    /**
+     * 상품 전체 조회
+     * */
     @Transactional(readOnly = true)
     public List<ItemListResponseDto> findAll(){
         return itemRepository.findAll().stream()

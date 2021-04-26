@@ -2,6 +2,7 @@ package cucumbermarket.cucumbermarketspring.domain.member.service;
 
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
+//import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
 import lombok.RequiredArgsConstructor;
@@ -105,7 +106,14 @@ public class MemberService implements UserDetailsService{
     public MemberProfileDto getMemberProfile(Long memberId) {
         try {
             Member member = memberRepository.getOne(memberId);
-            MemberProfileDto memberProfileDto = new MemberProfileDto(member.getName(), member.getAddress(), member.getBirthdate(), member.getEmail(), member.getContact(), member.getRatingScore());
+            MemberProfileDto memberProfileDto = new MemberProfileDto(
+                    member.getName(),
+                    member.getAddress().getCity(),
+                    member.getAddress().getStreet1(),
+                    member.getBirthdate(),
+                    member.getEmail(),
+                    member.getContact(),
+                    member.getRatingScore());
             return memberProfileDto;
         } catch (EntityNotFoundException e) {
             return new MemberProfileDto();

@@ -1,9 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.review.service;
 
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import cucumbermarket.cucumbermarketspring.domain.item.QItem;
-import cucumbermarket.cucumbermarketspring.domain.member.QMember;
 import cucumbermarket.cucumbermarketspring.domain.review.QReview;
 import cucumbermarket.cucumbermarketspring.domain.review.Review;
 import cucumbermarket.cucumbermarketspring.domain.review.ReviewRepository;
@@ -41,13 +38,14 @@ public class ReviewService {
      * 리뷰수정
      * */
     @Transactional
-    public Long updateReview(Long id, ReviewUpdateRequestDto requestDto){
+    public ReviewResponseDto updateReview(Long id, ReviewUpdateRequestDto requestDto){
         Review review = reviewRepository.findById(id).orElseThrow(
-                ()-> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다. id = " + id));
+                ()-> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
 
         review.update(requestDto.getContent(), requestDto.getRatingScore());
 
-        return id;
+        ReviewResponseDto reviewResponseDto = this.findOne(id);
+        return reviewResponseDto;
     }
 
     /**
@@ -62,80 +60,71 @@ public class ReviewService {
     }
 
     /**
-     * 리뷰 하나 조회
+     * 리뷰 개별 조회
      * */
     @Transactional(readOnly = true)
     public ReviewResponseDto findOne(Long id){
         Review entity = reviewRepository.findById(id).orElseThrow(()
-                -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다. id = " + id));
+                -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
 
         return new ReviewResponseDto(entity);
     }
 
     /**
-     * 리뷰 전체 조회
+     * 리뷰 전체 조회(구매+판매)
      * */
     @Transactional(readOnly = true)
-    public List<ReviewListResponseDto> findAll(){
-        return reviewRepository.findAll().stream()
+    public List<ReviewListResponseDto> findAll(Long id){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QReview review = QReview.review;
+
+        List<Review> reviewList = queryFactory
+                .selectFrom(review)
+                .where(review.item.member.id.eq(id).or(review.member.id.eq(id)))
+                .fetch();
+
+        return reviewList.stream()
                 .map(ReviewListResponseDto::new)
                 .collect(Collectors.toList());
     }
 
     /**
-     * 구매 리뷰 전체 조회
+     * 구매한 상품 관련 리뷰 전체 조회
      * */
     @Transactional(readOnly = true)
-    public List<ReviewListResponseDto> findAllByBuyer(String name){
+    public List<ReviewListResponseDto> findAllByBuyer(Long id){
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
         QReview review = QReview.review;
-        QMember seller = QItem.item.member;
-       // QMember seller = QReview.review.item.member;
-       // QMember buyer = QReview.review.member;
 
-        List<Review> reviewList = queryFactory.selectFrom(review)
-                .where(review.item.member.name.eq(name), review.member.name.ne(name))
+        List<Review> reviewList = queryFactory
+                .selectFrom(review)
+                .innerJoin(review.member)
+                .where(review.member.id.eq(id))
                 .fetch();
-       /* Predicate predicate = seller.name.equalsIgnoreCase(name)
-                .and(buyer.name.eq(name));
-        Iterator<Review> it = reviewRepository.findAll(predicate).iterator();
-        List<Review> reviewList = Lists.newArrayList(it);*/
+
         return reviewList.stream()
                 .map(ReviewListResponseDto::new)
                 .collect(Collectors.toList());
-        /*    return reviewRepository.findByBuyer(name).stream()
-                .map(ReviewListResponseDto::new)
-                .collect(Collectors.toList());*/
     }
 
     /**
-     * 판매 리뷰 전체 조회
+     * 판매한 상품 관련 리뷰 전체 조회
      * */
     @Transactional(readOnly = true)
-    public List<ReviewListResponseDto> findAllBySeller(String name){
+    public List<ReviewListResponseDto> findAllBySeller(Long id) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
         QReview review = QReview.review;
-      //  QMember seller = QReview.review.item.member;
-      //  QMember buyer = QReview.review.member;
 
-        JPAQuery<Review> query = queryFactory.selectFrom(review);
-
-     //   if(item.member)
-
-        /*Predicate predicate = buyer.name.equalsIgnoreCase(name)
-                .and(seller.name.eq(name));
-        Iterator<Review> it = reviewRepository.findAll(predicate).iterator();
-        List<Review> reviewList = Lists.newArrayList(it);*/
-        /*return reviewRepository.findBySeller(name).stream()
-                .map(ReviewListResponseDto::new)
-                .collect(Collectors.toList());*/
-        List<Review> reviewList = queryFactory.selectFrom(review)
-                .where(review.item.member.name.eq(name), review.member.name.ne(name))
+        List<Review> soldReviewList = queryFactory
+                .selectFrom(review)
+                .innerJoin(review.item.member)
+                .where(review.item.member.id.eq(id))
                 .fetch();
 
-        return reviewList.stream()
+        return soldReviewList.stream()
                 .map(ReviewListResponseDto::new)
                 .collect(Collectors.toList());
     }

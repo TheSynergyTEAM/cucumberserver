@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 public class ItemResponseDto {
     private Long id;
-    private String memberName;
+    private String member;
     private String title;
     private Categories categories;
     private int price;
@@ -21,7 +21,7 @@ public class ItemResponseDto {
 
     public ItemResponseDto(Item entity){
         this.id = entity.getId();
-        this.memberName = entity.getMember().getName();
+        this.member = entity.getMember().getName();
         this.title = entity.getTitle();
         this.categories = entity.getCategories();
         this.price = entity.getPrice();

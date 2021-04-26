@@ -1,16 +1,14 @@
 package cucumbermarket.cucumbermarketspring.domain.item;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
 import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.file.Photo;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.review.Review;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -53,6 +51,7 @@ public class Item extends BaseTimeEntity {
     private List<Photo> photo = new ArrayList<>();
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @JsonManagedReference("item")
     private List<FavouriteItem> favouriteItem = new ArrayList<>();
 
     private Boolean sold;
@@ -83,4 +82,10 @@ public class Item extends BaseTimeEntity {
         this.sold = sold;
     }
 
+    public void addPhoto(Photo photo){
+        this.photo.add(photo);
+
+        if(photo.getItem() != this)
+            photo.setItem(this);
+    }
 }

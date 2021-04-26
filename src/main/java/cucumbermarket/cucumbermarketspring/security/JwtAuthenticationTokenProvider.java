@@ -22,6 +22,7 @@ public class JwtAuthenticationTokenProvider implements AuthenticationTokenProvid
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationTokenProvider.class);
     private static final String SECRET_KEY = "zdtlD3JK56m6wTTgsNFhqzjqPjiwehqroewqooisauozcxkcxnzoihaowehr";
     private static final long EXPIRATION_MS = 1000 * 60 * 60 * 12;
+//    private static final long EXPIRATION_MS = 1000 * 10;
 
     @Override
     public String parseTokenString(HttpServletRequest request) {
@@ -59,7 +60,7 @@ public class JwtAuthenticationTokenProvider implements AuthenticationTokenProvid
     }
 
     @Override
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token) throws ExpiredJwtException{
         if (isNotEmpty(token)) {
             try {
                 Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
@@ -70,8 +71,9 @@ public class JwtAuthenticationTokenProvider implements AuthenticationTokenProvid
                 logger.error("Invalid JWT Token", e);
             } catch (ExpiredJwtException e) {
                 logger.error("Expired JWT Token", e);
+                throw e;
             } catch (UnsupportedJwtException e) {
-                logger.error("Unsupported JWT token", e);
+                logger.warn("Unsupported JWT token", e);
             } catch (IllegalArgumentException e) {
                 logger.error("JWT claims string is empty", e);
             }

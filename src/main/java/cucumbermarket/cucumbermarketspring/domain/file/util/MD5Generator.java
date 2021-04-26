@@ -1,4 +1,4 @@
-package cucumbermarket.cucumbermarketspring.domain.item.util;
+package cucumbermarket.cucumbermarketspring.domain.file.util;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
