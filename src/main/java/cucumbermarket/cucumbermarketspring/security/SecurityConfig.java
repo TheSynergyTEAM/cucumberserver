@@ -26,7 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final MemberService memberService;
 
     private static final String[] PUBLIC_URI = {
-            "/", "/login", "/address/city/**", "/members", "/item/**","/item"
+            "/", "/login", "/address/city/**", "/member", "/item/**","/item"
     };
 
     @Bean
