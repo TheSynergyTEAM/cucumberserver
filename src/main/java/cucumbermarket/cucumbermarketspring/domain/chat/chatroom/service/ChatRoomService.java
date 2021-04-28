@@ -21,7 +21,8 @@ public class ChatRoomService {
      * 채팅방 생성
      */
     @Transactional
-    public Long createChatRoom(ChatRoom chatRoom) {
+    public Long createChatRoom(Member member, Item item) {
+        ChatRoom chatRoom = new ChatRoom();
         ChatRoom saved = chatRoomRepository.save(chatRoom);
         return saved.getId();
     }
