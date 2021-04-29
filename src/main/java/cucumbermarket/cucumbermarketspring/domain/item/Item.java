@@ -39,6 +39,7 @@ public class Item extends BaseTimeEntity {
     private String title;
 
     @Enumerated(EnumType.STRING)
+   // @Converter(converter = )
     private Categories categories;
 
     private int price;
@@ -46,8 +47,8 @@ public class Item extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String spec;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name="photo_id")
+    @OneToMany(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+//    @JoinColumn(name="file_id")
     private List<Photo> photo = new ArrayList<>();
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.MERGE, orphanRemoval = true)

@@ -9,8 +9,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +26,7 @@ public class FileHandler {
     public List<Photo> parseFileInfo(
             Item item,
             List<MultipartFile> multipartFiles
+      //      MultipartHttpServletRequest request
     ) throws Exception{
         List<Photo> fileList = new ArrayList<>();
 
@@ -33,8 +34,11 @@ public class FileHandler {
             return fileList;
         }
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(("yyyyMMdd"));
-        String current_date = simpleDateFormat.format(LocalDate.now());
+        LocalDateTime now = LocalDateTime.now();
+     //   SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+        DateTimeFormatter dateTimeFormatter =
+                DateTimeFormatter.ofPattern("yyyyMMdd");
+        String current_date = now.format(dateTimeFormatter);
 
         String absolutePath = new File("").getAbsolutePath() + "\\";
 
@@ -48,10 +52,12 @@ public class FileHandler {
                 System.out.println("file: 디렉토리 생성");
         }
 
+     //   Iterator<String> iter = request.getFileNames();
+     //   while(iter.hasNext()){
         for(MultipartFile multipartFile : multipartFiles){
             if(!multipartFile.isEmpty()){
+            String originalFileExtension;
                 String contentType = multipartFile.getContentType();
-                String originalFileExtension;
 
                 if(ObjectUtils.isEmpty(contentType)) {
                     break;
@@ -61,21 +67,25 @@ public class FileHandler {
                         originalFileExtension = ".jpg";
                     else if(contentType.contains("image/png"))
                         originalFileExtension = ".png";
-                    else if(contentType.contains("image/gif"))
-                        originalFileExtension = ".gif";
                     else
                         break;
                 }
+         //   String uploadFileName = iter.next();
+         //   MultipartFile multipartFile = request.getFile(uploadFileName);
 
-                String new_file_name = System.nanoTime() + originalFileExtension;
+            String new_file_name = System.nanoTime()+originalFileExtension;
 
                 PhotoDto photoDto = PhotoDto.builder()
-                        .item(item)
                         .origFileName(multipartFile.getOriginalFilename())
                         .filePath(path + "/" + new_file_name)
                         .build();
 
-                photoService.savePhoto(photoDto);
+          //      photoService.savePhoto(photoDto);
+                Photo photo = new Photo(
+                        photoDto.getOrigFileName(),
+                        photoDto.getFilePath(),
+                        photoDto.getFileSize());
+                fileList.add(photo);
 
                 file = new File(absolutePath + path + "/" + new_file_name);
                 multipartFile.transferTo(file);

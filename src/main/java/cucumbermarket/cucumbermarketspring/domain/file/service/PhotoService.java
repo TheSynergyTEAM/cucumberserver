@@ -1,12 +1,16 @@
 package cucumbermarket.cucumbermarketspring.domain.file.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import cucumbermarket.cucumbermarketspring.domain.file.Photo;
 import cucumbermarket.cucumbermarketspring.domain.file.PhotoRepository;
+import cucumbermarket.cucumbermarketspring.domain.file.QPhoto;
 import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -14,14 +18,13 @@ import java.util.List;
 public class PhotoService {
     private final PhotoRepository photoRepository;
 
+    @PersistenceContext
+    private EntityManager em;
+
     @Transactional
     public Long savePhoto(PhotoDto photoDto){
         return photoRepository.save(photoDto.toEntity()).getId();
     }
-    /*public FileDto saveFile(FileDto fileDto){
-        Long id = fileRepository.save(fileDto.toEntity()).getId();
-        return getFile(id);
-    }*/
 
     @Transactional
     public void removePhoto(Long id){
@@ -34,15 +37,25 @@ public class PhotoService {
 
         PhotoDto photoDto = PhotoDto.builder()
                 .origFileName(photo.getOrigFileName())
-                .fileName(photo.getFileName())
                 .filePath(photo.getFilePath())
+                .fileSize(photo.getFileSize())
                 .build();
 
         return photoDto;
     }
 
     @Transactional(readOnly = true)
-    public List<Photo> findAll(Long id){
+    public List<Photo> findAll(Long itemId){
+
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QPhoto photo = QPhoto.photo;
+
+        List<Photo> photoList = queryFactory
+               .selectFrom(photo)
+               .where(photo.item.id.eq(itemId))
+               .fetch();
+
         return photoRepository.findAll();
     }
 }

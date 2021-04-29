@@ -36,10 +36,7 @@ public class ItemService {
      * 상품등록
      * */
     @Transactional
-    public Long save(
-            ItemCreateRequestDto requestDto,
-            List<MultipartFile> files)
-            throws Exception {
+    public Long save(ItemCreateRequestDto requestDto, List<MultipartFile> files) throws Exception {
 
         Item item = new Item(
                 requestDto.getMember(),
@@ -74,6 +71,24 @@ public class ItemService {
         ItemResponseDto itemResponseDto = this.findOne(id);
         return itemResponseDto;
     }
+    /*@Transactional
+    public ItemResponseDto update(Long id, ItemUpdateRequestDto requestDto, List<MultipartFile> files) throws Exception {
+        Item item = itemRepository.findById(id).orElseThrow(()
+                -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+
+        if(requestDto.get)
+        List<Photo> photoList = fileHandler.parseFileInfo(item, files);
+        if(!photoList.isEmpty()){
+            for(Photo photo : photoList)
+                item.addPhoto(photoRepository.save(photo));
+        }
+        ItemResponseDto itemResponseDto = this.findOne(id);
+
+        item.update(requestDto.getTitle(), requestDto.getCategories(), requestDto.getPrice(),
+                requestDto.getSpec(), requestDto.getAddress(), requestDto.getSold());
+
+        return itemResponseDto;
+    }*/
 
     /**
      * 상품삭제
@@ -93,7 +108,6 @@ public class ItemService {
     public ItemResponseDto findOne(Long id){
         Item entity = itemRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
-
         return new ItemResponseDto(entity);
     }
 
@@ -126,4 +140,5 @@ public class ItemService {
                 .map(ItemListResponseDto::new)
                 .collect(Collectors.toList());
     }
+
 }
