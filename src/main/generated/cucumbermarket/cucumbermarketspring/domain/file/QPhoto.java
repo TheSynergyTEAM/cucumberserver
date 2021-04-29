@@ -22,15 +22,21 @@ public class QPhoto extends EntityPathBase<Photo> {
 
     public static final QPhoto photo = new QPhoto("photo");
 
-    public final NumberPath<Long> file_size = createNumber("file_size", Long.class);
+    public final cucumbermarket.cucumbermarketspring.domain.QBaseTimeEntity _super = new cucumbermarket.cucumbermarketspring.domain.QBaseTimeEntity(this);
 
-    public final StringPath fileName = createString("fileName");
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> created = _super.created;
 
     public final StringPath filePath = createString("filePath");
+
+    public final NumberPath<Long> fileSize = createNumber("fileSize", Long.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final cucumbermarket.cucumbermarketspring.domain.item.QItem item;
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> modified = _super.modified;
 
     public final StringPath origFileName = createString("origFileName");
 

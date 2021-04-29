@@ -1,5 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.file;
 
+import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import lombok.*;
 
@@ -9,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity
 @Table(name = "file")
-public class Photo {
+public class Photo extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,18 +25,15 @@ public class Photo {
     private String origFileName;
 
     @Column(nullable = false)
-    private String fileName;
-
-    @Column(nullable = false)
     private String filePath;
 
-    private long file_size;
+    private Long fileSize;
 
     @Builder
-    public Photo(String origFileName, String fileName, String filePath){
+    public Photo(String origFileName, String filePath, Long fileSize){
         this.origFileName = origFileName;
-        this.fileName = fileName;
         this.filePath = filePath;
+        this.fileSize = fileSize;
     }
 
     public void setItem(Item item){

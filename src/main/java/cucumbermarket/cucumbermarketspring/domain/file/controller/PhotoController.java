@@ -4,12 +4,10 @@ import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
 import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.filechooser.FileSystemView;
-import java.io.File;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,20 +18,20 @@ public class PhotoController {
 
     @PostMapping("/photos")
    // @ResponseStatus(HttpStatus.CREATED)
-   // public List<String> test(@RequestParam("files") MultipartFile[] files){
-    public String test(@RequestParam("files") List<MultipartFile> files) throws Exception{
-        String rootPath = FileSystemView.getFileSystemView().getHomeDirectory().toString();
-        String basePath = rootPath + "/" + "multi";
+    public void test(@RequestPart List<MultipartFile> files) throws Exception{
+   // public String test(@RequestParam("files") List<MultipartFile> files) throws Exception{
+     //   String rootPath = FileSystemView.getFileSystemView().getHomeDirectory().toString();
+     //   String basePath = rootPath + "/" + "multi";
 
-        for(MultipartFile file : files){
-            String originalName = file.getOriginalFilename();
-            String filePath = basePath + "/" + originalName;
+     //   for(MultipartFile file : files){
+     //       String originalName = file.getOriginalFilename();
+    //        String filePath = basePath + "/" + originalName;
 
-            File dest = new File(filePath);
-            file.transferTo(dest);
-        }
+    //        File dest = new File(filePath);
+    //        file.transferTo(dest);
+    //    }
 
-        return  "uploaded";
+    //    return  "uploaded";
       /*  try {
 
             for(MultipartFile file : files){
