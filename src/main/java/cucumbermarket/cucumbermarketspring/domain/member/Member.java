@@ -66,8 +66,8 @@ public class Member implements UserDetails {
     @JsonManagedReference
     private List<Review> review = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
-    private List<Message> messageList = new ArrayList<>();
+//    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
+//    private List<Message> messageList = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
