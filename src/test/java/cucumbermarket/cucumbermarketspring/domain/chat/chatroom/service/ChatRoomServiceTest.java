@@ -3,8 +3,8 @@ package cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoom;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoomRepository;
 import cucumbermarket.cucumbermarketspring.domain.file.Photo;
-import cucumbermarket.cucumbermarketspring.domain.item.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
@@ -17,11 +17,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

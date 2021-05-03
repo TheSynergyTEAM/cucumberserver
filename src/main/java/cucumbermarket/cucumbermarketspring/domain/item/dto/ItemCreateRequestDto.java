@@ -1,7 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.item.dto;
 
 import cucumbermarket.cucumbermarketspring.domain.file.Photo;
-import cucumbermarket.cucumbermarketspring.domain.item.Categories;
+import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
