@@ -47,7 +47,7 @@ public class ItemService {
                 requestDto.getAddress(),
                 requestDto.getSold());
 
-        List<Photo> photoList = fileHandler.parseFileInfo(item, files);
+        List<Photo> photoList = fileHandler.parseFileInfo(files);
 
         if(!photoList.isEmpty()){
             for(Photo photo : photoList)

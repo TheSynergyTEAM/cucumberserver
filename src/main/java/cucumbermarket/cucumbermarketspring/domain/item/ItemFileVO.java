@@ -15,6 +15,5 @@ public class ItemFileVO {
     private String price;
     private String spec;
     private String sold;
-    private String delete;
     private List<MultipartFile> files;
 }

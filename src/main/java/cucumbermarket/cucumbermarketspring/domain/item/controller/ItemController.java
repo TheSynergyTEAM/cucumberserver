@@ -1,8 +1,8 @@
 package cucumbermarket.cucumbermarketspring.domain.item.controller;
 
 import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
-import cucumbermarket.cucumbermarketspring.domain.item.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemFileVO;
+import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemListResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
@@ -33,14 +33,14 @@ public class ItemController {
     @PostMapping("/item")
     @ResponseStatus(HttpStatus.CREATED)
     public CreateItemResponse create(ItemFileVO itemFileVO) throws Exception {
+  //  public ResponseEntity create(ItemFileVO itemFileVO) throws Exception {
 
         Member member = memberService.searchMemberById(Long.parseLong(itemFileVO.getId()));
         Address address = new Address(itemFileVO.getCity(), itemFileVO.getStreet1(), "", "");
         Categories category = Categories.find(itemFileVO.getCategory());
         Boolean sold = Boolean.parseBoolean(itemFileVO.getSold());
 
-        ItemCreateRequestDto itemRequestDto =
-                ItemCreateRequestDto.builder()
+        ItemCreateRequestDto itemRequestDto = ItemCreateRequestDto.builder()
                         .member(member)
                         .address(address)
                         .title(itemFileVO.getTitle())
@@ -51,7 +51,21 @@ public class ItemController {
 
         Long id = itemService.save(itemRequestDto, itemFileVO.getFiles());
         return new CreateItemResponse(id);
+
+    /*    HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "localhost:3000/item/" + id);
+        return new ResponseEntity(headers, HttpStatus.CREATED);*/
     }
+
+    /*@CrossOrigin
+    @PatchMapping("/member/{id}")
+    public ResponseEntity<UpdateMemberDto> updateMember(@PathVariable("id") Long id, @RequestBody @Valid UpdateMemberDto request) {
+
+        Member member = memberRepository.getOne(id);
+        UpdateMemberDto updateMember = memberService.updateMember(request);
+        return ResponseEntity.ok()
+                .body(updateMember);
+    }*/
 
     /**
      * 물품수정
