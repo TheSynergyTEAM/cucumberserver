@@ -3,6 +3,13 @@ package cucumbermarket.cucumbermarketspring.domain.item;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Getter
 @AllArgsConstructor
 public enum Categories {
@@ -20,5 +27,13 @@ public enum Categories {
     PLANT("식물"),
     ETC("기타");
 
-    private String value;
+    private final String value;
+
+    private static final Map<String, Categories> values =
+            Collections.unmodifiableMap(Stream.of(values())
+                .collect(Collectors.toMap(Categories::getValue, Function.identity())));
+
+    public static Categories find(String value){
+        return Optional.ofNullable(values.get(value)).orElse(ETC);
+    }
 }
