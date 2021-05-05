@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 public class ItemListResponseDto {
     private Long id;
-    private String userName;
+    private String member;
     private String city;
     private String street;
     private String title;
@@ -20,7 +20,7 @@ public class ItemListResponseDto {
 
     public ItemListResponseDto(Item entity){
         this.id = entity.getId();
-        this.userName = entity.getMember().getUsername();
+        this.member = entity.getMember().getUsername();
         this.city = entity.getAddress().getCity();
         this.street = entity.getAddress().getStreet1();
         this.title = entity.getTitle();

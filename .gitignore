@@ -23,6 +23,8 @@ bin/
 *.iml
 *.ipr
 *.yml
+images/
+files/
 
 out/
 !**/src/main/**/out/

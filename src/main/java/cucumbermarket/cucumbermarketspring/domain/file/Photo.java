@@ -1,18 +1,16 @@
 package cucumbermarket.cucumbermarketspring.domain.file;
 
+import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity
 @Table(name = "file")
-public class Photo {
+public class Photo extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,20 +25,21 @@ public class Photo {
     private String origFileName;
 
     @Column(nullable = false)
-    private String fileName;
-
-    @Column(nullable = false)
     private String filePath;
 
+    private Long fileSize;
+
     @Builder
-    public Photo(String origFileName, String fileName, String filePath, Item item){
+    public Photo(String origFileName, String filePath, Long fileSize){
         this.origFileName = origFileName;
-        this.fileName = fileName;
         this.filePath = filePath;
-        this.setItem(item);
+        this.fileSize = fileSize;
     }
 
-    public void setItem(Item item) {
+    public void setItem(Item item){
         this.item = item;
+
+        if(!item.getPhoto().contains(this))
+            item.getPhoto().add(this);
     }
 }

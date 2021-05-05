@@ -1,19 +1,39 @@
 package cucumbermarket.cucumbermarketspring.domain.file.controller;
 
+import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
+import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 public class PhotoController {
-  /*  private static PhotoService fileService;
+    private static PhotoService fileService;
     private static ItemService itemService;
 
     @PostMapping("/photos")
-    public String test(@RequestParam("itemId") Long id, @RequestParam("file") List<MultipartFile> files){
+   // @ResponseStatus(HttpStatus.CREATED)
+    public void test(@RequestPart List<MultipartFile> files) throws Exception{
+   // public String test(@RequestParam("files") List<MultipartFile> files) throws Exception{
+     //   String rootPath = FileSystemView.getFileSystemView().getHomeDirectory().toString();
+     //   String basePath = rootPath + "/" + "multi";
 
-        ItemResponseDto itemResponseDto = itemService.findOne(id);
-        try {
+     //   for(MultipartFile file : files){
+     //       String originalName = file.getOriginalFilename();
+    //        String filePath = basePath + "/" + originalName;
+
+    //        File dest = new File(filePath);
+    //        file.transferTo(dest);
+    //    }
+
+    //    return  "uploaded";
+      /*  try {
+
             for(MultipartFile file : files){
                 String origFilename = file.getOriginalFilename();
                 String filename = new MD5Generator(origFilename).toString();
@@ -31,20 +51,23 @@ public class PhotoController {
                 String filePath = savePath + "\\" + filename;
                 file.transferTo(new File(filePath));
 
-                PhotoDto fileDto = PhotoDto.builder()
-                        .origFileName(origFilename)
-                        .fileName(filename)
-                        .filePath(filePath)
-                        .build();
+                PhotoDto fileDto = new PhotoDto();
+                fileDto.setOrigFileName(origFilename);
+                fileDto.setFileName(filename);
+                fileDto.setFilePath(filePath);
 
-                Long fileId = fileService.savePhoto(fileDto);
-
-                PhotoDto photoDto = fileService.getPhoto(fileId);
-
+                Long photoId = fileService.savePhoto(fileDto);
 
             }
         } catch(Exception e) {
             e.printStackTrace();
+        }*/
+     /*   List<String> list = new ArrayList<>();
+        for(MultipartFile file : files) {
+            String originalfileName = file.getOriginalFilename();
+            File dest = new File("C:/Image/" + originalfileName);
+            file.transferTo(dest);
         }
-    }*/
+        return  list;*/
+    }
 }

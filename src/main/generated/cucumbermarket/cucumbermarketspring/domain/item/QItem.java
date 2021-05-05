@@ -26,7 +26,7 @@ public class QItem extends EntityPathBase<Item> {
 
     public final cucumbermarket.cucumbermarketspring.domain.member.address.QAddress address;
 
-    public final EnumPath<Categories> categories = createEnum("categories", Categories.class);
+    public final EnumPath<cucumbermarket.cucumbermarketspring.domain.item.category.Categories> categories = createEnum("categories", cucumbermarket.cucumbermarketspring.domain.item.category.Categories.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> created = _super.created;

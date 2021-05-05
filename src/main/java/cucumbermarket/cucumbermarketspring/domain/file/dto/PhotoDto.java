@@ -1,33 +1,29 @@
 package cucumbermarket.cucumbermarketspring.domain.file.dto;
 
 import cucumbermarket.cucumbermarketspring.domain.file.Photo;
-import cucumbermarket.cucumbermarketspring.domain.item.Item;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
+@ToString
 @NoArgsConstructor
 public class PhotoDto {
     private String origFileName;
-    private String fileName;
     private String filePath;
-    private Item item;
+    private Long fileSize;
 
     @Builder
-    public PhotoDto(String origFileName, String fileName, String filePath, Item item){
+    public PhotoDto(String origFileName, String filePath, Long fileSize){
         this.origFileName = origFileName;
-        this.fileName = fileName;
         this.filePath = filePath;
-        this.item = item;
+        this.fileSize = fileSize;
     }
 
     public Photo toEntity(){
         Photo build = Photo.builder()
                 .origFileName(origFileName)
-                .fileName(fileName)
                 .filePath(filePath)
-                .item(item)
+                .fileSize(fileSize)
                 .build();
 
         return build;

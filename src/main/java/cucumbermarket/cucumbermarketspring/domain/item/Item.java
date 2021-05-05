@@ -1,9 +1,11 @@
 package cucumbermarket.cucumbermarketspring.domain.item;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
 import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.file.Photo;
+import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.review.Review;
@@ -48,11 +50,11 @@ public class Item extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String spec;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name="photo_id")
+    @OneToMany(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Photo> photo = new ArrayList<>();
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @JsonManagedReference("item")
     private List<FavouriteItem> favouriteItem = new ArrayList<>();
 
     private Boolean sold;
@@ -83,4 +85,10 @@ public class Item extends BaseTimeEntity {
         this.sold = sold;
     }
 
+    public void addPhoto(Photo photo){
+        this.photo.add(photo);
+
+        if(photo.getItem() != this)
+            photo.setItem(this);
+    }
 }
