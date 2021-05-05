@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -18,13 +17,11 @@ public class QMessage extends EntityPathBase<Message> {
 
     private static final long serialVersionUID = 547657921L;
 
-    private static final PathInits INITS = PathInits.DIRECT2;
-
     public static final QMessage message = new QMessage("message");
 
     public final cucumbermarket.cucumbermarketspring.domain.QBaseTimeEntity _super = new cucumbermarket.cucumbermarketspring.domain.QBaseTimeEntity(this);
 
-    public final cucumbermarket.cucumbermarketspring.domain.chat.chatroom.QChatRoom chatRoom;
+    public final StringPath chatId = createString("chatId");
 
     public final StringPath content = createString("content");
 
@@ -33,31 +30,23 @@ public class QMessage extends EntityPathBase<Message> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final cucumbermarket.cucumbermarketspring.domain.member.QMember member;
-
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modified = _super.modified;
 
+    public final NumberPath<Long> receiverId = createNumber("receiverId", Long.class);
+
+    public final NumberPath<Long> senderId = createNumber("senderId", Long.class);
+
     public QMessage(String variable) {
-        this(Message.class, forVariable(variable), INITS);
+        super(Message.class, forVariable(variable));
     }
 
     public QMessage(Path<? extends Message> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+        super(path.getType(), path.getMetadata());
     }
 
     public QMessage(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QMessage(PathMetadata metadata, PathInits inits) {
-        this(Message.class, metadata, inits);
-    }
-
-    public QMessage(Class<? extends Message> type, PathMetadata metadata, PathInits inits) {
-        super(type, metadata, inits);
-        this.chatRoom = inits.isInitialized("chatRoom") ? new cucumbermarket.cucumbermarketspring.domain.chat.chatroom.QChatRoom(forProperty("chatRoom"), inits.get("chatRoom")) : null;
-        this.member = inits.isInitialized("member") ? new cucumbermarket.cucumbermarketspring.domain.member.QMember(forProperty("member"), inits.get("member")) : null;
+        super(Message.class, metadata);
     }
 
 }

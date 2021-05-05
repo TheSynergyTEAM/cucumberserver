@@ -36,8 +36,6 @@ public class QMember extends EntityPathBase<Member> {
 
     public final ListPath<cucumbermarket.cucumbermarketspring.domain.item.Item, cucumbermarket.cucumbermarketspring.domain.item.QItem> item = this.<cucumbermarket.cucumbermarketspring.domain.item.Item, cucumbermarket.cucumbermarketspring.domain.item.QItem>createList("item", cucumbermarket.cucumbermarketspring.domain.item.Item.class, cucumbermarket.cucumbermarketspring.domain.item.QItem.class, PathInits.DIRECT2);
 
-    public final ListPath<cucumbermarket.cucumbermarketspring.domain.chat.Message.Message, cucumbermarket.cucumbermarketspring.domain.chat.Message.QMessage> messageList = this.<cucumbermarket.cucumbermarketspring.domain.chat.Message.Message, cucumbermarket.cucumbermarketspring.domain.chat.Message.QMessage>createList("messageList", cucumbermarket.cucumbermarketspring.domain.chat.Message.Message.class, cucumbermarket.cucumbermarketspring.domain.chat.Message.QMessage.class, PathInits.DIRECT2);
-
     public final StringPath name = createString("name");
 
     public final StringPath password = createString("password");
