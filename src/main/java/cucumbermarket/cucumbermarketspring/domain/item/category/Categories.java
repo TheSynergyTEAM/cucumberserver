@@ -1,5 +1,8 @@
-package cucumbermarket.cucumbermarketspring.domain.item;
+package cucumbermarket.cucumbermarketspring.domain.item.category;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,8 +13,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@JsonFormat(shape = Shape.OBJECT)
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 public enum Categories {
     DIGIT("디지털/가전"),
     INTERIOR("가구/인테리어"),

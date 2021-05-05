@@ -2,10 +2,7 @@ package cucumbermarket.cucumbermarketspring.domain.chat.Message;
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoom;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -13,10 +10,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.Optional;
 
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Builder
 @Table(name = "message")
 public class Message extends BaseTimeEntity {
     @Id
@@ -24,21 +24,30 @@ public class Message extends BaseTimeEntity {
     @Column(name = "message_id")
     private Long id;
 
-    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @Column(name = "chat_id")
+    private String chatId;
+
+    @Column(name = "sender_id")
+    private Long senderId;
+
+    @Column(name = "receiver_id")
+    private Long receiverId;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @ManyToOne(targetEntity = ChatRoom.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "chatroom_id")
-    private ChatRoom chatRoom;
+    //    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "member_id")
+//    private Member itemOwner;
+//
+//    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "member_id")
+//    private Member itemBuyer;
 
-    @Builder
-    public Message(Member member, String content)
-    {
-        this.content = content;
-        this.member = member;
-    }
+//    @ManyToOne(targetEntity = ChatRoom.class, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "chatroom_id")
+//    private ChatRoom chatRoom;
+
+//    @Column(name = "item_id")
+//    private Long itemId;
 }
