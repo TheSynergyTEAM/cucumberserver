@@ -31,6 +31,7 @@ public class ItemController {
      * 물품등록
      */
     @PostMapping("/item")
+    @CrossOrigin
     @ResponseStatus(HttpStatus.CREATED)
     public CreateItemResponse create(ItemFileVO itemFileVO) throws Exception {
   //  public ResponseEntity create(ItemFileVO itemFileVO) throws Exception {
@@ -71,6 +72,7 @@ public class ItemController {
      * 물품수정
      */
     @PutMapping("/item/{id}")
+    @CrossOrigin
     public ItemResponseDto update(@PathVariable Long id, @RequestBody ItemUpdateRequestDto requestDto){
         return itemService.update(id, requestDto);
     }
@@ -103,6 +105,7 @@ public class ItemController {
      * 물품삭제
      */
     @DeleteMapping("/item/{id}")
+    @CrossOrigin
     public void delete(@PathVariable Long id){
         itemService.delete(id);
     }
@@ -111,6 +114,7 @@ public class ItemController {
      * 물품 개별 조회
      */
     @GetMapping("/item/{id}")
+    @CrossOrigin
     public ItemResponseDto findById(@PathVariable("id") Long id){
         return itemService.findOne(id);
     }
@@ -152,6 +156,7 @@ public class ItemController {
      * 물품 전체 조회(구 기준)
      */
     @GetMapping("/item/area")
+    @CrossOrigin
     public List<ItemListResponseDto> findByArea(
             @RequestParam("city") String city,
             @RequestParam("street") String street) {
@@ -163,6 +168,7 @@ public class ItemController {
      * 물품 전체 조회
      */
     @GetMapping("/item")
+    @CrossOrigin
     public List<ItemListResponseDto> findAll() {
         return itemService.findAll();
     }
