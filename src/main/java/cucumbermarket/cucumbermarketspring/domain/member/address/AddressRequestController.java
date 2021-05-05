@@ -14,12 +14,14 @@ import java.util.List;
 public class AddressRequestController {
     private final AddressService addressService;
 
+    @CrossOrigin
     @GetMapping("/address/city")
     public List<AddressService.CityDto> getCity() {
         List<AddressService.CityDto> cityDtos = addressService.requestCity();
         return cityDtos;
     }
 
+    @CrossOrigin
     @GetMapping("/address/city/{id}")
     public AddressService.StreetDto getStreet(@PathVariable Integer id) {
         AddressService.StreetDto streetDtos = addressService.requestStreet(id);
