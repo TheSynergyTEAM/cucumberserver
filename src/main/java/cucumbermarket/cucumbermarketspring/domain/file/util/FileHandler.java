@@ -1,6 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.file.util;
 
 import cucumbermarket.cucumbermarketspring.domain.file.Photo;
+import cucumbermarket.cucumbermarketspring.domain.file.PhotoRepository;
 import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoDto;
 import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
 import org.springframework.stereotype.Component;
@@ -17,12 +18,15 @@ import java.util.List;
 public class FileHandler {
 
     private final PhotoService photoService;
+    private final PhotoRepository photoRepository;
 
-    public FileHandler(PhotoService photoService) {
+    public FileHandler(PhotoService photoService, PhotoRepository photoRepository) {
         this.photoService = photoService;
+        this.photoRepository = photoRepository;
     }
 
     public List<Photo> parseFileInfo(
+            Long itemId,
             List<MultipartFile> multipartFiles
     ) throws Exception {
         List<Photo> fileList = new ArrayList<>();
@@ -43,12 +47,16 @@ public class FileHandler {
                 boolean wasSuccessful = file.mkdirs();
                 if (!wasSuccessful)
                     System.out.println("file: was not successful");
-                else
-                    System.out.println("file: 디렉토리 생성");
             }
 
             for (MultipartFile multipartFile : multipartFiles) {
-                if (!multipartFile.isEmpty()) {
+                if(multipartFile.isEmpty()) {
+                    Photo deleteFile;
+                    String originName = multipartFile.getOriginalFilename();
+                    deleteFile = photoService.findByFileName(originName, itemId);
+                    photoRepository.delete(deleteFile);
+                }
+                else {
                     String originalFileExtension;
                     String contentType = multipartFile.getContentType();
 
