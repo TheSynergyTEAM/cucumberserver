@@ -51,6 +51,25 @@ public class ChatRoomService {
         return chatRoomRepository.getOne(chatRoomId);
     }
 
+    @Transactional(readOnly = true)
+    public String getChatId(Long senderId, Long receiverId) {
+        Optional<ChatRoom> chatRoom = chatRoomRepository.findBySenderIdAndReceiverId(senderId, receiverId);
+        return chatRoom.get().getChatId();
+    }
+
+
+    @Transactional
+    public Optional<String> getChatId(Long senderId, Long receiverId, Long itemId, Boolean createIfNotExist) {
+        try {
+            Optional<ChatRoom> bySenderIdAndReceiverId = chatRoomRepository.findBySenderIdAndReceiverId(senderId, receiverId);
+            ChatRoom chatRoom = bySenderIdAndReceiverId.get();
+            return Optional.ofNullable(chatRoom.getChatId());
+
+        } catch (EntityNotFoundException e) {
+            return Optional.ofNullable(createChatRoom(senderId, receiverId, itemId));
+        }
+
+    }
 //    @Transactional(readOnly = true)
 //    public ChatRoom searchChatRoomByMemberAndItem(Member member, Item item) {
 //        return chatRoomRepository.findByMemberAndItem(member, item);
@@ -72,17 +91,4 @@ public class ChatRoomService {
 //    public List<ChatRoom> getAllChatRoom(Item item) {
 //        return chatRoomRepository.findAllByItem(item);
 //    }
-
-    @Transactional
-    public Optional<String> getChatId(Long senderId, Long receiverId, Long itemId, Boolean createIfNotExist) {
-        try {
-            Optional<ChatRoom> bySenderIdAndReceiverId = chatRoomRepository.findBySenderIdAndReceiverId(senderId, receiverId);
-            ChatRoom chatRoom = bySenderIdAndReceiverId.get();
-            return Optional.ofNullable(chatRoom.getChatId());
-
-        } catch (EntityNotFoundException e) {
-            return Optional.ofNullable(createChatRoom(senderId, receiverId, itemId));
-        }
-
-    }
 }
