@@ -31,6 +31,7 @@ public class ItemController {
      * 물품등록
      */
     @PostMapping("/item")
+    @CrossOrigin
     @ResponseStatus(HttpStatus.CREATED)
     public CreateItemResponse create(ItemFileVO itemFileVO) throws Exception {
   //  public ResponseEntity create(ItemFileVO itemFileVO) throws Exception {
@@ -57,52 +58,32 @@ public class ItemController {
         return new ResponseEntity(headers, HttpStatus.CREATED);*/
     }
 
-    /*@CrossOrigin
-    @PatchMapping("/member/{id}")
-    public ResponseEntity<UpdateMemberDto> updateMember(@PathVariable("id") Long id, @RequestBody @Valid UpdateMemberDto request) {
-
-        Member member = memberRepository.getOne(id);
-        UpdateMemberDto updateMember = memberService.updateMember(request);
-        return ResponseEntity.ok()
-                .body(updateMember);
-    }*/
-
     /**
      * 물품수정
      */
     @PutMapping("/item/{id}")
-    public ItemResponseDto update(@PathVariable Long id, @RequestBody ItemUpdateRequestDto requestDto){
-        return itemService.update(id, requestDto);
-    }
-  /* @PutMapping("/item/{id}")
+    @CrossOrigin
     public ItemResponseDto update(@PathVariable Long id, ItemFileVO itemFileVO) throws Exception {
-       Address address = new Address(itemFileVO.getCity(), itemFileVO.getStreet1(), "", "");
-       Categories category = Categories.find(itemFileVO.getCategory());
-       Boolean sold = Boolean.parseBoolean(itemFileVO.getSold());
+        Address address = new Address(itemFileVO.getCity(), itemFileVO.getStreet1(), "", "");
+        Categories category = Categories.find(itemFileVO.getCategory());
+        Boolean sold = Boolean.parseBoolean(itemFileVO.getSold());
 
-       ItemUpdateRequestDto itemRequestDto =
-               ItemUpdateRequestDto.builder()
-                       .address(address)
-                       .title(itemFileVO.getTitle())
-                       .categories(category)
-                       .spec(itemFileVO.getSpec())
-                       .sold(sold)
-                       .build();
+        ItemUpdateRequestDto itemRequestDto = ItemUpdateRequestDto.builder()
+                .address(address)
+                .title(itemFileVO.getTitle())
+                .categories(category)
+                .spec(itemFileVO.getSpec())
+                .sold(sold)
+                .build();
 
-
-       List<Photo> photoList = fileService.findAll(id);
-
-
-    //   Long id = itemService.save(ItemRequestDto, itemFileVO.getFiles());
-       ItemResponseDto responseDto = itemService.update(id, itemRequestDto, itemFileVO.getFiles());
-
-        return responseDto;
-    }*/
+        return itemService.update(id, itemRequestDto, itemFileVO.getFiles());
+    }
 
     /**
      * 물품삭제
      */
     @DeleteMapping("/item/{id}")
+    @CrossOrigin
     public void delete(@PathVariable Long id){
         itemService.delete(id);
     }
@@ -111,6 +92,7 @@ public class ItemController {
      * 물품 개별 조회
      */
     @GetMapping("/item/{id}")
+    @CrossOrigin
     public ItemResponseDto findById(@PathVariable("id") Long id){
         return itemService.findOne(id);
     }
@@ -155,14 +137,13 @@ public class ItemController {
     public List<ItemListResponseDto> findByArea(
             @RequestParam("city") String city,
             @RequestParam("street") String street) {
-
         return itemService.findByArea(city, street);
     }
 
     /**
      * 물품 전체 조회
      */
-    @GetMapping("/item")
+    @GetMapping("/item/list")
     public List<ItemListResponseDto> findAll() {
         return itemService.findAll();
     }

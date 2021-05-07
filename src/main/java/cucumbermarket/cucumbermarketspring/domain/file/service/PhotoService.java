@@ -32,8 +32,8 @@ public class PhotoService {
     }
 
     @Transactional(readOnly = true)
-    public PhotoDto getPhoto(Long id){
-        Photo photo = photoRepository.findById(id).get();
+    public PhotoDto findByItemId(Long itemId){
+        /*Photo photo = photoRepository.findById(id).get();
 
         PhotoDto photoDto = PhotoDto.builder()
                 .origFileName(photo.getOrigFileName())
@@ -41,7 +41,39 @@ public class PhotoService {
                 .fileSize(photo.getFileSize())
                 .build();
 
+        return photoDto;*/
+
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QPhoto photo = QPhoto.photo;
+
+        Photo file = queryFactory
+                .selectFrom(photo)
+                .where(photo.item.id.eq(itemId))
+                .fetchFirst();
+
+        PhotoDto photoDto = PhotoDto.builder()
+                .origFileName(file.getOrigFileName())
+                .filePath(file.getFilePath())
+                .fileSize(file.getFileSize())
+                .build();
+
         return photoDto;
+    }
+
+    @Transactional(readOnly = true)
+    public Photo findByFileName(String fileName, Long itemId){
+
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QPhoto photo = QPhoto.photo;
+
+        Photo file = queryFactory
+                .selectFrom(photo)
+                .where(photo.item.id.eq(itemId).and(photo.origFileName.eq(fileName)))
+                .fetchOne();
+
+        return file;
     }
 
     @Transactional(readOnly = true)
