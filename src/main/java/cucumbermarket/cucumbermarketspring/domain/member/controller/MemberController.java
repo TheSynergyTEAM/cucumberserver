@@ -76,7 +76,7 @@ public class MemberController {
     /**
      * 로그인
      */
-    @CrossOrigin
+    @CrossOrigin(exposedHeaders = {"Authorization"})
     @PostMapping("/login")
     public ResponseEntity<?> loginMember(@RequestBody @Valid LoginRequestDTO loginRequest) {
         String email = loginRequest.getEmail();
