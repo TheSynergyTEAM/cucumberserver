@@ -134,6 +134,7 @@ public class ItemController {
      * 물품 전체 조회(구 기준)
      */
     @GetMapping("/item/area")
+    @CrossOrigin
     public List<ItemListResponseDto> findByArea(
             @RequestParam("city") String city,
             @RequestParam("street") String street) {
@@ -144,6 +145,7 @@ public class ItemController {
      * 물품 전체 조회
      */
     @GetMapping("/item/list")
+    @CrossOrigin
     public List<ItemListResponseDto> findAll() {
         return itemService.findAll();
     }
