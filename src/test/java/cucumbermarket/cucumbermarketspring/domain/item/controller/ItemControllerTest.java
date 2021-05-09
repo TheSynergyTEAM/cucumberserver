@@ -1,6 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.item.controller;
 
-import cucumbermarket.cucumbermarketspring.domain.item.Categories;
+import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;

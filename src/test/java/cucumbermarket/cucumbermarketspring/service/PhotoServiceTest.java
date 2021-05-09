@@ -3,7 +3,6 @@ package cucumbermarket.cucumbermarketspring.service;
 import cucumbermarket.cucumbermarketspring.domain.file.PhotoRepository;
 import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoDto;
 import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
-import cucumbermarket.cucumbermarketspring.domain.file.util.MD5Generator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +32,7 @@ public class PhotoServiceTest {
 
         MockMultipartFile file = new MockMultipartFile("content", filename.toString(), "multipart/mixed", content);
 
-       // Calendar calendar = Calendar.getInstance();
-       // SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHMMss");
-       // String timeStampString = dateFormat.format(calendar.getTime());
-
         String origFileName = file.getOriginalFilename();
-        String fileName = new MD5Generator(origFileName).toString();
         String savePath = System.getProperty("member.dir") + "\\files";
 
         if (!new File(savePath).exists()) {
@@ -55,7 +49,6 @@ public class PhotoServiceTest {
 
         PhotoDto fileDto = PhotoDto.builder()
                 .origFileName(origFileName)
-                .fileName(fileName)
                 .filePath(filePath)
                 .build();
 
@@ -64,6 +57,5 @@ public class PhotoServiceTest {
 
         //then
         assertThat(fileRepository.findAll()).isNotNull();
-        //assertThat(item.getId()).isEqualTo(updateId);
     }
 }
