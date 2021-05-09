@@ -43,8 +43,10 @@ public class ChatMessageController {
 
 
     @MessageMapping("/send")
+    @CrossOrigin
     public void processMessage(@Payload MessageDto messageDto) {
 
+        System.out.println("messageDto = " + messageDto);
         Optional<String> chatId = chatRoomService.getChatId(
                 messageDto.getSenderId(),
                 messageDto.getReceiverId(),
@@ -62,11 +64,18 @@ public class ChatMessageController {
     }
 
     @GetMapping("/message/{senderId}/{receiverId}")
+    @CrossOrigin
     public ResponseEntity<?> findChatMessages(@PathVariable("senderId") Long senderId, @PathVariable("receiverId") Long receiverId){
         List<Message> messages = messageService.findMessages(senderId, receiverId);
         return ResponseEntity.ok(
                 messages
         );
+    }
+
+    @RequestMapping("/test")
+    @CrossOrigin
+    public String testview(){
+        return "test";
     }
 
 

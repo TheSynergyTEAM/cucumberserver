@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -65,7 +66,7 @@ public class ChatRoomService {
             ChatRoom chatRoom = bySenderIdAndReceiverId.get();
             return Optional.ofNullable(chatRoom.getChatId());
 
-        } catch (EntityNotFoundException e) {
+        } catch (NoSuchElementException e) {
             return Optional.ofNullable(createChatRoom(senderId, receiverId, itemId));
         }
 
