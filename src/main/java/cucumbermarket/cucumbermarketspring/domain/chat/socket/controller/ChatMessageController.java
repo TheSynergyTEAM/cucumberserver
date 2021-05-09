@@ -41,7 +41,6 @@ public class ChatMessageController {
     @Autowired
     private final MemberService memberService;
 
-
     @MessageMapping("/send")
     @CrossOrigin
     public void processMessage(@Payload MessageDto messageDto) {
