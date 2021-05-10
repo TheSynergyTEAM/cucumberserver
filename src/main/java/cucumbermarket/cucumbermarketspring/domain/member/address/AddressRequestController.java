@@ -1,11 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.member.address;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @ResponseBody
@@ -14,12 +10,14 @@ import java.util.List;
 public class AddressRequestController {
     private final AddressService addressService;
 
+    @CrossOrigin
     @GetMapping("/address/city")
     public List<AddressService.CityDto> getCity() {
         List<AddressService.CityDto> cityDtos = addressService.requestCity();
         return cityDtos;
     }
 
+    @CrossOrigin
     @GetMapping("/address/city/{id}")
     public AddressService.StreetDto getStreet(@PathVariable Integer id) {
         AddressService.StreetDto streetDtos = addressService.requestStreet(id);

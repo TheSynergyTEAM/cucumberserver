@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -39,6 +40,43 @@ public class ChatMessageController {
     private final MessageService messageService;
     @Autowired
     private final MemberService memberService;
+
+    @MessageMapping("/send")
+    @CrossOrigin
+    public void processMessage(@Payload MessageDto messageDto) {
+
+        System.out.println("messageDto = " + messageDto);
+        Optional<String> chatId = chatRoomService.getChatId(
+                messageDto.getSenderId(),
+                messageDto.getReceiverId(),
+                messageDto.getItemId(),
+                true
+        );
+        Message message = messageService.createMessage(messageDto);
+        Member sender = memberService.searchMemberById(message.getSenderId());
+        simpMessagingTemplate.convertAndSendToUser(
+                String.valueOf(message.getReceiverId()), "/queue/messages",
+                new ChatNotification(
+                        message.getId(),
+                        message.getSenderId(),
+                        sender.getEmail()));
+    }
+
+    @GetMapping("/message/{senderId}/{receiverId}")
+    @CrossOrigin
+    public ResponseEntity<?> findChatMessages(@PathVariable("senderId") Long senderId, @PathVariable("receiverId") Long receiverId){
+        List<Message> messages = messageService.findMessages(senderId, receiverId);
+        return ResponseEntity.ok(
+                messages
+        );
+    }
+
+    @RequestMapping("/test")
+    @CrossOrigin
+    public String testview(){
+        return "test";
+    }
+
 
 //    @PostMapping("/chat/message")
 //    public String findChatRoom(@RequestBody @Valid CreateChatRoomDto request) {
@@ -61,25 +99,4 @@ public class ChatMessageController {
 //                memberRepository.findByEmail(email), chatRoomService.searchChatRoom(chatRoomId).getItem()
 //        ));
 //    }
-
-    @MessageMapping("/send")
-    public void processMessage(@Payload MessageDto messageDto) {
-
-        Optional<String> chatId = chatRoomService.getChatId(
-                messageDto.getSenderId(),
-                messageDto.getReceiverId(),
-                messageDto.getItemId(),
-                true
-        );
-        Message message = messageService.createMessage(messageDto);
-        Member sender = memberService.searchMemberById(message.getSenderId());
-        simpMessagingTemplate.convertAndSendToUser(
-                String.valueOf(message.getReceiverId()), "/queue/messages",
-                new ChatNotification(
-                        message.getId(),
-                        message.getSenderId(),
-                        sender.getEmail()));
-    }
-
-
 }
