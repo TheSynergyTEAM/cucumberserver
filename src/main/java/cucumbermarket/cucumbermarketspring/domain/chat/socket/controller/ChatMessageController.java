@@ -55,7 +55,7 @@ public class ChatMessageController {
 //
 //    @RequestMapping("/room/{chatRoomId}")
 //    public ResponseEntity<?> enterChatRoom(@PathVariable("chatRoomId") Long chatRoomId, HttpServletRequest request) {
-//        HttpSession session = request.getSession();
+//        HttpSession session = request.getSession( );
 //        String email = (String)session.getAttribute("email");
 //        return ResponseEntity.ok(chatRoomService.getAllMessage(
 //                memberRepository.findByEmail(email), chatRoomService.searchChatRoom(chatRoomId).getItem()
