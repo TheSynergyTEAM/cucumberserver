@@ -1,15 +1,16 @@
 package cucumbermarket.cucumbermarketspring.domain.member;
 
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItem;
-import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
+import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
 import cucumbermarket.cucumbermarketspring.domain.review.Review;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import org.hibernate.annotations.Proxy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,7 +18,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -65,9 +68,6 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member", cascade = CascadeType.MERGE, orphanRemoval = true)
     @JsonManagedReference
     private List<Review> review = new ArrayList<>();
-
-//    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
-//    private List<Message> messageList = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();

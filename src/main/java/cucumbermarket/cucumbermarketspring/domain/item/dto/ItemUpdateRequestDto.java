@@ -1,5 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.item.dto;
 
+import cucumbermarket.cucumbermarketspring.domain.file.Photo;
 import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import lombok.Builder;
@@ -15,6 +16,7 @@ public class ItemUpdateRequestDto {
     private String spec;
     private Address address;
     private Boolean sold;
+    private Photo photo;
 
     @Builder
     public ItemUpdateRequestDto(String title, Categories categories, int price, String spec, Address address, Boolean sold){

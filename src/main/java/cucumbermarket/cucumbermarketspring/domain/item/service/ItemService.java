@@ -47,7 +47,7 @@ public class ItemService {
                 requestDto.getAddress(),
                 requestDto.getSold());
 
-        List<Photo> photoList = fileHandler.parseFileInfo(files);
+        List<Photo> photoList = fileHandler.parseFileInfo(item, files);
 
         if(!photoList.isEmpty()){
             for(Photo photo : photoList)
@@ -61,34 +61,21 @@ public class ItemService {
      * 상품수정
      * */
     @Transactional
-    public ItemResponseDto update(Long id, ItemUpdateRequestDto requestDto){
+    public void update(Long id, ItemUpdateRequestDto requestDto, List<MultipartFile> files) throws Exception {
         Item item = itemRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
 
-        item.update(requestDto.getTitle(), requestDto.getCategories(), requestDto.getPrice(),
-                requestDto.getSpec(), requestDto.getAddress(), requestDto.getSold());
-
-        ItemResponseDto itemResponseDto = this.findOne(id);
-        return itemResponseDto;
-    }
-    /*@Transactional
-    public ItemResponseDto update(Long id, ItemUpdateRequestDto requestDto, List<MultipartFile> files) throws Exception {
-        Item item = itemRepository.findById(id).orElseThrow(()
-                -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
-
-        if(requestDto.get)
         List<Photo> photoList = fileHandler.parseFileInfo(item, files);
+
         if(!photoList.isEmpty()){
-            for(Photo photo : photoList)
-                item.addPhoto(photoRepository.save(photo));
+            for(Photo photo : photoList) {
+                photoRepository.save(photo);
+            }
         }
-        ItemResponseDto itemResponseDto = this.findOne(id);
 
         item.update(requestDto.getTitle(), requestDto.getCategories(), requestDto.getPrice(),
                 requestDto.getSpec(), requestDto.getAddress(), requestDto.getSold());
-
-        return itemResponseDto;
-    }*/
+    }
 
     /**
      * 상품삭제
@@ -105,10 +92,10 @@ public class ItemService {
      * 상품 개별 조회
      * */
     @Transactional(readOnly = true)
-    public ItemResponseDto findOne(Long id){
+    public ItemResponseDto findOne(Long id, List<Long> fileId){
         Item entity = itemRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
-        return new ItemResponseDto(entity);
+        return new ItemResponseDto(entity, fileId);
     }
 
     /**
@@ -125,6 +112,7 @@ public class ItemService {
                .selectFrom(item)
                .where(item.address.city.eq(city).and(item.address.street1.eq(street)))
                .fetch();
+
 
        return itemList.stream()
                .map(ItemListResponseDto::new)

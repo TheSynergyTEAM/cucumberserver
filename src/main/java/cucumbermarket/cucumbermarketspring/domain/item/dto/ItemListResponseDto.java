@@ -14,11 +14,12 @@ public class ItemListResponseDto {
     private String title;
     private String categories;
     private int price;
-    private String spec;
     private Boolean sold;
     private LocalDateTime created;
+    private Long thumbnailid;
 
-    public ItemListResponseDto(Item entity){
+
+    public ItemListResponseDto(Item entity) {
         this.id = entity.getId();
         this.member = entity.getMember().getUsername();
         this.city = entity.getAddress().getCity();
@@ -26,8 +27,12 @@ public class ItemListResponseDto {
         this.title = entity.getTitle();
         this.categories = entity.getCategories().getValue();
         this.price = entity.getPrice();
-        this.spec = entity.getSpec();
         this.sold = entity.getSold();
         this.created = entity.getCreated();
+
+        if(!entity.getPhoto().isEmpty())
+            this.thumbnailid = entity.getPhoto().get(0).getId();
+        else
+            this.thumbnailid = 0L;
     }
 }

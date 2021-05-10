@@ -1,73 +1,80 @@
 package cucumbermarket.cucumbermarketspring.domain.file.controller;
 
+import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoDto;
+import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
-import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.apache.commons.io.IOUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 public class PhotoController {
-    private static PhotoService fileService;
-    private static ItemService itemService;
 
-    @PostMapping("/photos")
-   // @ResponseStatus(HttpStatus.CREATED)
-    public void test(@RequestPart List<MultipartFile> files) throws Exception{
-   // public String test(@RequestParam("files") List<MultipartFile> files) throws Exception{
-     //   String rootPath = FileSystemView.getFileSystemView().getHomeDirectory().toString();
-     //   String basePath = rootPath + "/" + "multi";
+    private final PhotoService photoService;
 
-     //   for(MultipartFile file : files){
-     //       String originalName = file.getOriginalFilename();
-    //        String filePath = basePath + "/" + originalName;
+    /**
+     * 썸네일용 이미지
+     */
+    @CrossOrigin
+    @GetMapping(
+            value = "/thumbnail/{id}",
+            produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE}
+    )
+    public ResponseEntity<byte[]> getThumbnail(@PathVariable Long id) throws IOException {
+        String absolutePath = new File("").getAbsolutePath() + "\\";
+        String path;
 
-    //        File dest = new File(filePath);
-    //        file.transferTo(dest);
-    //    }
-
-    //    return  "uploaded";
-      /*  try {
-
-            for(MultipartFile file : files){
-                String origFilename = file.getOriginalFilename();
-                String filename = new MD5Generator(origFilename).toString();
-
-                String savePath = System.getProperty("user.dir") + "\\files";
-
-                if (!new File(savePath).exists()) {
-                    try{
-                        new File(savePath).mkdir();
-                    }
-                    catch(Exception e){
-                        e.getStackTrace();
-                    }
-                }
-                String filePath = savePath + "\\" + filename;
-                file.transferTo(new File(filePath));
-
-                PhotoDto fileDto = new PhotoDto();
-                fileDto.setOrigFileName(origFilename);
-                fileDto.setFileName(filename);
-                fileDto.setFilePath(filePath);
-
-                Long photoId = fileService.savePhoto(fileDto);
-
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
-        }*/
-     /*   List<String> list = new ArrayList<>();
-        for(MultipartFile file : files) {
-            String originalfileName = file.getOriginalFilename();
-            File dest = new File("C:/Image/" + originalfileName);
-            file.transferTo(dest);
+        if(id != 0) {
+            PhotoDto photoDto = photoService.findByFileId(id);
+            path = photoDto.getFilePath();
         }
-        return  list;*/
+        else
+            path = "images/thumbnail/thumbnail.png";
+
+        InputStream imageStream = new FileInputStream(absolutePath + path);
+        byte[] imageByteArray = IOUtils.toByteArray(imageStream);
+        imageStream.close();
+        return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
+    }
+
+    /**
+     * 이미지 개별 조회
+     */
+    @CrossOrigin
+    @GetMapping(
+            value = "/image/{id}",
+            produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE}
+    )
+    public ResponseEntity<byte[]> getImage(@PathVariable Long id) throws IOException {
+        PhotoDto photoDto = photoService.findByFileId(id);
+        String absolutePath = new File("").getAbsolutePath() + "\\";
+        String path = photoDto.getFilePath();
+
+        InputStream imageStream = new FileInputStream(absolutePath + path);
+        byte[] imageByteArray = IOUtils.toByteArray(imageStream);
+        imageStream.close();
+        return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
+    }
+
+    /**
+     * 이미지 전체 조회
+     */
+    @CrossOrigin
+    @GetMapping("/images/{id}")
+    public List<PhotoResponseDto> getImageList(@PathVariable Long id) {
+        return photoService.findAll(id);
     }
 }
