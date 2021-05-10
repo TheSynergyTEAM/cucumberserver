@@ -4,6 +4,7 @@ import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 public class ItemResponseDto {
@@ -17,8 +18,9 @@ public class ItemResponseDto {
     private String street;
     private Boolean sold;
     private LocalDateTime created;
+    private List<Long> fileid;
 
-    public ItemResponseDto(Item entity){
+    public ItemResponseDto(Item entity, List<Long> fileId){
         this.id = entity.getId();
         this.member = entity.getMember().getName();
         this.title = entity.getTitle();
@@ -29,5 +31,6 @@ public class ItemResponseDto {
         this.street = entity.getAddress().getStreet1();
         this.sold = entity.getSold();
         this.created = entity.getCreated();
+        this.fileid = fileId;
     }
 }
