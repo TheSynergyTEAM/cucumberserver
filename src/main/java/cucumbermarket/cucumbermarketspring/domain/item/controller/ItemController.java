@@ -1,5 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.item.controller;
 
+import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoDto;
+import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemFileVO;
 import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
@@ -15,15 +17,18 @@ import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 public class ItemController {
     private final ItemService itemService;
-    private PhotoService fileService;
+    private final PhotoService fileService;
     private AddressService addressService;
     private final MemberService memberService;
 
@@ -33,8 +38,7 @@ public class ItemController {
     @PostMapping("/item")
     @CrossOrigin
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateItemResponse create(ItemFileVO itemFileVO) throws Exception {
-  //  public ResponseEntity create(ItemFileVO itemFileVO) throws Exception {
+    public CreateUpdateItemResponse create(ItemFileVO itemFileVO) throws Exception {
 
         Member member = memberService.searchMemberById(Long.parseLong(itemFileVO.getId()));
         Address address = new Address(itemFileVO.getCity(), itemFileVO.getStreet1(), "", "");
@@ -51,11 +55,8 @@ public class ItemController {
                         .build();
 
         Long id = itemService.save(itemRequestDto, itemFileVO.getFiles());
-        return new CreateItemResponse(id);
 
-    /*    HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "localhost:3000/item/" + id);
-        return new ResponseEntity(headers, HttpStatus.CREATED);*/
+        return new CreateUpdateItemResponse(id);
     }
 
     /**
@@ -63,7 +64,7 @@ public class ItemController {
      */
     @PutMapping("/item/{id}")
     @CrossOrigin
-    public ItemResponseDto update(@PathVariable Long id, ItemFileVO itemFileVO) throws Exception {
+    public CreateUpdateItemResponse update(@PathVariable Long id, ItemFileVO itemFileVO) throws Exception {
         Address address = new Address(itemFileVO.getCity(), itemFileVO.getStreet1(), "", "");
         Categories category = Categories.find(itemFileVO.getCategory());
         Boolean sold = Boolean.parseBoolean(itemFileVO.getSold());
@@ -76,7 +77,47 @@ public class ItemController {
                 .sold(sold)
                 .build();
 
-        return itemService.update(id, itemRequestDto, itemFileVO.getFiles());
+
+        List<PhotoResponseDto> dbPhotoList = fileService.findAll(id);
+        List<MultipartFile> multipartList = itemFileVO.getFiles();
+        List<MultipartFile> validFileList = new ArrayList<>();
+
+        if(CollectionUtils.isEmpty(dbPhotoList)) { // db에 아예 존재 x
+            if(!CollectionUtils.isEmpty(multipartList)) { // 전달되어온 파일 o
+                for (MultipartFile multipartFile : multipartList)
+                    validFileList.add(multipartFile);
+            }
+        }
+        else { // db에 한 장 이상 존재
+            if(CollectionUtils.isEmpty(multipartList)) { // 전달되어온 파일 아예 x
+                for(PhotoResponseDto dbPhoto : dbPhotoList)
+                    fileService.deletePhoto(dbPhoto.getFileId());
+            }
+            else { // 전달되어온 파일 한 장 이상 존재
+                List<String> dbOriginNameList = new ArrayList<>();
+
+                for(PhotoResponseDto dbPhoto : dbPhotoList) {   // db의 파일 원본명 추출
+                    PhotoDto dbPhotoDto = fileService.findByFileId(dbPhoto.getFileId());
+                    String dbOrigFileName = dbPhotoDto.getOrigFileName();
+
+                    if(!multipartList.contains(dbOrigFileName)) // 삭제요청 파일
+                        fileService.deletePhoto(dbPhoto.getFileId());
+                    else
+                        dbOriginNameList.add(dbOrigFileName);
+                }
+
+                for (MultipartFile multipartFile : multipartList) { // 전달되어온 파일 하나씩 검사
+                    String multipartOrigName = multipartFile.getOriginalFilename();
+                    if(!dbOriginNameList.contains(multipartOrigName)){   // db에 없는 파일이면
+                        validFileList.add(multipartFile);
+                    }
+                }
+            }
+        }
+
+        itemService.update(id, itemRequestDto, validFileList);
+
+        return new CreateUpdateItemResponse(id);
     }
 
     /**
@@ -94,41 +135,14 @@ public class ItemController {
     @GetMapping("/item/{id}")
     @CrossOrigin
     public ItemResponseDto findById(@PathVariable("id") Long id){
-        return itemService.findOne(id);
+        List<PhotoResponseDto> photoResponseDtoList = fileService.findAll(id);
+        List<Long> photoId = new ArrayList<>();
+        for(PhotoResponseDto photoResponseDto : photoResponseDtoList)
+            photoId.add(photoResponseDto.getFileId());
+
+        return itemService.findOne(id, photoId);
     }
 
-   // @GetMapping(value = "/item/{id}",
-   //         produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
-    /*@GetMapping("/item/{id}")
-    public ResponseEntity<?> findById(
-            @PathVariable("id") Long id,
-            HttpServletRequest request) throws MalformedURLException {
-        List<Photo> photoList = fileService.findAll(id);
-        for(Photo photo : photoList){
-            Path filePath = Paths.get(photo.getFilePath()).toAbsolutePath().normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-
-            String contentType = null;
-
-            try{
-                contentType = request.getServletContext().getMimeType(
-                        resource.getFile().getAbsolutePath()
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-                contentType = "application/octet-stream";
-            }
-        }
-
-        ItemResponseDto responseDto = itemService.findOne(id);
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + mdssFile.getName() + "\""
-                )
-                .body(resource);
-    }*/
 
     /**
      * 물품 전체 조회(구 기준)
@@ -152,10 +166,10 @@ public class ItemController {
 
 
     @Data
-    static class CreateItemResponse {
+    static class CreateUpdateItemResponse {
         private Long id;
 
-        public CreateItemResponse(Long id) {
+        public CreateUpdateItemResponse(Long id) {
             this.id = id;
         }
     }

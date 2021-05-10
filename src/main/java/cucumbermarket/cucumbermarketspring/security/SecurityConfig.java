@@ -30,7 +30,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private final MemberService memberService;
 
-    private static final String[] PUBLIC_URI = {"/", "/login", "/address/city/**", "/member", "/item/**","/item","/test","/webjars/**", "/ws/**", "/user/**", "/chat/**"
+    private static final String[] PUBLIC_URI = {
+            "/", "/login", "/address/city/**", "/member",
+            "/category", "/item/**","/item", "/item/list", "/item/area",
+            "/thumbnail/**", "/image/**",
+            "/test", "/webjars/**", "/ws/**", "/user/**", "/chat/**"
     };
 
     @Bean
