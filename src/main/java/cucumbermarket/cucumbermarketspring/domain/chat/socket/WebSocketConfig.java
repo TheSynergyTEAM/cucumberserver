@@ -29,7 +29,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         registry
                 .addEndpoint("/ws")
-                .setAllowedOrigins("*")
+//                .setAllowedOrigins("*")
                 .withSockJS();
 
     }

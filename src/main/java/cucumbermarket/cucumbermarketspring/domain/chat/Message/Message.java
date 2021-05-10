@@ -36,6 +36,9 @@ public class Message extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @Enumerated(EnumType.STRING)
+    private MessageStatus messageStatus;
+
     //    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
 //    @JoinColumn(name = "member_id")
 //    private Member itemOwner;

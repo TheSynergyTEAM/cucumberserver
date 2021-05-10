@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -40,31 +41,11 @@ public class ChatMessageController {
     @Autowired
     private final MemberService memberService;
 
-//    @PostMapping("/chat/message")
-//    public String findChatRoom(@RequestBody @Valid CreateChatRoomDto request) {
-//
-//        Long itemId = request.getItemid();
-//        Long userId = request.getUserid();
-//
-//        Member member = memberService.searchMemberById(userId);
-//        Item item = itemRepository.getOne(itemId);
-//        ChatRoom chatRoom = chatRoomService.searchChatRoomByMemberAndItem(member, item);
-////        Long chatRoomId = chatRoomService.createChatRoom(member, item);
-//        return "redirect:/room/" + chatRoom.getId();
-//    }
-//
-//    @RequestMapping("/room/{chatRoomId}")
-//    public ResponseEntity<?> enterChatRoom(@PathVariable("chatRoomId") Long chatRoomId, HttpServletRequest request) {
-//        HttpSession session = request.getSession( );
-//        String email = (String)session.getAttribute("email");
-//        return ResponseEntity.ok(chatRoomService.getAllMessage(
-//                memberRepository.findByEmail(email), chatRoomService.searchChatRoom(chatRoomId).getItem()
-//        ));
-//    }
-
     @MessageMapping("/send")
+    @CrossOrigin
     public void processMessage(@Payload MessageDto messageDto) {
 
+        System.out.println("messageDto = " + messageDto);
         Optional<String> chatId = chatRoomService.getChatId(
                 messageDto.getSenderId(),
                 messageDto.getReceiverId(),
@@ -81,5 +62,41 @@ public class ChatMessageController {
                         sender.getEmail()));
     }
 
+    @GetMapping("/message/{senderId}/{receiverId}")
+    @CrossOrigin
+    public ResponseEntity<?> findChatMessages(@PathVariable("senderId") Long senderId, @PathVariable("receiverId") Long receiverId){
+        List<Message> messages = messageService.findMessages(senderId, receiverId);
+        return ResponseEntity.ok(
+                messages
+        );
+    }
 
+    @RequestMapping("/test")
+    @CrossOrigin
+    public String testview(){
+        return "test";
+    }
+
+
+//    @PostMapping("/chat/message")
+//    public String findChatRoom(@RequestBody @Valid CreateChatRoomDto request) {
+//
+//        Long itemId = request.getItemid();
+//        Long userId = request.getUserid();
+//
+//        Member member = memberService.searchMemberById(userId);
+//        Item item = itemRepository.getOne(itemId);
+//        ChatRoom chatRoom = chatRoomService.searchChatRoomByMemberAndItem(member, item);
+////        Long chatRoomId = chatRoomService.createChatRoom(member, item);
+//        return "redirect:/room/" + chatRoom.getId();
+//    }
+//
+//    @RequestMapping("/room/{chatRoomId}")
+//    public ResponseEntity<?> enterChatRoom(@PathVariable("chatRoomId") Long chatRoomId, HttpServletRequest request) {
+//        HttpSession session = request.getSession();
+//        String email = (String)session.getAttribute("email");
+//        return ResponseEntity.ok(chatRoomService.getAllMessage(
+//                memberRepository.findByEmail(email), chatRoomService.searchChatRoom(chatRoomId).getItem()
+//        ));
+//    }
 }
