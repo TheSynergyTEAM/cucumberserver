@@ -34,7 +34,8 @@ public class PhotoController {
             produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE}
     )
     public ResponseEntity<byte[]> getThumbnail(@PathVariable Long id) throws IOException {
-        String absolutePath = new File("").getAbsolutePath() + "\\";
+       // String absolutePath = new File("").getAbsolutePath() + "\\";
+        String absolutePath = new File("").getAbsolutePath() + File.separator + File.separator;
         String path;
 
         if(id != 0) {
@@ -42,7 +43,8 @@ public class PhotoController {
             path = photoDto.getFilePath();
         }
         else
-            path = "images/thumbnail/thumbnail.png";
+           // path = "images/thumbnail/thumbnail.png";
+            path = "images" + File.separator + "thumbnail" + File.separator + "thumbnail.png";
 
         InputStream imageStream = new FileInputStream(absolutePath + path);
         byte[] imageByteArray = IOUtils.toByteArray(imageStream);
@@ -60,7 +62,8 @@ public class PhotoController {
     )
     public ResponseEntity<byte[]> getImage(@PathVariable Long id) throws IOException {
         PhotoDto photoDto = photoService.findByFileId(id);
-        String absolutePath = new File("").getAbsolutePath() + "\\";
+      //  String absolutePath = new File("").getAbsolutePath() + "\\";
+        String absolutePath = new File("").getAbsolutePath() + File.separator + File.separator;
         String path = photoDto.getFilePath();
 
         InputStream imageStream = new FileInputStream(absolutePath + path);

@@ -40,9 +40,11 @@ public class FileHandler {
                     DateTimeFormatter.ofPattern("yyyyMMdd");
             String current_date = now.format(dateTimeFormatter);
 
-            String absolutePath = new File("").getAbsolutePath() + "\\";
+         //   String absolutePath = new File("").getAbsolutePath() + "\\";
+            String absolutePath = new File("").getAbsolutePath() + File.separator + File.separator;
 
-            String path = "images/" + current_date;
+         //   String path = "images/" + current_date;
+            String path = "images" + File.separator + current_date;
             File file = new File(path);
             if (!file.exists()) {
                 boolean wasSuccessful = file.mkdirs();
@@ -69,7 +71,8 @@ public class FileHandler {
 
                     PhotoDto photoDto = PhotoDto.builder()
                             .origFileName(multipartFile.getOriginalFilename())
-                            .filePath(path + "/" + new_file_name)
+                            //.filePath(path + "/" + new_file_name)
+                            .filePath(path + File.separator + new_file_name)
                             .fileSize(multipartFile.getSize())
                             .build();
 
@@ -81,7 +84,8 @@ public class FileHandler {
                         photo.setItem(item);
                     fileList.add(photo);
 
-                    file = new File(absolutePath + path + "/" + new_file_name);
+                 //   file = new File(absolutePath + path + "/" + new_file_name);
+                    file = new File(absolutePath + path + File.separator + new_file_name);
                     multipartFile.transferTo(file);
 
                     file.setWritable(true);
