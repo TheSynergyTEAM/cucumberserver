@@ -16,6 +16,7 @@ public class ItemListResponseDto {
     private int price;
     private Boolean sold;
     private LocalDateTime created;
+    private int views;
     private Long thumbnailid;
 
 
@@ -29,6 +30,7 @@ public class ItemListResponseDto {
         this.price = entity.getPrice();
         this.sold = entity.getSold();
         this.created = entity.getCreated();
+        this.views = entity.getViews();
 
         if(!entity.getPhoto().isEmpty())
             this.thumbnailid = entity.getPhoto().get(0).getId();

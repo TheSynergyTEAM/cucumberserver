@@ -45,7 +45,8 @@ public class ItemService {
                 requestDto.getPrice(),
                 requestDto.getSpec(),
                 requestDto.getAddress(),
-                requestDto.getSold());
+                requestDto.getSold(),
+                0);
 
         List<Photo> photoList = fileHandler.parseFileInfo(item, files);
 
@@ -95,8 +96,22 @@ public class ItemService {
     public ItemResponseDto findOne(Long id, List<Long> fileId){
         Item entity = itemRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+
+
         return new ItemResponseDto(entity, fileId);
     }
+
+    /**
+     * 조회수 증가
+     * */
+    @Transactional
+    public void updateViews(Long id, int views) {
+        Item item = itemRepository.findById(id).orElseThrow(()
+                -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+
+        item.updateView(views);
+    }
+
 
     /**
      * 상품 전체 조회(구 기준)

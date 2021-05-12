@@ -6,6 +6,7 @@ import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoDto;
 import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,9 +33,9 @@ public class FileHandler {
     ) throws Exception {
         List<Photo> fileList = new ArrayList<>();
 
-        if (multipartFiles == null) // 전달되어온 파일이 존재하지 않을 경우
-            return fileList;
-        else {  // 전달되어 온 파일이 존재할 경우
+      //  if (multipartFiles == null) // 전달되어온 파일이 존재하지 않을 경우
+      //      return fileList;
+        if(!CollectionUtils.isEmpty(multipartFiles)) {  // 전달되어 온 파일이 존재할 경우
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter dateTimeFormatter =
                     DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -92,7 +93,9 @@ public class FileHandler {
                     file.setReadable(true);
 
             }
-            return fileList;
+
         }
+
+        return fileList;
     }
 }

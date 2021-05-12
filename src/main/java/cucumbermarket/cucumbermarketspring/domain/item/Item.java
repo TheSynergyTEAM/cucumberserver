@@ -50,14 +50,17 @@ public class Item extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String spec;
 
+    private Boolean sold;
+
+    @Column(columnDefinition = "int default 0")
+    private int views;
+
     @OneToMany(mappedBy = "item", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Photo> photo = new ArrayList<>();
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.MERGE, orphanRemoval = true)
     @JsonManagedReference("item")
     private List<FavouriteItem> favouriteItem = new ArrayList<>();
-
-    private Boolean sold;
 
     @OneToOne(mappedBy = "item")
     private Review review;
@@ -66,7 +69,7 @@ public class Item extends BaseTimeEntity {
      * 빌더
      * */
     @Builder
-    public Item(Member member, String title, Categories categories, int price, String spec, Address address, Boolean sold){
+    public Item(Member member, String title, Categories categories, int price, String spec, Address address, Boolean sold, int views){
         this.member = member;
         this.title = title;
         this.categories = categories;
@@ -74,6 +77,7 @@ public class Item extends BaseTimeEntity {
         this.spec = spec;
         this.address = address;
         this.sold = sold;
+        this.views = views;
     }
 
     public void update(String title, Categories categories, int price, String spec, Address address, Boolean sold){
@@ -83,6 +87,10 @@ public class Item extends BaseTimeEntity {
         this.price = price;
         this.spec = spec;
         this.sold = sold;
+    }
+
+    public void updateView(int views){
+        this.views = views + 1;
     }
 
     public void addPhoto(Photo photo){
