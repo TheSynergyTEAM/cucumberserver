@@ -28,23 +28,24 @@ public class ChatRoomService {
      */
     @Transactional
     public String createChatRoom(Long senderId, Long receiverId, Long itemId) {
-        var chatId = String.format("%s_%s_%s", senderId, receiverId, itemId);
+        var chatId1 = String.format("%s_%s_%s", senderId, receiverId, itemId);
+        var chatId2 = String.format("%s_%s_%s", receiverId, senderId, itemId);
         ChatRoom chatRoomBySender = ChatRoom
                 .builder()
-                .chatId(chatId)
+                .chatId(chatId1)
                 .senderId(senderId)
                 .receiverId(receiverId)
                 .build();
 
         ChatRoom chatRoomByReceiver = ChatRoom
                 .builder()
-                .chatId(chatId)
+                .chatId(chatId2)
                 .senderId(receiverId)
                 .receiverId(senderId)
                 .build();
         chatRoomRepository.save(chatRoomBySender);
         chatRoomRepository.save(chatRoomByReceiver);
-        return chatId;
+        return chatId1;
     }
 
     @Transactional(readOnly = true)
@@ -52,17 +53,12 @@ public class ChatRoomService {
         return chatRoomRepository.getOne(chatRoomId);
     }
 
-    @Transactional(readOnly = true)
-    public String getChatId(Long senderId, Long receiverId) {
-        Optional<ChatRoom> chatRoom = chatRoomRepository.findBySenderIdAndReceiverId(senderId, receiverId);
-        return chatRoom.get().getChatId();
-    }
-
 
     @Transactional
-    public Optional<String> getChatId(Long senderId, Long receiverId, Long itemId, Boolean createIfNotExist) {
+    public Optional<String> getChatId(Long senderId, Long receiverId, Long itemId) {
         try {
-            Optional<ChatRoom> bySenderIdAndReceiverId = chatRoomRepository.findBySenderIdAndReceiverId(senderId, receiverId);
+            String chatId = String.format("%s_%s_%s", senderId, receiverId, itemId);
+            Optional<ChatRoom> bySenderIdAndReceiverId = chatRoomRepository.findByChatId(chatId);
             ChatRoom chatRoom = bySenderIdAndReceiverId.get();
             return Optional.ofNullable(chatRoom.getChatId());
 
@@ -71,25 +67,5 @@ public class ChatRoomService {
         }
 
     }
-//    @Transactional(readOnly = true)
-//    public ChatRoom searchChatRoomByMemberAndItem(Member member, Item item) {
-//        return chatRoomRepository.findByMemberAndItem(member, item);
-//    }
 
-//    @Transactional
-//    public void addMessage(Member member, Item item, Message message) {
-//        ChatRoom byMemberAndItem = chatRoomRepository.findByMemberAndItem(member, item);
-//        byMemberAndItem.addMessage(message);
-//    }
-
-//    @Transactional
-//    public List<Message> getAllMessage(Member member, Item item) {
-//        ChatRoom chatRoom = chatRoomRepository.findByMemberAndItem(member, item);
-//        return chatRoom.getMessageList();
-//    }
-
-//    @Transactional
-//    public List<ChatRoom> getAllChatRoom(Item item) {
-//        return chatRoomRepository.findAllByItem(item);
-//    }
 }

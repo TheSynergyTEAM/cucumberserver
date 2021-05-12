@@ -2,9 +2,9 @@ package cucumbermarket.cucumbermarketspring.domain.chat.Message.service;
 
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageRepository;
+import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageStatus;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service.ChatRoomService;
 import cucumbermarket.cucumbermarketspring.domain.chat.socket.dto.MessageDto;
-import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,22 +23,32 @@ public class MessageService {
      */
     @Transactional
     public Message createMessage(MessageDto messageDto) {
-        Message message = Message.builder()
+        Message originMessage = Message.builder()
                 .senderId(messageDto.getSenderId())
                 .receiverId(messageDto.getReceiverId())
+                .chatId(String.format("%s_%s_%s", messageDto.getSenderId(), messageDto.getReceiverId(), messageDto.getItemId()))
                 .content(messageDto.getContent())
+                .messageStatus(MessageStatus.RECEIVED)
                 .build();
-        messageRepository.save(message);
-        return message;
+        messageRepository.save(originMessage);
+        Message createdMessage = Message.builder()
+                .senderId(messageDto.getSenderId())
+                .receiverId(messageDto.getReceiverId())
+                .chatId(String.format("%s_%s_%s", messageDto.getReceiverId(), messageDto.getSenderId(), messageDto.getItemId()))
+                .content(messageDto.getContent())
+                .messageStatus(MessageStatus.RECEIVED)
+                .build();
+        messageRepository.save(createdMessage);
+        return createdMessage;
     }
 
     /**
      * 메세지 조회
      */
     @Transactional
-    public List<Message> findMessages(Long senderId, Long receiverId) {
+    public List<Message> findMessages(Long senderId, Long receiverId, Long itemId) {
         // TODO Exception Handling
-        String chatId = chatRoomService.getChatId(senderId, receiverId);
+        Optional<String> chatId = chatRoomService.getChatId(senderId, receiverId, itemId);
         return messageRepository.findByChatId(chatId);
     }
 
@@ -49,5 +59,15 @@ public class MessageService {
     public void deleteMessage(Long messageId) {
         messageRepository.deleteById(messageId);
     }
+
+    /**
+     * 메세지 수 조회 (읽지 않은 메세지)
+     */
+    @Transactional
+    public Integer countNewMessages(Long senderId, Long receiverId, Long itemId) {
+        Optional<String> chatId = chatRoomService.getChatId(senderId, receiverId, itemId);
+        return messageRepository.findByChatIdAndMessageStatus(chatId, String.valueOf(MessageStatus.RECEIVED));
+    }
+
 
 }
