@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @Getter
 public class PhotoResponseDto {
-    private Long fileId;
+    private Long fileid;
 
     public PhotoResponseDto(Photo entity){
-        this.fileId = entity.getId();
+        this.fileid = entity.getId();
     }
 }

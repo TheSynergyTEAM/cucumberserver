@@ -43,10 +43,11 @@
 
         function sendMessage() {
             var senderId = document.getElementById("sender_ID").value;
-            var receiverId = document.getElementById("receiver_Id").value;
+            var receiverId = document.getElementById("receiver_ID").value;
+            var itemId = document.getElementById("item_ID").value;
             var text = document.getElementById('text').value;
             stompClient.send("/chat/send", {},
-                JSON.stringify({'senderId':senderId, 'receiverId':receiverId, 'content':text, 'itemId':'1'}));
+                JSON.stringify({'senderId':senderId, 'receiverId':receiverId, 'content':text, 'itemId':itemId}));
         }
 
         function showMessageOutput(messageOutput) {
@@ -63,7 +64,8 @@
 <div>
     <div>
         <input type="text" id="sender_ID" placeholder="senderId"/>
-        <input type="text" id="receiver_Id" placeholder="receiverId"/>
+        <input type="text" id="receiver_ID" placeholder="receiverId"/>
+        <input type="text" id="item_ID" placeholder="itemId"/>
     </div>
     <br />
     <div>
