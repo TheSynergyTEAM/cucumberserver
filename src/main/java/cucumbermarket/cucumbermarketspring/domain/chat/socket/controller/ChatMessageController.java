@@ -65,6 +65,7 @@ public class ChatMessageController {
     @CrossOrigin
     public ResponseEntity<?> findChatMessages(@PathVariable("senderId") Long senderId, @PathVariable("receiverId") Long receiverId, @PathVariable("itemId") Long itemId){
         List<Message> messages = messageService.findMessages(senderId, receiverId, itemId);
+        messageService.updateMessages(senderId, receiverId, itemId);
         return ResponseEntity.ok(
                 messages
         );

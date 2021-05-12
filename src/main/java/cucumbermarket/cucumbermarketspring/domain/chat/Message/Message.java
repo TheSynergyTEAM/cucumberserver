@@ -39,18 +39,7 @@ public class Message extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private MessageStatus messageStatus;
 
-    //    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_id")
-//    private Member itemOwner;
-//
-//    @ManyToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_id")
-//    private Member itemBuyer;
-
-//    @ManyToOne(targetEntity = ChatRoom.class, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "chatroom_id")
-//    private ChatRoom chatRoom;
-
-//    @Column(name = "item_id")
-//    private Long itemId;
+    public void updateStatus() {
+        this.messageStatus = MessageStatus.DELIVERED;
+    }
 }

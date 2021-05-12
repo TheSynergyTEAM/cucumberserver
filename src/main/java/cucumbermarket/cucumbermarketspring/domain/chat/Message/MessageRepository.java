@@ -7,8 +7,4 @@ import java.util.Optional;
 public interface MessageRepository extends JpaRepository<Message, Long>{
 
     List<Message> findByChatId(Optional<String> chatId);
-
-    Integer findByChatIdAndMessageStatus(
-            Optional<String> chatId, String messageStatus
-    );
 }

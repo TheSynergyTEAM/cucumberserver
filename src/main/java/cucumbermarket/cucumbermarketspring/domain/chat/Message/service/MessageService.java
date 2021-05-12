@@ -27,16 +27,16 @@ public class MessageService {
                 .senderId(messageDto.getSenderId())
                 .receiverId(messageDto.getReceiverId())
                 .chatId(String.format("%s_%s_%s", messageDto.getSenderId(), messageDto.getReceiverId(), messageDto.getItemId()))
-                .content(messageDto.getContent())
                 .messageStatus(MessageStatus.RECEIVED)
+                .content(messageDto.getContent())
                 .build();
         messageRepository.save(originMessage);
         Message createdMessage = Message.builder()
                 .senderId(messageDto.getSenderId())
                 .receiverId(messageDto.getReceiverId())
                 .chatId(String.format("%s_%s_%s", messageDto.getReceiverId(), messageDto.getSenderId(), messageDto.getItemId()))
-                .content(messageDto.getContent())
                 .messageStatus(MessageStatus.RECEIVED)
+                .content(messageDto.getContent())
                 .build();
         messageRepository.save(createdMessage);
         return createdMessage;
@@ -48,7 +48,7 @@ public class MessageService {
     @Transactional
     public List<Message> findMessages(Long senderId, Long receiverId, Long itemId) {
         // TODO Exception Handling
-        Optional<String> chatId = chatRoomService.getChatId(senderId, receiverId, itemId);
+        Optional<String> chatId = getChatId(senderId, receiverId, itemId);
         return messageRepository.findByChatId(chatId);
     }
 
@@ -64,10 +64,27 @@ public class MessageService {
      * 메세지 수 조회 (읽지 않은 메세지)
      */
     @Transactional
-    public Integer countNewMessages(Long senderId, Long receiverId, Long itemId) {
-        Optional<String> chatId = chatRoomService.getChatId(senderId, receiverId, itemId);
-        return messageRepository.findByChatIdAndMessageStatus(chatId, String.valueOf(MessageStatus.RECEIVED));
+    public Long countNewMessages(Long senderId, Long receiverId, Long itemId) {
+        Optional<String> chatId = getChatId(senderId, receiverId, itemId);
+        List<Message> byChatId = messageRepository.findByChatId(chatId);
+        return byChatId.stream().filter(message -> message.getMessageStatus().equals(MessageStatus.RECEIVED)).count();
     }
 
+
+    @Transactional
+    public void updateMessages(Long senderId, Long receiverId, Long itemId) {
+        Optional<String> chatId = getChatId(senderId, receiverId, itemId);
+        List<Message> allMessages = messageRepository.findByChatId(chatId);
+        for (Message message : allMessages) {
+            if (message.getMessageStatus().equals(MessageStatus.RECEIVED)) {
+                message.updateStatus();
+            }
+        }
+        return;
+    }
+
+    private Optional<String> getChatId(Long senderId, Long receiverId, Long itemId) {
+        return chatRoomService.getChatId(senderId, receiverId, itemId);
+    }
 
 }
