@@ -18,6 +18,7 @@ public class ItemResponseDto {
     private String street;
     private Boolean sold;
     private LocalDateTime created;
+    private int views;
     private List<Long> fileid;
 
     public ItemResponseDto(Item entity, List<Long> fileId){
@@ -31,6 +32,7 @@ public class ItemResponseDto {
         this.street = entity.getAddress().getStreet1();
         this.sold = entity.getSold();
         this.created = entity.getCreated();
+        this.views = entity.getViews();
         this.fileid = fileId;
     }
 }

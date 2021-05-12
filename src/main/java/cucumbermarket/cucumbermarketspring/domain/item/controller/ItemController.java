@@ -77,7 +77,6 @@ public class ItemController {
                 .sold(sold)
                 .build();
 
-
         List<PhotoResponseDto> dbPhotoList = fileService.findAll(id);
         List<MultipartFile> multipartList = itemFileVO.getFiles();
         List<MultipartFile> validFileList = new ArrayList<>();
@@ -91,17 +90,17 @@ public class ItemController {
         else { // db에 한 장 이상 존재
             if(CollectionUtils.isEmpty(multipartList)) { // 전달되어온 파일 아예 x
                 for(PhotoResponseDto dbPhoto : dbPhotoList)
-                    fileService.deletePhoto(dbPhoto.getFileId());
+                    fileService.deletePhoto(dbPhoto.getFileid());
             }
             else { // 전달되어온 파일 한 장 이상 존재
                 List<String> dbOriginNameList = new ArrayList<>();
 
                 for(PhotoResponseDto dbPhoto : dbPhotoList) {   // db의 파일 원본명 추출
-                    PhotoDto dbPhotoDto = fileService.findByFileId(dbPhoto.getFileId());
+                    PhotoDto dbPhotoDto = fileService.findByFileId(dbPhoto.getFileid());
                     String dbOrigFileName = dbPhotoDto.getOrigFileName();
 
                     if(!multipartList.contains(dbOrigFileName)) // 삭제요청 파일
-                        fileService.deletePhoto(dbPhoto.getFileId());
+                        fileService.deletePhoto(dbPhoto.getFileid());
                     else
                         dbOriginNameList.add(dbOrigFileName);
                 }
@@ -138,8 +137,10 @@ public class ItemController {
         List<PhotoResponseDto> photoResponseDtoList = fileService.findAll(id);
         List<Long> photoId = new ArrayList<>();
         for(PhotoResponseDto photoResponseDto : photoResponseDtoList)
-            photoId.add(photoResponseDto.getFileId());
+            photoId.add(photoResponseDto.getFileid());
 
+        ItemResponseDto itemResponseDto = itemService.findOne(id, null);
+        itemService.updateViews(id, itemResponseDto.getViews());
         return itemService.findOne(id, photoId);
     }
 
