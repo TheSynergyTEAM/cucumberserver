@@ -49,8 +49,7 @@ public class ChatMessageController {
         Optional<String> chatId = chatRoomService.getChatId(
                 messageDto.getSenderId(),
                 messageDto.getReceiverId(),
-                messageDto.getItemId(),
-                true
+                messageDto.getItemId()
         );
         Message message = messageService.createMessage(messageDto);
         Member sender = memberService.searchMemberById(message.getSenderId());
@@ -62,10 +61,11 @@ public class ChatMessageController {
                         sender.getEmail()));
     }
 
-    @GetMapping("/message/{senderId}/{receiverId}")
+    @GetMapping("/message/{senderId}/{receiverId}/{itemId}")
     @CrossOrigin
-    public ResponseEntity<?> findChatMessages(@PathVariable("senderId") Long senderId, @PathVariable("receiverId") Long receiverId){
-        List<Message> messages = messageService.findMessages(senderId, receiverId);
+    public ResponseEntity<?> findChatMessages(@PathVariable("senderId") Long senderId, @PathVariable("receiverId") Long receiverId, @PathVariable("itemId") Long itemId){
+        List<Message> messages = messageService.findMessages(senderId, receiverId, itemId);
+        messageService.updateMessages(senderId, receiverId, itemId);
         return ResponseEntity.ok(
                 messages
         );
@@ -77,26 +77,13 @@ public class ChatMessageController {
         return "test";
     }
 
+    @GetMapping("/message/{senderId}/{receiverId}/{itemId}/count")
+    @CrossOrigin
+    public ResponseEntity<?> countNewMessages(@PathVariable("senderId") Long senderId, @PathVariable("receiverId") Long receiverId, @PathVariable("itemId") Long itemId) {
+        return ResponseEntity.ok(
+                messageService.countNewMessages(senderId, receiverId, itemId)
+        );
+    }
 
-//    @PostMapping("/chat/message")
-//    public String findChatRoom(@RequestBody @Valid CreateChatRoomDto request) {
-//
-//        Long itemId = request.getItemid();
-//        Long userId = request.getUserid();
-//
-//        Member member = memberService.searchMemberById(userId);
-//        Item item = itemRepository.getOne(itemId);
-//        ChatRoom chatRoom = chatRoomService.searchChatRoomByMemberAndItem(member, item);
-////        Long chatRoomId = chatRoomService.createChatRoom(member, item);
-//        return "redirect:/room/" + chatRoom.getId();
-//    }
-//
-//    @RequestMapping("/room/{chatRoomId}")
-//    public ResponseEntity<?> enterChatRoom(@PathVariable("chatRoomId") Long chatRoomId, HttpServletRequest request) {
-//        HttpSession session = request.getSession();
-//        String email = (String)session.getAttribute("email");
-//        return ResponseEntity.ok(chatRoomService.getAllMessage(
-//                memberRepository.findByEmail(email), chatRoomService.searchChatRoom(chatRoomId).getItem()
-//        ));
-//    }
+
 }
