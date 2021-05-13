@@ -1,6 +1,9 @@
 package cucumbermarket.cucumbermarketspring.domain.review.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import cucumbermarket.cucumbermarketspring.domain.file.Photo;
+import cucumbermarket.cucumbermarketspring.domain.file.PhotoRepository;
+import cucumbermarket.cucumbermarketspring.domain.file.util.FileHandler;
 import cucumbermarket.cucumbermarketspring.domain.review.QReview;
 import cucumbermarket.cucumbermarketspring.domain.review.Review;
 import cucumbermarket.cucumbermarketspring.domain.review.ReviewRepository;
@@ -11,6 +14,8 @@ import cucumbermarket.cucumbermarketspring.domain.review.dto.ReviewUpdateRequest
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,6 +26,8 @@ import java.util.stream.Collectors;
 @Service
 public class ReviewService {
     private final ReviewRepository reviewRepository;
+    private final PhotoRepository photoRepository;
+    private final FileHandler fileHandler;
 
     @PersistenceContext
     private EntityManager em;
@@ -29,23 +36,42 @@ public class ReviewService {
      * 리뷰생성
      * */
     @Transactional
-    public Long createReview(ReviewCreateRequestDto requestDto){
-        Long id = reviewRepository.save(requestDto.toEntity()).getId();
-        return id;
+    public Long createReview(ReviewCreateRequestDto requestDto, List<MultipartFile> files) throws Exception{
+
+        Review review = new Review(
+                requestDto.getItem(),
+                requestDto.getMember(),
+                requestDto.getRatingScore(),
+                requestDto.getContent()
+        );
+
+        List<Photo> photoList = fileHandler.parseFileInfo(review, files);
+
+        if(!CollectionUtils.isEmpty(photoList)){
+            for(Photo photo : photoList)
+                review.addPhoto(photoRepository.save(photo));
+        }
+
+        return reviewRepository.save(review).getId();
     }
 
     /**
      * 리뷰수정
      * */
     @Transactional
-    public ReviewResponseDto updateReview(Long id, ReviewUpdateRequestDto requestDto){
+    public void updateReview(Long id, ReviewUpdateRequestDto requestDto, List<MultipartFile> files) throws Exception {
         Review review = reviewRepository.findById(id).orElseThrow(
                 ()-> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
 
-        review.update(requestDto.getContent(), requestDto.getRatingScore());
+        List<Photo> photoList = fileHandler.parseFileInfo(review, files);
 
-        ReviewResponseDto reviewResponseDto = this.findOne(id);
-        return reviewResponseDto;
+        if(!photoList.isEmpty()){
+            for(Photo photo : photoList) {
+                photoRepository.save(photo);
+            }
+        }
+
+        review.update(requestDto.getContent(), requestDto.getRatingScore());
     }
 
     /**
@@ -63,11 +89,11 @@ public class ReviewService {
      * 리뷰 개별 조회
      * */
     @Transactional(readOnly = true)
-    public ReviewResponseDto findOne(Long id){
+    public ReviewResponseDto findOne(Long id, List<Long> fileId){
         Review entity = reviewRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
 
-        return new ReviewResponseDto(entity);
+        return new ReviewResponseDto(entity, fileId);
     }
 
     /**
@@ -128,4 +154,5 @@ public class ReviewService {
                 .map(ReviewListResponseDto::new)
                 .collect(Collectors.toList());
     }
+
 }

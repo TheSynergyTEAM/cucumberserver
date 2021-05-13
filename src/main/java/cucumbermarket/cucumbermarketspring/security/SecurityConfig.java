@@ -34,7 +34,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/", "/login", "/address/city/**", "/member",
             "/category", "/item/**","/item", "/item/list", "/item/area",
             "/thumbnail/**", "/image/**",
-            "/test", "/webjars/**", "/ws/**", "/user/**", "/chat/**"
+            "/test", "/webjars/**", "/ws/**", "/user/**", "/chat/**",
+            "/review/list/**",
     };
 
     @Bean

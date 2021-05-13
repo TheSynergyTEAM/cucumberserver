@@ -1,7 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.file.controller;
 
 import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoDto;
-import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
@@ -17,7 +16,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -75,9 +73,9 @@ public class PhotoController {
     /**
      * 이미지 전체 조회
      */
-    @CrossOrigin
-    @GetMapping("/images/{id}")
-    public List<PhotoResponseDto> getImageList(@PathVariable Long id) {
-        return photoService.findAll(id);
-    }
+  //  @CrossOrigin
+  //  @GetMapping("/images/{id}")
+  //  public List<PhotoResponseDto> getImageList(@PathVariable Long id) {
+  //      return photoService.findAll(id);
+  //  }
 }

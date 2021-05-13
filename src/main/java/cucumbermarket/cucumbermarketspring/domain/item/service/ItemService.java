@@ -15,6 +15,7 @@ import cucumbermarket.cucumbermarketspring.domain.member.address.QAddress;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
@@ -50,7 +51,7 @@ public class ItemService {
 
         List<Photo> photoList = fileHandler.parseFileInfo(item, files);
 
-        if(!photoList.isEmpty()){
+        if(!CollectionUtils.isEmpty(photoList)){
             for(Photo photo : photoList)
                 item.addPhoto(photoRepository.save(photo));
         }
@@ -90,15 +91,25 @@ public class ItemService {
     }
 
     /**
-     * 상품 개별 조회
+     * 상품 개별 조회(정보 + 파일)
      * */
     @Transactional(readOnly = true)
     public ItemResponseDto findOne(Long id, List<Long> fileId){
         Item entity = itemRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
 
-
         return new ItemResponseDto(entity, fileId);
+    }
+
+    /**
+     * 상품 개별 조회(정보)
+     * */
+    @Transactional(readOnly = true)
+    public Item searchItemById(Long id){
+        Item item = itemRepository.findById(id).orElseThrow(()
+                -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+
+        return item;
     }
 
     /**
