@@ -1,7 +1,9 @@
 package cucumbermarket.cucumbermarketspring.domain.member.address;
 
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,11 @@ public class AddressVO {
 
     private HashMap<Integer, String> cityMap = new HashMap<>();
     private HashMap<String, ArrayList<String>> streetMap = new HashMap<>();
+
+    @PostConstruct
+    public int getCityMapLength(){
+        return cityMap.size();
+    }
 
     public AddressVO() {
         cityMap.put(1, "서울특별시");
