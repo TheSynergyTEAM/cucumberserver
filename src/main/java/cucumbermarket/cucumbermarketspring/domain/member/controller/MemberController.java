@@ -121,6 +121,16 @@ public class MemberController {
                 .body(updateMember);
     }
 
+    /**
+     * 회원 탈퇴
+     */
+    @CrossOrigin
+    @DeleteMapping("/member/{id}")
+    public ResponseEntity<?> deleteMember(@PathVariable("id") Long id) {
+        memberService.deleteMember(id);
+        return ResponseEntity.ok().body("OK");
+    }
+
     @Data
     static class CreateMemberResponseDto {
         private Long id;

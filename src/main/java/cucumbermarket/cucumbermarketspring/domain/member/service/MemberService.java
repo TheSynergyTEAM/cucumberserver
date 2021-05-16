@@ -2,7 +2,6 @@ package cucumbermarket.cucumbermarketspring.domain.member.service;
 
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
-//import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
 import lombok.RequiredArgsConstructor;
