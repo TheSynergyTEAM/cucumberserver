@@ -1,7 +1,9 @@
 package cucumbermarket.cucumbermarketspring.domain.review;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
+import cucumbermarket.cucumbermarketspring.domain.file.Photo;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import lombok.AccessLevel;
@@ -10,9 +12,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity
 @Table(name = "review")
 public class Review extends BaseTimeEntity {
@@ -38,6 +42,10 @@ public class Review extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @OneToMany(mappedBy = "review", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Photo> photo = new ArrayList<>();
+
     /**
      * 빌더
      * */
@@ -53,4 +61,12 @@ public class Review extends BaseTimeEntity {
         this.content = content;
         this.ratingScore = ratingScore;
     }
+
+    public void addPhoto(Photo photo){
+        this.photo.add(photo);
+
+        if(photo.getReview() != this)
+            photo.setReview(this);
+    }
+
 }
