@@ -24,7 +24,6 @@ public class Photo extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne
-    //@JoinColumn(name = "item_id")
     @JoinTable(
             name = "ITEM_PHOTO",
             joinColumns = @JoinColumn(name = "file_id"),
@@ -32,8 +31,7 @@ public class Photo extends BaseTimeEntity {
     )
     private Item item;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    //@JoinColumn(name = "review_id")
+    @ManyToOne
     @JoinTable(
             name = "REVIEW_PHOTO",
             joinColumns = @JoinColumn(name = "file_id"),

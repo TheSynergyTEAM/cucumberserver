@@ -34,18 +34,14 @@ public class FileHandler {
     ) throws Exception {
         List<Photo> fileList = new ArrayList<>();
 
-      //  if (multipartFiles == null) // 전달되어온 파일이 존재하지 않을 경우
-      //      return fileList;
         if(!CollectionUtils.isEmpty(multipartFiles)) {  // 전달되어 온 파일이 존재할 경우
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter dateTimeFormatter =
                     DateTimeFormatter.ofPattern("yyyyMMdd");
             String current_date = now.format(dateTimeFormatter);
 
-         //   String absolutePath = new File("").getAbsolutePath() + "\\";
             String absolutePath = new File("").getAbsolutePath() + File.separator + File.separator;
 
-         //   String path = "images/" + current_date;
             String path = "images" + File.separator + "item" + File.separator + current_date;
             File file = new File(path);
             if (!file.exists()) {
@@ -86,7 +82,6 @@ public class FileHandler {
                         photo.setItem(item);
                     fileList.add(photo);
 
-                 //   file = new File(absolutePath + path + "/" + new_file_name);
                     file = new File(absolutePath + path + File.separator + new_file_name);
                     multipartFile.transferTo(file);
 
@@ -112,10 +107,8 @@ public class FileHandler {
                     DateTimeFormatter.ofPattern("yyyyMMdd");
             String current_date = now.format(dateTimeFormatter);
 
-            //   String absolutePath = new File("").getAbsolutePath() + "\\";
             String absolutePath = new File("").getAbsolutePath() + File.separator + File.separator;
 
-            //   String path = "images/" + current_date;
             String path = "images" + File.separator + "review" + File.separator + current_date;
             File file = new File(path);
             if (!file.exists()) {
@@ -143,7 +136,6 @@ public class FileHandler {
 
                 PhotoDto photoDto = PhotoDto.builder()
                         .origFileName(multipartFile.getOriginalFilename())
-                        //.filePath(path + "/" + new_file_name)
                         .filePath(path + File.separator + new_file_name)
                         .fileSize(multipartFile.getSize())
                         .build();
@@ -156,7 +148,6 @@ public class FileHandler {
                    photo.setReview(review);
                 fileList.add(photo);
 
-                //   file = new File(absolutePath + path + "/" + new_file_name);
                 file = new File(absolutePath + path + File.separator + new_file_name);
                 multipartFile.transferTo(file);
 

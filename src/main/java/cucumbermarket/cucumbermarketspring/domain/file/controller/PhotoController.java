@@ -60,7 +60,6 @@ public class PhotoController {
     )
     public ResponseEntity<byte[]> getImage(@PathVariable Long id) throws IOException {
         PhotoDto photoDto = photoService.findByFileId(id);
-      //  String absolutePath = new File("").getAbsolutePath() + "\\";
         String absolutePath = new File("").getAbsolutePath() + File.separator + File.separator;
         String path = photoDto.getFilePath();
 
