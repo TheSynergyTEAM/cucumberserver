@@ -10,6 +10,7 @@ import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 
@@ -41,63 +43,30 @@ public class ChatRoomServiceTest {
     @Test
     public void createChatRoomTest() throws Exception {
 
-//        //given
-//        Member member = getMember("memberA", "1234", "abc@abc.com", "010-1234-1234");
-//        entityManager.persist(member);
-//        Item item1 = getItem1(member);
-//        ChatRoom chatRoom = getChatRoom(member, item1);
-//        chatRoomRepository.save(chatRoom);
-//        System.out.println("here");
-//        entityManager.flush();
-//        //when
-//        ChatRoom chatRoom1 = chatRoomService.searchChatRoomByMemberAndItem(member, item1);
-//
-//        assertEquals(chatRoom1.getMember(), member);
-//
-//        //then
-    }
+        //given
+        String chatRoomId = chatRoomService.createChatRoom(1L, 2L, 1L);
 
-    private Item getItem1(Member member) {
-        return new Item(member, "", Categories.BEAUTY, 1, "", new Address(), Boolean.FALSE, 0);
-    }
+        //when
+        Optional<ChatRoom> byChatId = chatRoomRepository.findByChatId(chatRoomId);
 
-    @Test
-    public void addMessageTest() throws Exception {
-        Member member = getMember("memberA", "1234", "abc@abc.com", "010-1234-1234");
-        entityManager.persist(member);
-
-
+        //then
+        Assertions.assertEquals(chatRoomId, byChatId.get().getChatId());
 
     }
 
     @Test
-    public void getAllChatRoomByItemTest() throws Exception {
+    public void findChatRoomBySenderIdTest() throws Exception {
 
+        //given
+        String chatRoomId = chatRoomService.createChatRoom(1L, 2L, 1L);
+        String chatRoomId2 = chatRoomService.createChatRoom(2L, 3L, 3L);
 
+        //when
+        List<ChatRoom> bySenderId = chatRoomRepository.findBySenderId(1L);
+
+        //then
+        Assertions.assertEquals(bySenderId.size(),1);
     }
-
-    private Item getItem(Member member, List<Photo> fileList) {
-        Item item = new Item();
-        return item;
-    }
-
-    private Member getMember(String name, String password, String email, String contact) {
-        Member member = new Member(
-                name,
-                password,
-                new Address(),
-                LocalDate.now(),
-                email,
-                contact,
-                0,
-                "USER"
-        );
-        return member;
-    }
-
-//    private ChatRoom getChatRoom(Member member, Item item) {
-//        return new ChatRoom(item, member);
-//    }
 
 
 }

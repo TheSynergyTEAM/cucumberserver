@@ -3,6 +3,7 @@ package cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoom;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoomRepository;
+import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.dto.ChatRoomListDTO;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -48,12 +50,14 @@ public class ChatRoomService {
         return chatId1;
     }
 
-    @Transactional(readOnly = true)
-    public ChatRoom searchChatRoom(Long chatRoomId) {
-        return chatRoomRepository.getOne(chatRoomId);
-    }
-
-
+    /**
+     * 채팅 방 조회
+     *
+     * @param senderId
+     * @param receiverId
+     * @param itemId
+     * @return
+     */
     @Transactional
     public Optional<String> getChatId(Long senderId, Long receiverId, Long itemId) {
         try {
@@ -65,7 +69,17 @@ public class ChatRoomService {
         } catch (NoSuchElementException e) {
             return Optional.ofNullable(createChatRoom(senderId, receiverId, itemId));
         }
-
     }
+
+    @Transactional
+    public List<ChatRoomListDTO> findAllChatRoomsBySenderId(Long senderId) {
+        List<ChatRoom> bySenderId = chatRoomRepository.findBySenderId(senderId);
+        List<ChatRoomListDTO> chatRoomList = new ArrayList<ChatRoomListDTO>();
+        for (ChatRoom chatRoom : bySenderId) {
+            chatRoomList.add(new ChatRoomListDTO(chatRoom.getChatId()));
+        }
+        return chatRoomList;
+    }
+
 
 }

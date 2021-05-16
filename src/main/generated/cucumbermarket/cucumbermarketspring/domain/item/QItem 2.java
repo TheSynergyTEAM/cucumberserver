@@ -52,8 +52,6 @@ public class QItem extends EntityPathBase<Item> {
 
     public final StringPath title = createString("title");
 
-    public final NumberPath<Integer> views = createNumber("views", Integer.class);
-
     public QItem(String variable) {
         this(Item.class, forVariable(variable), INITS);
     }

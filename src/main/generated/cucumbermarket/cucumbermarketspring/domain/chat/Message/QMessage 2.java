@@ -30,8 +30,6 @@ public class QMessage extends EntityPathBase<Message> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final EnumPath<MessageStatus> messageStatus = createEnum("messageStatus", MessageStatus.class);
-
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modified = _super.modified;
 
