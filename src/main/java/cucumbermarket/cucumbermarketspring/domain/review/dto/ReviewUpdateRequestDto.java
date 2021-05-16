@@ -15,4 +15,5 @@ public class ReviewUpdateRequestDto {
         this.ratingScore = ratingScore;
         this.content = content;
     }
+
 }

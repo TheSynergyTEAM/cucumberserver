@@ -77,7 +77,7 @@ public class ItemController {
                 .sold(sold)
                 .build();
 
-        List<PhotoResponseDto> dbPhotoList = fileService.findAll(id);
+        List<PhotoResponseDto> dbPhotoList = fileService.findAllByItem(id);
         List<MultipartFile> multipartList = itemFileVO.getFiles();
         List<MultipartFile> validFileList = new ArrayList<>();
 
@@ -134,7 +134,7 @@ public class ItemController {
     @GetMapping("/item/{id}")
     @CrossOrigin
     public ItemResponseDto findById(@PathVariable("id") Long id){
-        List<PhotoResponseDto> photoResponseDtoList = fileService.findAll(id);
+        List<PhotoResponseDto> photoResponseDtoList = fileService.findAllByItem(id);
         List<Long> photoId = new ArrayList<>();
         for(PhotoResponseDto photoResponseDto : photoResponseDtoList)
             photoId.add(photoResponseDto.getFileid());

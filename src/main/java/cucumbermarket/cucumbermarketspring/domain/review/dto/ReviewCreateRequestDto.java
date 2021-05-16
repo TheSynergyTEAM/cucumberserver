@@ -18,7 +18,7 @@ public class ReviewCreateRequestDto {
     @Builder
     public ReviewCreateRequestDto(Item item, Member member, int ratingScore, String content){
         this.item = item;
-        this.member = member;   // 구매자
+        this.member = member;
         this.ratingScore = ratingScore;
         this.content = content;
     }

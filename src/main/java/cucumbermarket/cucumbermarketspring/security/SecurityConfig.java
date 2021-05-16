@@ -34,7 +34,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/", "/login", "/address/city/**", "/member",
             "/category", "/item/**","/item", "/item/list", "/item/area",
             "/thumbnail/**", "/image/**",
-            "/test", "/webjars/**", "/ws/**", "/user/**", "/chat/**"
+            "/test", "/webjars/**", "/ws/**", "/user/**", "/chat/**",
+            "/review/list/**",
     };
 
     @Bean
@@ -64,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     CorsConfigurationSource source = request -> {
                         CorsConfiguration config = new CorsConfiguration();
                         config.setAllowedOrigins(
-                                List.of("http://localhost.3000/"));
+                                List.of("http://localhost:3000/"));
                         config.setAllowedMethods(
                                 List.of("GET", "POST", "PUT", "DELETE"));
                         return config;

@@ -4,6 +4,7 @@ import cucumbermarket.cucumbermarketspring.domain.chat.ChatNotification;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.service.MessageService;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoom;
+import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.dto.ChatRoomListDTO;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service.ChatRoomService;
 import cucumbermarket.cucumbermarketspring.domain.chat.socket.dto.CreateChatRoomDto;
 import cucumbermarket.cucumbermarketspring.domain.chat.socket.dto.MessageDto;
@@ -12,7 +13,10 @@ import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -81,9 +85,26 @@ public class ChatMessageController {
     @CrossOrigin
     public ResponseEntity<?> countNewMessages(@PathVariable("senderId") Long senderId, @PathVariable("receiverId") Long receiverId, @PathVariable("itemId") Long itemId) {
         return ResponseEntity.ok(
-                messageService.countNewMessages(senderId, receiverId, itemId)
+                new CountMessageDTO(messageService.countNewMessages(senderId, receiverId, itemId))
         );
     }
 
+    @GetMapping("/chatroom/{senderId}")
+    @CrossOrigin
+    public ResponseEntity<?> chatRoomList(@PathVariable("senderId") Long senderId) {
+        List<ChatRoomListDTO> allChatRoomsBySenderId = chatRoomService.findAllChatRoomsBySenderId(senderId);
+        return ResponseEntity.ok().body(
+                allChatRoomsBySenderId
+        );
+    }
+
+    @Getter
+    class CountMessageDTO {
+        private Long count;
+
+        public CountMessageDTO(Long count) {
+            this.count = count;
+        }
+    }
 
 }

@@ -19,10 +19,13 @@ import java.util.List;
 public class InitMember {
 
     private final InitService initService;
+    private final MemberRepository memberRepository;
 
     @PostConstruct
     public void init() {
-        initService.initDB();
+        if (memberRepository.findAll().size() == 0) {
+            initService.initDB();
+        }
     }
     @Component
     @Transactional
