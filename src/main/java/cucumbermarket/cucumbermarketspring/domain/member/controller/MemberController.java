@@ -36,22 +36,6 @@ public class MemberController {
     private final JwtAuthenticationTokenProvider jwtAuthenticationTokenProvider;
     private final AuthenticationManager authenticationManager;
 
-    @GetMapping("/api/member")
-    public List<Member> members() {
-        return memberService.searchAllMember();
-    }
-
-    @GetMapping("/api/members/{id}")
-    public MemberDto memberById(@PathVariable("id") Long id) {
-        Member member = memberService.searchMemberById(id);
-        MemberDto memberDto = new MemberDto();
-        memberDto.setId(member.getId());
-        memberDto.setName(member.getName());
-        memberDto.setEmail(member.getEmail());
-        memberDto.setContact(member.getContact());
-        return memberDto;
-    }
-
     /**
      *
      * 회원가입

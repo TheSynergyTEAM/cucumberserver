@@ -58,7 +58,7 @@ public class ChatRoomServiceTest {
     }
 
     private Item getItem1(Member member) {
-        return new Item(member, "", Categories.BEAUTY, 1, "", new Address(), Boolean.FALSE);
+        return new Item(member, "", Categories.BEAUTY, 1, "", new Address(), Boolean.FALSE, 0);
     }
 
     @Test
