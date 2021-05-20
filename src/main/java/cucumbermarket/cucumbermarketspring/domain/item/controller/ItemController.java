@@ -157,6 +157,27 @@ public class ItemController {
     }
 
     /**
+     * 물품 전체 조회(카테고리 기준)
+     */
+    @GetMapping("/item/search/1")
+    @CrossOrigin
+    public List<ItemListResponseDto> findByCategory(
+            @RequestParam("category") String category) {
+        Categories categories = Categories.find(category);
+        return itemService.findByCategory(categories);
+    }
+
+    /**
+     * 물품 전체 조회(키워드 기준)
+     */
+    @GetMapping("/item/search/2")
+    @CrossOrigin
+    public List<ItemListResponseDto> findByKeyword(
+            @RequestParam("keyword") String keyword) {
+        return itemService.findByKeyword(keyword);
+    }
+
+    /**
      * 물품 전체 조회
      */
     @GetMapping("/item/list")
