@@ -7,6 +7,7 @@ import cucumbermarket.cucumbermarketspring.domain.file.util.FileHandler;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.item.QItem;
+import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemListResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
@@ -143,6 +144,46 @@ public class ItemService {
        return itemList.stream()
                .map(ItemListResponseDto::new)
                .collect(Collectors.toList());
+    }
+
+    /**
+     * 상품 전체 조회(카테고리 기준)
+     * */
+    @Transactional(readOnly = true)
+    public List<ItemListResponseDto> findByCategory(Categories category){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QItem item = QItem.item;
+
+        List<Item> itemList = queryFactory
+                .selectFrom(item)
+                .where(item.categories.eq(category))
+                .fetch();
+
+
+        return itemList.stream()
+                .map(ItemListResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 상품 전체 조회(키워드 기준)
+     * */
+    @Transactional(readOnly = true)
+    public List<ItemListResponseDto> findByKeyword(String keyword){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QItem item = QItem.item;
+
+        List<Item> itemList = queryFactory
+                .selectFrom(item)
+                .where(item.title.contains(keyword).or(item.spec.contains(keyword)))
+                .fetch();
+
+
+        return itemList.stream()
+                .map(ItemListResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     /**
