@@ -112,7 +112,7 @@ public class ItemServiceTest {
         Member member = new Member("홍길동", "sj1234", new Address(), LocalDate.now(),
                 "hgd@gmail.com", "010-1234-5678", 0, "USER");
         Item item = new Item(
-                member, "싸게 팔아요", Categories.KID,
+                member, null, "싸게 팔아요", Categories.KID,
                 10000, "잔기스 있어요", null, false,0);
    //     Item item = Item.builder()
    //             .member(member)

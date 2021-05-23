@@ -42,6 +42,7 @@ public class ItemService {
 
         Item item = new Item(
                 requestDto.getMember(),
+                null,
                 requestDto.getTitle(),
                 requestDto.getCategories(),
                 requestDto.getPrice(),
@@ -78,6 +79,17 @@ public class ItemService {
 
         item.update(requestDto.getTitle(), requestDto.getCategories(), requestDto.getPrice(),
                 requestDto.getSpec(), requestDto.getAddress(), requestDto.getSold());
+    }
+
+    /**
+     * 판매 완료
+     * */
+    @Transactional
+    public void soldOut(Long itemId, Long buyerId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(()
+                -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+
+        item.soldOut(true, buyerId);
     }
 
     /**
@@ -124,6 +136,45 @@ public class ItemService {
         item.updateView(views);
     }
 
+    /**
+     * 판매 상품 전체 조회
+     * */
+    @Transactional(readOnly = true)
+    public List<ItemListResponseDto> findBySoldItem(Long memberId){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QItem item = QItem.item;
+
+        List<Item> itemList = queryFactory
+                .selectFrom(item)
+                .where(item.member.id.eq(memberId))
+                .fetch();
+
+
+        return itemList.stream()
+                .map(ItemListResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 구매 상품 전체 조회
+     * */
+    @Transactional(readOnly = true)
+    public List<ItemListResponseDto> findByBoughtItem(Long buyerId){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QItem item = QItem.item;
+
+        List<Item> itemList = queryFactory
+                .selectFrom(item)
+                .where(item.buyerId.eq(buyerId))
+                .fetch();
+
+
+        return itemList.stream()
+                .map(ItemListResponseDto::new)
+                .collect(Collectors.toList());
+    }
 
     /**
      * 상품 전체 조회(구 기준)

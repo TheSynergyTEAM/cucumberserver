@@ -36,6 +36,9 @@ public class Item extends BaseTimeEntity {
     @JsonBackReference
     private Member member;  // 판매자
 
+    @Column(name = "buyer_id")
+    private Long buyerId;   // 구매자
+
     @Embedded
     private Address address;
 
@@ -69,8 +72,9 @@ public class Item extends BaseTimeEntity {
      * 빌더
      * */
     @Builder
-    public Item(Member member, String title, Categories categories, int price, String spec, Address address, Boolean sold, int views){
+    public Item(Member member, Long buyerId, String title, Categories categories, int price, String spec, Address address, Boolean sold, int views){
         this.member = member;
+        this.buyerId = buyerId;
         this.title = title;
         this.categories = categories;
         this.price = price;
@@ -91,6 +95,11 @@ public class Item extends BaseTimeEntity {
 
     public void updateView(int views){
         this.views = views + 1;
+    }
+
+    public void soldOut(Boolean sold, Long memberId){
+        this.sold = sold;
+        this.buyerId = memberId;
     }
 
     public void addPhoto(Photo photo){

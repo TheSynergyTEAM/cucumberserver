@@ -120,6 +120,16 @@ public class ItemController {
     }
 
     /**
+     * 판매 완료
+     */
+    @PatchMapping("/item/{id}/soldout")
+    @CrossOrigin
+    public CreateUpdateItemResponse soldOut(@PathVariable("id") Long itemId, @RequestParam("buyer") Long buyerId) {
+        itemService.soldOut(itemId, buyerId);
+        return new CreateUpdateItemResponse(itemId);
+    }
+
+    /**
      * 물품삭제
      */
     @DeleteMapping("/item/{id}")
@@ -144,6 +154,23 @@ public class ItemController {
         return itemService.findOne(id, photoId);
     }
 
+    /**
+     * 판매 물품 전체 조회
+     */
+    @GetMapping("/item/sell")
+    @CrossOrigin
+    public List<ItemListResponseDto> findBySoldItem(@RequestParam("user") Long id) {
+        return itemService.findBySoldItem(id);
+    }
+
+    /**
+     * 구매 물품 전체 조회
+     */
+    @GetMapping("/item/buy")
+    @CrossOrigin
+    public List<ItemListResponseDto> findByBoughtItem(@RequestParam("user") Long id) {
+        return itemService.findByBoughtItem(id);
+    }
 
     /**
      * 물품 전체 조회(구 기준)
