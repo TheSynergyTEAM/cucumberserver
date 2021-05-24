@@ -5,8 +5,7 @@ import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.favourite.QFavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.favourite.dto.FavItemCreateRequestDto;
-import cucumbermarket.cucumbermarketspring.domain.favourite.dto.FavItemListResponseDto;
-import cucumbermarket.cucumbermarketspring.domain.favourite.dto.FavItemResponseDto;
+import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -44,33 +42,53 @@ public class FavouriteService {
     }
 
     /**
-     * 찜하기 모두 조회
+     * 찜하기 전체 조회
      * */
     @Transactional(readOnly = true)
-    public List<FavItemListResponseDto> findAll(Long id){
+    public List<FavouriteItem> findAll(Long memberId){
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
         QFavouriteItem favouriteItem = QFavouriteItem.favouriteItem;
 
         List<FavouriteItem> favouriteList = queryFactory
                 .selectFrom(favouriteItem)
-                .innerJoin(favouriteItem.member)
-                .where(favouriteItem.member.id.eq(id))
+                .where(favouriteItem.member.id.eq(memberId))
                 .fetch();
 
-        return favouriteList.stream()
-                .map(FavItemListResponseDto::new)
-                .collect(Collectors.toList());
+        return favouriteList;
     }
 
     /**
-     * 찜하기 개별 조회
+     * 찜하기 카테고리별 전체 조회
      * */
     @Transactional(readOnly = true)
-    public FavItemResponseDto findOne(Long id) {
-        FavouriteItem entity = favItemRepository.findById(id).orElseThrow(()
-                -> new IllegalArgumentException("해당 내역이 존재하지 않습니다."));
+    public List<FavouriteItem> findAllByCategory(Long memberId, Categories category){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
-        return new FavItemResponseDto(entity);
+        QFavouriteItem favouriteItem = QFavouriteItem.favouriteItem;
+
+        List<FavouriteItem> favouriteList = queryFactory
+                .selectFrom(favouriteItem)
+                .where(favouriteItem.member.id.eq(memberId).and(favouriteItem.item.categories.eq(category)))
+                .fetch();
+
+        return favouriteList;
+    }
+
+    /**
+     * 찜하기 횟수
+     * */
+    @Transactional(readOnly = true)
+    public Long countFavourite(Long itemId){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QFavouriteItem favouriteItem = QFavouriteItem.favouriteItem;
+
+        Long count = queryFactory
+                .selectFrom(favouriteItem)
+                .where(favouriteItem.item.id.eq(itemId))
+                .fetchCount();
+
+        return count;
     }
 }

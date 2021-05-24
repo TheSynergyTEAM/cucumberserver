@@ -19,9 +19,10 @@ public class ItemResponseDto {
     private Boolean sold;
     private LocalDateTime created;
     private int views;
+    private Long favourite;
     private List<Long> fileid;
 
-    public ItemResponseDto(Item entity, List<Long> fileId){
+    public ItemResponseDto(Item entity, List<Long> fileId, Long favourite){
         this.id = entity.getId();
         this.member = entity.getMember().getName();
         this.title = entity.getTitle();
@@ -33,6 +34,7 @@ public class ItemResponseDto {
         this.sold = entity.getSold();
         this.created = entity.getCreated();
         this.views = entity.getViews();
+        this.favourite = favourite;
         this.fileid = fileId;
     }
 }

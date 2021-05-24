@@ -7,8 +7,8 @@ import cucumbermarket.cucumbermarketspring.domain.file.util.FileHandler;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.item.QItem;
+import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
-import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemListResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.member.address.QAddress;
@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -41,6 +40,7 @@ public class ItemService {
 
         Item item = new Item(
                 requestDto.getMember(),
+                null,
                 requestDto.getTitle(),
                 requestDto.getCategories(),
                 requestDto.getPrice(),
@@ -80,6 +80,17 @@ public class ItemService {
     }
 
     /**
+     * 판매 완료
+     * */
+    @Transactional
+    public void soldOut(Long itemId, Long buyerId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(()
+                -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+
+        item.soldOut(true, buyerId);
+    }
+
+    /**
      * 상품삭제
      * */
     @Transactional
@@ -94,11 +105,11 @@ public class ItemService {
      * 상품 개별 조회(정보 + 파일)
      * */
     @Transactional(readOnly = true)
-    public ItemResponseDto findOne(Long id, List<Long> fileId){
+    public ItemResponseDto findOne(Long id, List<Long> fileId, Long count){
         Item entity = itemRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
 
-        return new ItemResponseDto(entity, fileId);
+        return new ItemResponseDto(entity, fileId, count);
     }
 
     /**
@@ -123,12 +134,54 @@ public class ItemService {
         item.updateView(views);
     }
 
+    /**
+     * 판매 상품 전체 조회
+     * */
+    @Transactional(readOnly = true)
+//    public List<ItemListResponseDto> findBySoldItem(Long memberId){
+    public List<Item> findBySoldItem(Long memberId){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QItem item = QItem.item;
+
+        List<Item> itemList = queryFactory
+                .selectFrom(item)
+                .where(item.member.id.eq(memberId))
+                .fetch();
+
+        return itemList;
+        //return itemList.stream()
+        //        .map(ItemListResponseDto::new)
+        //        .collect(Collectors.toList());
+    }
+
+    /**
+     * 구매 상품 전체 조회
+     * */
+    @Transactional(readOnly = true)
+//    public List<ItemListResponseDto> findByBoughtItem(Long buyerId){
+    public List<Item> findByBoughtItem(Long buyerId){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QItem item = QItem.item;
+
+        List<Item> itemList = queryFactory
+                .selectFrom(item)
+                .where(item.buyerId.eq(buyerId))
+                .fetch();
+
+        return itemList;
+    //    return itemList.stream()
+    //            .map(ItemListResponseDto::new)
+    //            .collect(Collectors.toList());
+    }
 
     /**
      * 상품 전체 조회(구 기준)
      * */
    @Transactional(readOnly = true)
-    public List<ItemListResponseDto> findByArea(String city, String street){
+//    public List<ItemListResponseDto> findByArea(String city, String street){
+   public List<Item> findByArea(String city, String street){
        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
        QItem item = QItem.item;
@@ -139,20 +192,65 @@ public class ItemService {
                .where(item.address.city.eq(city).and(item.address.street1.eq(street)))
                .fetch();
 
+        return itemList;
+    //   return itemList.stream()
+    //           .map(ItemListResponseDto::new)
+    //           .collect(Collectors.toList());
+    }
 
-       return itemList.stream()
-               .map(ItemListResponseDto::new)
-               .collect(Collectors.toList());
+    /**
+     * 상품 전체 조회(카테고리 기준)
+     * */
+    @Transactional(readOnly = true)
+//    public List<ItemListResponseDto> findByCategory(Categories category){
+    public List<Item> findByCategory(Categories category){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QItem item = QItem.item;
+
+        List<Item> itemList = queryFactory
+                .selectFrom(item)
+                .where(item.categories.eq(category))
+                .fetch();
+
+        return itemList;
+    //    return itemList.stream()
+    //            .map(ItemListResponseDto::new)
+    //            .collect(Collectors.toList());
+    }
+
+    /**
+     * 상품 전체 조회(키워드 기준)
+     * */
+    @Transactional(readOnly = true)
+//    public List<ItemListResponseDto> findByKeyword(String keyword){
+    public List<Item> findByKeyword(String keyword){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QItem item = QItem.item;
+
+        List<Item> itemList = queryFactory
+                .selectFrom(item)
+                .where(item.title.contains(keyword).or(item.spec.contains(keyword)))
+                .fetch();
+
+        return itemList;
+   //     return itemList.stream()
+   //             .map(ItemListResponseDto::new)
+   //             .collect(Collectors.toList());
     }
 
     /**
      * 상품 전체 조회
      * */
     @Transactional(readOnly = true)
-    public List<ItemListResponseDto> findAll(){
-        return itemRepository.findAll().stream()
-                .map(ItemListResponseDto::new)
-                .collect(Collectors.toList());
+ //   public List<ItemListResponseDto> findAll(){
+    public List<Item> findAll(){
+
+        return itemRepository.findAll();
+   //     return itemRepository.findAll().stream()
+   //             .map(ItemListResponseDto::new)
+   //             .collect(Collectors.toList());
     }
 
 }

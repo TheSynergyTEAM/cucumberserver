@@ -1,8 +1,10 @@
 package cucumbermarket.cucumbermarketspring.domain.item.controller;
 
+import cucumbermarket.cucumbermarketspring.domain.favourite.service.FavouriteService;
 import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoDto;
 import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemFileVO;
 import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
@@ -31,6 +33,7 @@ public class ItemController {
     private final PhotoService fileService;
     private AddressService addressService;
     private final MemberService memberService;
+    private final FavouriteService favouriteService;
 
     /**
      * 물품등록
@@ -38,7 +41,7 @@ public class ItemController {
     @PostMapping("/item")
     @CrossOrigin
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateUpdateItemResponse create(ItemFileVO itemFileVO) throws Exception {
+    public CreateUpdateItemResponseDto create(ItemFileVO itemFileVO) throws Exception {
 
         Member member = memberService.searchMemberById(Long.parseLong(itemFileVO.getId()));
         Address address = new Address(itemFileVO.getCity(), itemFileVO.getStreet1(), "", "");
@@ -56,7 +59,7 @@ public class ItemController {
 
         Long id = itemService.save(itemRequestDto, itemFileVO.getFiles());
 
-        return new CreateUpdateItemResponse(id);
+        return new CreateUpdateItemResponseDto(id);
     }
 
     /**
@@ -64,7 +67,7 @@ public class ItemController {
      */
     @PutMapping("/item/{id}")
     @CrossOrigin
-    public CreateUpdateItemResponse update(@PathVariable Long id, ItemFileVO itemFileVO) throws Exception {
+    public CreateUpdateItemResponseDto update(@PathVariable Long id, ItemFileVO itemFileVO) throws Exception {
         Address address = new Address(itemFileVO.getCity(), itemFileVO.getStreet1(), "", "");
         Categories category = Categories.find(itemFileVO.getCategory());
         Boolean sold = Boolean.parseBoolean(itemFileVO.getSold());
@@ -116,7 +119,17 @@ public class ItemController {
 
         itemService.update(id, itemRequestDto, validFileList);
 
-        return new CreateUpdateItemResponse(id);
+        return new CreateUpdateItemResponseDto(id);
+    }
+
+    /**
+     * 판매 완료
+     */
+    @PatchMapping("/item/{id}/soldout")
+    @CrossOrigin
+    public CreateUpdateItemResponseDto soldOut(@PathVariable("id") Long itemId, @RequestParam("buyer") Long buyerId) {
+        itemService.soldOut(itemId, buyerId);
+        return new CreateUpdateItemResponseDto(itemId);
     }
 
     /**
@@ -139,21 +152,107 @@ public class ItemController {
         for(PhotoResponseDto photoResponseDto : photoResponseDtoList)
             photoId.add(photoResponseDto.getFileid());
 
-        ItemResponseDto itemResponseDto = itemService.findOne(id, null);
-        itemService.updateViews(id, itemResponseDto.getViews());
-        return itemService.findOne(id, photoId);
+        Item item = itemService.searchItemById(id);
+        itemService.updateViews(id, item.getViews());
+        Long favourite = favouriteService.countFavourite(id);
+        return itemService.findOne(id, photoId, favourite);
     }
 
+    /**
+     * 판매 물품 전체 조회
+     */
+    @GetMapping("/item/sell")
+    @CrossOrigin
+    public List<ItemListResponseDto> findBySoldItem(@RequestParam("user") Long memberId) {
+        List<Item> itemList = itemService.findBySoldItem(memberId);
+        List<ItemListResponseDto> responseDtoList = new ArrayList<>();
+
+        for(Item item : itemList){
+            Long favourite = favouriteService.countFavourite(item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            responseDtoList.add(responseDto);
+        }
+   //     return itemService.findBySoldItem(id, count);
+
+        return responseDtoList;
+    }
+
+    /**
+     * 구매 물품 전체 조회
+     */
+    @GetMapping("/item/buy")
+    @CrossOrigin
+    public List<ItemListResponseDto> findByBoughtItem(@RequestParam("user") Long memberId) {
+        List<Item> itemList = itemService.findByBoughtItem(memberId);
+        List<ItemListResponseDto> responseDtoList = new ArrayList<>();
+
+        for(Item item : itemList){
+            Long favourite = favouriteService.countFavourite(item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            responseDtoList.add(responseDto);
+        }
+
+        return responseDtoList;
+
+        //return itemService.findByBoughtItem(id, count);
+    }
 
     /**
      * 물품 전체 조회(구 기준)
      */
     @GetMapping("/item/area")
     @CrossOrigin
-    public List<ItemListResponseDto> findByArea(
-            @RequestParam("city") String city,
-            @RequestParam("street") String street) {
-        return itemService.findByArea(city, street);
+    public List<ItemListResponseDto> findByArea(@RequestParam("city") String city, @RequestParam("street") String street) {
+        List<Item> itemList = itemService.findByArea(city, street);
+        List<ItemListResponseDto> responseDtoList = new ArrayList<>();
+
+        for(Item item : itemList){
+            Long favourite = favouriteService.countFavourite(item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            responseDtoList.add(responseDto);
+        }
+
+        return responseDtoList;
+      //  return itemService.findByArea(city, street);
+    }
+
+    /**
+     * 물품 전체 조회(카테고리 기준)
+     */
+    @GetMapping("/item/search/1")
+    @CrossOrigin
+    public List<ItemListResponseDto> findByCategory(@RequestParam("category") String category) {
+        Categories categories = Categories.find(category);
+        List<Item> itemList = itemService.findByCategory(categories);
+        List<ItemListResponseDto> responseDtoList = new ArrayList<>();
+
+        for(Item item : itemList){
+            Long favourite = favouriteService.countFavourite(item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            responseDtoList.add(responseDto);
+        }
+
+        return responseDtoList;
+    //    return itemService.findByCategory(categories);
+    }
+
+    /**
+     * 물품 전체 조회(키워드 기준)
+     */
+    @GetMapping("/item/search/2")
+    @CrossOrigin
+    public List<ItemListResponseDto> findByKeyword(@RequestParam("keyword") String keyword) {
+        List<Item> itemList = itemService.findByKeyword(keyword);
+        List<ItemListResponseDto> responseDtoList = new ArrayList<>();
+
+        for(Item item : itemList){
+            Long favourite = favouriteService.countFavourite(item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            responseDtoList.add(responseDto);
+        }
+
+        return responseDtoList;
+    //    return itemService.findByKeyword(keyword);
     }
 
     /**
@@ -162,15 +261,25 @@ public class ItemController {
     @GetMapping("/item/list")
     @CrossOrigin
     public List<ItemListResponseDto> findAll() {
-        return itemService.findAll();
+        List<Item> itemList = itemService.findAll();
+        List<ItemListResponseDto> responseDtoList = new ArrayList<>();
+
+        for(Item item : itemList){
+            Long favourite = favouriteService.countFavourite(item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            responseDtoList.add(responseDto);
+        }
+
+        return responseDtoList;
+    //    return itemService.findAll();
     }
 
 
     @Data
-    static class CreateUpdateItemResponse {
+    static class CreateUpdateItemResponseDto {
         private Long id;
 
-        public CreateUpdateItemResponse(Long id) {
+        public CreateUpdateItemResponseDto(Long id) {
             this.id = id;
         }
     }

@@ -5,17 +5,19 @@ import lombok.Getter;
 
 @Getter
 public class FavItemListResponseDto {
-    private Long id;
-    private Long itemId;
-    private String item ;
+    private Long favid;
+    private Long itemid;
+    private String title ;
     private String city;
     private String street;
+    private Long count;
 
-    public FavItemListResponseDto(FavouriteItem entity){
-        this.id = entity.getId();
-        this.itemId = entity.getItem().getId();
-        this.item = entity.getItem().getTitle();
+    public FavItemListResponseDto(FavouriteItem entity, Long count){
+        this.favid = entity.getId();
+        this.itemid = entity.getItem().getId();
+        this.title = entity.getItem().getTitle();
         this.city = entity.getItem().getAddress().getCity();
         this.street = entity.getItem().getAddress().getStreet1();
+        this.count = count;
     }
 }
