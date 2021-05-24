@@ -19,6 +19,7 @@ import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -137,8 +138,9 @@ public class ItemController {
      */
     @DeleteMapping("/item/{id}")
     @CrossOrigin
-    public void delete(@PathVariable Long id){
+    public ResponseEntity<?> delete(@PathVariable Long id){
         itemService.delete(id);
+        return ResponseEntity.ok().body("OK");
     }
 
     /**
@@ -172,7 +174,6 @@ public class ItemController {
             ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
             responseDtoList.add(responseDto);
         }
-   //     return itemService.findBySoldItem(id, count);
 
         return responseDtoList;
     }
@@ -193,8 +194,6 @@ public class ItemController {
         }
 
         return responseDtoList;
-
-        //return itemService.findByBoughtItem(id, count);
     }
 
     /**
@@ -213,7 +212,6 @@ public class ItemController {
         }
 
         return responseDtoList;
-      //  return itemService.findByArea(city, street);
     }
 
     /**
@@ -233,7 +231,6 @@ public class ItemController {
         }
 
         return responseDtoList;
-    //    return itemService.findByCategory(categories);
     }
 
     /**
@@ -252,7 +249,6 @@ public class ItemController {
         }
 
         return responseDtoList;
-    //    return itemService.findByKeyword(keyword);
     }
 
     /**
@@ -271,7 +267,6 @@ public class ItemController {
         }
 
         return responseDtoList;
-    //    return itemService.findAll();
     }
 
 
