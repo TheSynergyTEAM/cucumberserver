@@ -1,3 +1,5 @@
+DELETE FROM favourite_item;
+ALTER TABLE favourite_item ALTER COLUMN favourite_item_id RESTART WITH 1;
 DELETE FROM item;
 ALTER TABLE item ALTER COLUMN item_id RESTART WITH 1;
 INSERT INTO item (created, modified, city, street1, street2, zipcode, categories, price, sold, spec, title, views, member_id)
