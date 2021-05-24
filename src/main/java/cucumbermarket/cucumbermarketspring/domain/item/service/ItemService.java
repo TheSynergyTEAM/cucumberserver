@@ -138,7 +138,6 @@ public class ItemService {
      * 판매 상품 전체 조회
      * */
     @Transactional(readOnly = true)
-//    public List<ItemListResponseDto> findBySoldItem(Long memberId){
     public List<Item> findBySoldItem(Long memberId){
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
@@ -150,16 +149,12 @@ public class ItemService {
                 .fetch();
 
         return itemList;
-        //return itemList.stream()
-        //        .map(ItemListResponseDto::new)
-        //        .collect(Collectors.toList());
     }
 
     /**
      * 구매 상품 전체 조회
      * */
     @Transactional(readOnly = true)
-//    public List<ItemListResponseDto> findByBoughtItem(Long buyerId){
     public List<Item> findByBoughtItem(Long buyerId){
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
@@ -171,16 +166,12 @@ public class ItemService {
                 .fetch();
 
         return itemList;
-    //    return itemList.stream()
-    //            .map(ItemListResponseDto::new)
-    //            .collect(Collectors.toList());
     }
 
     /**
      * 상품 전체 조회(구 기준)
      * */
    @Transactional(readOnly = true)
-//    public List<ItemListResponseDto> findByArea(String city, String street){
    public List<Item> findByArea(String city, String street){
        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
@@ -193,16 +184,12 @@ public class ItemService {
                .fetch();
 
         return itemList;
-    //   return itemList.stream()
-    //           .map(ItemListResponseDto::new)
-    //           .collect(Collectors.toList());
     }
 
     /**
      * 상품 전체 조회(카테고리 기준)
      * */
     @Transactional(readOnly = true)
-//    public List<ItemListResponseDto> findByCategory(Categories category){
     public List<Item> findByCategory(Categories category){
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
@@ -214,16 +201,12 @@ public class ItemService {
                 .fetch();
 
         return itemList;
-    //    return itemList.stream()
-    //            .map(ItemListResponseDto::new)
-    //            .collect(Collectors.toList());
     }
 
     /**
      * 상품 전체 조회(키워드 기준)
      * */
     @Transactional(readOnly = true)
-//    public List<ItemListResponseDto> findByKeyword(String keyword){
     public List<Item> findByKeyword(String keyword){
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
@@ -235,22 +218,15 @@ public class ItemService {
                 .fetch();
 
         return itemList;
-   //     return itemList.stream()
-   //             .map(ItemListResponseDto::new)
-   //             .collect(Collectors.toList());
     }
 
     /**
      * 상품 전체 조회
      * */
     @Transactional(readOnly = true)
- //   public List<ItemListResponseDto> findAll(){
     public List<Item> findAll(){
 
         return itemRepository.findAll();
-   //     return itemRepository.findAll().stream()
-   //             .map(ItemListResponseDto::new)
-   //             .collect(Collectors.toList());
     }
 
 }

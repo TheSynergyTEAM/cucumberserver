@@ -11,6 +11,7 @@ import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
@@ -82,10 +83,11 @@ public class FavouriteController {
     /**
      * 찜하기 삭제
      * */
-    @DeleteMapping("/favourite/{id}")
+    @DeleteMapping("/favourite/{itemId}/{memberId}")
     @CrossOrigin
-    public void delete(@PathVariable Long id){
-        favouriteService.delete(id);
+    public ResponseEntity<?> delete(@PathVariable("itemId") Long itemId, @PathVariable("memberId") Long memberId){
+        favouriteService.delete(itemId, memberId);
+        return ResponseEntity.ok().body("OK");
     }
 
 
