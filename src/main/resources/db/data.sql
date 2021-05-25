@@ -1,3 +1,11 @@
+DELETE FROM review_photo;
+DELETE FROM item_photo;
+DELETE FROM file;
+ALTER TABLE file ALTER COLUMN file_id RESTART WITH 1;
+DELETE FROM favourite_item;
+ALTER TABLE favourite_item ALTER COLUMN favourite_item_id RESTART WITH 1;
+DELETE FROM review;
+ALTER TABLE review ALTER COLUMN review_id RESTART WITH 1;
 DELETE FROM favourite_item;
 ALTER TABLE favourite_item ALTER COLUMN favourite_item_id RESTART WITH 1;
 DELETE FROM item;
