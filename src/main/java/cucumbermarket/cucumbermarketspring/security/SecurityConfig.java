@@ -62,17 +62,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors();
         http
                 .csrf().disable()
-                .cors(c->{
-                    CorsConfigurationSource source = request -> {
-                        CorsConfiguration config = new CorsConfiguration();
-                        config.setAllowedOrigins(
-                                List.of("http://localhost:3000/"));
-                        config.setAllowedMethods(
-                                List.of("GET", "POST", "PUT", "DELETE"));
-                        return config;
-                    };
-                    c.configurationSource(source);
-                })
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -99,7 +88,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.setAllowedHeaders(ImmutableList.of("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowedMethods(ImmutableList.of("HEAD",
-                "GET", "POST", "PUT", "DELETE", "PATCH"));
+                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
