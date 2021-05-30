@@ -43,16 +43,16 @@ public class ChatMessageController {
     @Autowired
     private final MemberService memberService;
 
-    @MessageMapping("/send")
+    @MessageMapping("/chat")
     @CrossOrigin
     public void processMessage(@Payload MessageDto messageDto) {
 
         System.out.println("messageDto = " + messageDto);
-        Optional<String> chatId1 = chatRoomService.getChatId(
-                messageDto.getSenderId(),
-                messageDto.getReceiverId(),
-                messageDto.getItemId()
-        );
+//        Optional<String> chatId1 = chatRoomService.getChatId(
+//                messageDto.getSenderId(),
+//                messageDto.getReceiverId(),
+//                messageDto.getItemId()
+//        );
 
         // Todo : 수정해야 할 부분
         // 받아온 message에서 보낸사람과 받은 사람의 정보를 가지고
