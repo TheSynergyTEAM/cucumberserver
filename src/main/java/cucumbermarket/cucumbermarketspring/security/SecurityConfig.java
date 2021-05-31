@@ -1,5 +1,6 @@
 package cucumbermarket.cucumbermarketspring.security;
 
+import com.google.common.collect.ImmutableList;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,17 +62,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors();
         http
                 .csrf().disable()
-                .cors(c->{
-                    CorsConfigurationSource source = request -> {
-                        CorsConfiguration config = new CorsConfiguration();
-                        config.setAllowedOrigins(
-                                List.of("http://localhost:3000/"));
-                        config.setAllowedMethods(
-                                List.of("GET", "POST", "PUT", "DELETE"));
-                        return config;
-                    };
-                    c.configurationSource(source);
-                })
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -96,10 +86,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
+        configuration.setAllowedHeaders(ImmutableList.of("Authorization", "Cache-Control", "Content-Type", "refreshToken"));
+        configuration.setAllowedMethods(ImmutableList.of("HEAD",
+                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowCredentials(true);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

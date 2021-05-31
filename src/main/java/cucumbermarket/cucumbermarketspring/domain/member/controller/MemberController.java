@@ -26,6 +26,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,10 +36,25 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final JwtAuthenticationTokenProvider jwtAuthenticationTokenProvider;
-    private final AuthenticationManager authenticationManager;
+
+    @CrossOrigin
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestHeader Map<String, String> headers) {
+        String token = headers.get("authorization");
+        Long tokenOwnerId = jwtAuthenticationTokenProvider.getTokenOwnerId(token);
+        if (tokenOwnerId > 0) {
+            Member member = memberRepository.getOne(tokenOwnerId);
+            LoginResponseDto loginResponseDTO = getLoginResponseDTO(member);
+            return ResponseEntity.ok().header(
+                    HttpHeaders.AUTHORIZATION,token
+            ).body(
+                    loginResponseDTO
+            );
+        }
+        return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.NOT_FOUND);
+    }
 
     /**
-     *
      * 회원가입
      */
     @CrossOrigin
@@ -71,19 +88,10 @@ public class MemberController {
             return ResponseEntity.badRequest().body("Password is not correct");
         }
 
-        Member memberbyEmail = memberRepository.findByEmail(email);
-        Long userId = memberbyEmail.getId();
-        LoginResponseDto loginResponseDTO = new LoginResponseDto(
-                userId,
-                memberbyEmail.getName(),
-                memberbyEmail.getAddress(),
-                memberbyEmail.getBirthdate(),
-                memberbyEmail.getEmail(),
-                memberbyEmail.getContact(),
-                memberbyEmail.getRatingScore()
-        );
+        Member member = memberRepository.findByEmail(email);
+        LoginResponseDto loginResponseDTO = getLoginResponseDTO(member);
 
-        String token = jwtAuthenticationTokenProvider.issue(userId).getToken();
+        String token = jwtAuthenticationTokenProvider.issue(member.getId()).getToken();
         System.out.println("token = " + token);
         return ResponseEntity.ok()
                 .header(
@@ -91,6 +99,18 @@ public class MemberController {
                         token
                         )
                 .body(loginResponseDTO);
+    }
+
+    private LoginResponseDto getLoginResponseDTO(Member member) {
+        return new LoginResponseDto(
+                member.getId(),
+                member.getName(),
+                member.getAddress(),
+                member.getBirthdate(),
+                member.getEmail(),
+                member.getContact(),
+                member.getRatingScore()
+        );
     }
 
     /**
@@ -114,8 +134,6 @@ public class MemberController {
     @CrossOrigin
     @PatchMapping("/member/{id}")
     public ResponseEntity<UpdateMemberDto> updateMember(@PathVariable("id") Long id, @RequestBody @Valid UpdateMemberDto request) {
-
-        Member member = memberRepository.getOne(id);
         UpdateMemberDto updateMember = memberService.updateMember(request);
         return ResponseEntity.ok()
                 .body(updateMember);

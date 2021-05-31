@@ -22,11 +22,18 @@
 
         const onConnected=()=>{
             var senderId = document.getElementById("sender_ID").value;
+            var receiverId = document.getElementById("receiver_ID").value;
+            var itemId = document.getElementById("item_ID").value;
             console.log(senderId);
             setConnected(true);
             stompClient.subscribe(
-                "/user/"+senderId+"/queue/messages"
-            );
+                "/user/"+senderId+"/"+receiverId+"/"+itemId+"/queue/messages", function (response) {
+                    let data = JSON.parse(response.body);
+                    // var msg = data.message;
+                    // var fromlogin = data.message;
+                    // render(data.username, msg, fromlogin);
+                    console.log(data);
+                });
         };
 
         const onError = (err) => {
@@ -50,7 +57,7 @@
                 JSON.stringify({'senderId':senderId, 'receiverId':receiverId, 'content':text, 'itemId':itemId}));
         }
 
-        function showMessageOutput(messageOutput) {
+        function showMessageOutput(message) {
             var response = document.getElementById('response');
             var p = document.createElement('p');
             p.style.wordWrap = 'break-word';

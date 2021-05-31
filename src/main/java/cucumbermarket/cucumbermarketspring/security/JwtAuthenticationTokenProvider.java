@@ -18,7 +18,9 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationTokenProvider implements AuthenticationTokenProvider {
+public class
+
+JwtAuthenticationTokenProvider implements AuthenticationTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationTokenProvider.class);
     private static final String SECRET_KEY = "zdtlD3JK56m6wTTgsNFhqzjqPjiwehqroewqooisauozcxkcxnzoihaowehr";
     private static final long EXPIRATION_MS = 1000 * 60 * 60 * 12;
