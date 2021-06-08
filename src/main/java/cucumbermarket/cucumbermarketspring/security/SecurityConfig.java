@@ -65,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     CorsConfigurationSource source = request -> {
                         CorsConfiguration config = new CorsConfiguration();
                         config.setAllowedOrigins(
-                                List.of("http://localhost:3000/"));
+                                List.of("http://localhost:3000/", "https://cucum.netlify.com"));
                         config.setAllowedMethods(
                                 List.of("GET", "POST", "PUT", "DELETE"));
                         return config;
@@ -94,8 +94,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://cucum.netlify.com"));
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
