@@ -16,6 +16,7 @@ import cucumbermarket.cucumbermarketspring.domain.review.service.ReviewService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -115,8 +116,9 @@ public class ReviewController {
      * */
     @DeleteMapping("/review/{id}")
     @CrossOrigin
-    public void delete (@PathVariable Long id){
+    public ResponseEntity<?> delete (@PathVariable Long id){
         reviewService.delete(id);
+        return ResponseEntity.ok().body("OK");
     }
 
     /**

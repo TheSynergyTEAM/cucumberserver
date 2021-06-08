@@ -34,11 +34,17 @@ public class FavouriteService {
      * 찜하기 삭제
      * */
     @Transactional
-    public void delete(Long id){
-        FavouriteItem favItem = favItemRepository.findById(id)
-                .orElseThrow(()->new IllegalArgumentException("해당 내역이 존재하지 않습니다."));
+    public void delete(Long itemId, Long memberId){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
-        favItemRepository.delete(favItem);
+        QFavouriteItem favouriteItem = QFavouriteItem.favouriteItem;
+
+        FavouriteItem favourite = queryFactory
+                .selectFrom(favouriteItem)
+                .where(favouriteItem.item.id.eq(itemId).and(favouriteItem.member.id.eq(memberId)))
+                .fetchOne();
+
+        favItemRepository.delete(favourite);
     }
 
     /**

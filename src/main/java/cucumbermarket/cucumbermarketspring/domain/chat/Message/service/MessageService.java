@@ -1,11 +1,16 @@
 package cucumbermarket.cucumbermarketspring.domain.chat.Message.service;
 
+import cucumbermarket.cucumbermarketspring.domain.chat.ChatNotification;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageRepository;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageStatus;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service.ChatRoomService;
 import cucumbermarket.cucumbermarketspring.domain.chat.socket.dto.MessageDto;
+import cucumbermarket.cucumbermarketspring.domain.member.Member;
+import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,14 +20,18 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MessageService {
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
     private final MessageRepository messageRepository;
     private final ChatRoomService chatRoomService;
-
+    private final MemberService memberService;
     /**
      * 메세지 생성
      */
     @Transactional
-    public Message createMessage(MessageDto messageDto) {
+    public void createMessage(MessageDto messageDto) {
+
         Message originMessage = Message.builder()
                 .senderId(messageDto.getSenderId())
                 .receiverId(messageDto.getReceiverId())
@@ -39,7 +48,16 @@ public class MessageService {
                 .content(messageDto.getContent())
                 .build();
         messageRepository.save(createdMessage);
-        return createdMessage;
+
+        Member sender = memberService.searchMemberById(originMessage.getSenderId());
+        Member receiver = memberService.searchMemberById(originMessage.getReceiverId());
+        simpMessagingTemplate.convertAndSendToUser(
+                receiver.getName(),
+                "/user/" + sender.getId() + "/" + receiver.getId() + "/" + messageDto.getItemId() + "/queue/messages",
+                new ChatNotification(
+                        sender.getId(), receiver.getId(), messageDto.getItemId()
+                )
+        );
     }
 
     /**
