@@ -1,8 +1,7 @@
 <html>
 <head>
     <title>Chat WebSocket</title>
-<!--    <script src="/webjars/sockjs-client/1.0.2/sockjs.min.js"></script>-->
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="/webjars/sockjs-client/1.0.2/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
     <script type="text/javascript">
         var stompClient = null;
@@ -17,10 +16,10 @@
         }
 
         function connect() {
-
-            var socket = new SockJS("http://localhost:8080/ws");
+            var socket = new SockJS("/ws");
             stompClient = Stomp.over(socket);
             // stompClient.debug = null;
+            // stompClient.connect({}, onConnected(), onError());
             stompClient.connect({}, onConnected(), onError());
         }
 
@@ -33,11 +32,13 @@
             console.log("/user/" + senderId + "/" + receiverId + "/" + itemId + "/queue/messages");
             stompClient.subscribe(
                 "/user/" + senderId + "/" + receiverId + "/" + itemId + "/queue/messages",
-                function (message) {
-                    var body = JSON.parse(message.body).content;
-                    console.log(body);
-                    showMessage(body);
-                });
+                onMessageReceived
+                // function (message) {
+                //     var body = JSON.parse(message.body).content;
+                //     console.log(body);
+                //     showMessage(body);
+                // }
+                );
         };
         function showMessage(message) {
             let elementById = document.getElementById("messages");
@@ -49,6 +50,8 @@
 
         const onMessageReceived = (msg) =>{
             const message = JSON.parse(msg.body);
+            console.log(message);
+            // var messageElement = document.createElement('li');
             findChatMessage(message.senderId, message.receiverId, message.itemId);
         }
         // const request = (options) => {
