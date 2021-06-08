@@ -84,7 +84,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://cucum.netlify.com"));
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.setAllowedHeaders(ImmutableList.of("Authorization", "Cache-Control", "Content-Type", "refreshToken"));
         configuration.setAllowedMethods(ImmutableList.of("HEAD",
