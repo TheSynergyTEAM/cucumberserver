@@ -26,6 +26,8 @@ public class QItem extends EntityPathBase<Item> {
 
     public final cucumbermarket.cucumbermarketspring.domain.member.address.QAddress address;
 
+    public final NumberPath<Long> buyerId = createNumber("buyerId", Long.class);
+
     public final EnumPath<cucumbermarket.cucumbermarketspring.domain.item.category.Categories> categories = createEnum("categories", cucumbermarket.cucumbermarketspring.domain.item.category.Categories.class);
 
     //inherited

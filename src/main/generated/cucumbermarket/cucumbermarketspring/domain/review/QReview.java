@@ -38,6 +38,8 @@ public class QReview extends EntityPathBase<Review> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modified = _super.modified;
 
+    public final ListPath<cucumbermarket.cucumbermarketspring.domain.file.Photo, cucumbermarket.cucumbermarketspring.domain.file.QPhoto> photo = this.<cucumbermarket.cucumbermarketspring.domain.file.Photo, cucumbermarket.cucumbermarketspring.domain.file.QPhoto>createList("photo", cucumbermarket.cucumbermarketspring.domain.file.Photo.class, cucumbermarket.cucumbermarketspring.domain.file.QPhoto.class, PathInits.DIRECT2);
+
     public final NumberPath<Integer> ratingScore = createNumber("ratingScore", Integer.class);
 
     public QReview(String variable) {
