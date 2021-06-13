@@ -1,6 +1,5 @@
 package cucumbermarket.cucumbermarketspring.domain.chat.Message.service;
 
-import cucumbermarket.cucumbermarketspring.domain.chat.ChatNotification;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageRepository;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageStatus;
@@ -10,6 +9,10 @@ import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +33,7 @@ public class MessageService {
      * 메세지 생성
      */
     @Transactional
-    public void createMessage(MessageDto messageDto) {
+    public void createMessage(@Payload MessageDto messageDto) {
 
         Message originMessage = Message.builder()
                 .senderId(messageDto.getSenderId())
@@ -48,16 +51,32 @@ public class MessageService {
                 .content(messageDto.getContent())
                 .build();
         messageRepository.save(createdMessage);
-
         Member sender = memberService.searchMemberById(originMessage.getSenderId());
         Member receiver = memberService.searchMemberById(originMessage.getReceiverId());
-        simpMessagingTemplate.convertAndSendToUser(
-                receiver.getName(),
-                "/user/" + sender.getId() + "/" + receiver.getId() + "/" + messageDto.getItemId() + "/queue/messages",
-                new ChatNotification(
-                        sender.getId(), receiver.getId(), messageDto.getItemId()
-                )
+        String destination1 = "/user/" + sender.getId() + "/" + receiver.getId() + "/" + messageDto.getItemId() + "/queue/messages";
+        String destination2 = "/user/" + receiver.getId() + "/" + sender.getId() + "/" + messageDto.getItemId() + "/queue/messages";
+        simpMessagingTemplate.convertAndSend(
+                destination1,
+                originMessage
         );
+
+        simpMessagingTemplate.convertAndSend(
+                destination2,
+                originMessage
+
+        );
+//        simpMessagingTemplate.convertAndSendToUser(
+//                String.valueOf(sender.getId()),
+//                receiver.getId() + "/" + messageDto.getItemId() + "/queue/messages",
+//                originMessage,
+//                createMessageHeaders(String.valueOf(sender.getId()))
+//        );
+//        simpMessagingTemplate.convertAndSendToUser(
+//                String.valueOf(receiver.getId()),
+//                "/"+sender.getId() + "/" + messageDto.getItemId() + "/queue/messages",
+//                originMessage,
+//                createMessageHeaders(String.valueOf(receiver.getId()))
+//        );
     }
 
     /**
@@ -103,6 +122,14 @@ public class MessageService {
 
     private Optional<String> getChatId(Long senderId, Long receiverId, Long itemId) {
         return chatRoomService.getChatId(senderId, receiverId, itemId);
+    }
+
+    private MessageHeaders createMessageHeaders(String sessionId) {
+        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor
+                .create(SimpMessageType.MESSAGE);
+        headerAccessor.setSessionId(sessionId);
+        headerAccessor.setLeaveMutable(true);
+        return headerAccessor.getMessageHeaders();
     }
 
 }

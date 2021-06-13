@@ -12,11 +12,14 @@
             document.getElementById('conversationDiv').style.visibility
                 = connected ? 'visible' : 'hidden';
             document.getElementById('response').innerHTML = '';
+
         }
 
         function connect() {
-            var socket = new SockJS("http://localhost:8080/ws");
+            var socket = new SockJS("/ws");
             stompClient = Stomp.over(socket);
+            // stompClient.debug = null;
+            // stompClient.connect({}, onConnected(), onError());
             stompClient.connect({}, onConnected(), onError());
         }
 
@@ -26,15 +29,65 @@
             var itemId = document.getElementById("item_ID").value;
             console.log(senderId);
             setConnected(true);
+            console.log("/user/" + senderId + "/" + receiverId + "/" + itemId + "/queue/messages");
             stompClient.subscribe(
-                "/user/"+senderId+"/"+receiverId+"/"+itemId+"/queue/messages", function (response) {
-                    let data = JSON.parse(response.body);
-                    // var msg = data.message;
-                    // var fromlogin = data.message;
-                    // render(data.username, msg, fromlogin);
-                    console.log(data);
-                });
+                "/user/" + senderId + "/" + receiverId + "/" + itemId + "/queue/messages",
+                onMessageReceived
+                // function (message) {
+                //     var body = JSON.parse(message.body).content;
+                //     console.log(body);
+                //     showMessage(body);
+                // }
+                );
         };
+        function showMessage(message) {
+            let elementById = document.getElementById("messages");
+            var tag = document.createElement("p");
+            var text = document.createTextNode("Message");
+            tag.appendChild(text);
+            elementById.appendChild(tag);
+        }
+
+        const onMessageReceived = (msg) =>{
+            const message = JSON.parse(msg.body);
+            console.log(message);
+            // var messageElement = document.createElement('li');
+            findChatMessage(message.senderId, message.receiverId, message.itemId);
+        }
+        // const request = (options) => {
+        //     const headers = new Headers();
+        //
+        //     if (options.setContentType !== false) {
+        //         headers.append("Content-Type", "application/json");
+        //     }
+        //
+        //     if (localStorage.getItem("accessToken")) {
+        //         headers.append(
+        //             "Authorization",
+        //             "Bearer " + localStorage.getItem("accessToken")
+        //         );
+        //     }
+        //
+        //     const defaults = { headers: headers };
+        //     options = Object.assign({}, defaults, options);
+        //
+        //     return fetch(options.url, options).then((response) =>
+        //         response.json().then((json) => {
+        //             if (!response.ok) {
+        //                 return Promise.reject(json);
+        //             }
+        //             return json;
+        //         })
+        //     );
+        // };
+        function findChatMessage(senderId, receiverId, itemId) {
+
+            return request({
+                url: "http://localhost:8080" + "/message/" + senderId + "/" + receiverId + "/" + itemId,
+                method: "GET"
+            });
+        }
+
 
         const onError = (err) => {
             console.log(err);
@@ -53,18 +106,11 @@
             var receiverId = document.getElementById("receiver_ID").value;
             var itemId = document.getElementById("item_ID").value;
             var text = document.getElementById('text').value;
-            stompClient.send("/chat/send", {},
+            stompClient.send("/app/chat", {},
                 JSON.stringify({'senderId':senderId, 'receiverId':receiverId, 'content':text, 'itemId':itemId}));
         }
 
-        function showMessageOutput(message) {
-            var response = document.getElementById('response');
-            var p = document.createElement('p');
-            p.style.wordWrap = 'break-word';
-            p.appendChild(document.createTextNode(messageOutput.from + ": "
-                + messageOutput.text + " (" + messageOutput.time + ")"));
-            response.appendChild(p);
-        }
+
     </script>
 </head>
 <body onload="disconnect()">
@@ -86,6 +132,9 @@
         <input type="text" id="text" placeholder="Write a message..."/>
         <button id="sendMessage" onclick="sendMessage();">Send</button>
         <p id="response"></p>
+    </div>
+
+    <div id="messages">
     </div>
 </div>
 
