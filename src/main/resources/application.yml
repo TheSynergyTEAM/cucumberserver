@@ -5,7 +5,7 @@ spring:
     console:
       enabled: true
   datasource:
-    url: jdbc:h2:tcp://localhost/~/cucumbertest
+    url: jdbc:h2:tcp://35.184.67.254:8082/~/cucumbertest
     username: sa
     password:
     driver-class-name: org.h2.Driver
