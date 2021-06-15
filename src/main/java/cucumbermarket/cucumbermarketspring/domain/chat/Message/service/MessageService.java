@@ -4,11 +4,15 @@ import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageRepository;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageStatus;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service.ChatRoomService;
+import cucumbermarket.cucumbermarketspring.domain.chat.socket.dto.ChatRoomMessagesDTO;
 import cucumbermarket.cucumbermarketspring.domain.chat.socket.dto.MessageDto;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -17,7 +21,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -29,6 +35,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final ChatRoomService chatRoomService;
     private final MemberService memberService;
+
     /**
      * 메세지 생성
      */
@@ -65,28 +72,27 @@ public class MessageService {
                 originMessage
 
         );
-//        simpMessagingTemplate.convertAndSendToUser(
-//                String.valueOf(sender.getId()),
-//                receiver.getId() + "/" + messageDto.getItemId() + "/queue/messages",
-//                originMessage,
-//                createMessageHeaders(String.valueOf(sender.getId()))
-//        );
-//        simpMessagingTemplate.convertAndSendToUser(
-//                String.valueOf(receiver.getId()),
-//                "/"+sender.getId() + "/" + messageDto.getItemId() + "/queue/messages",
-//                originMessage,
-//                createMessageHeaders(String.valueOf(receiver.getId()))
-//        );
     }
 
     /**
      * 메세지 조회
      */
     @Transactional
-    public List<Message> findMessages(Long senderId, Long receiverId, Long itemId) {
+    public ChatRoomMessagesDTO findMessages(Long senderId, Long receiverId, Long itemId, int page) {
         // TODO Exception Handling
         Optional<String> chatId = getChatId(senderId, receiverId, itemId);
-        return messageRepository.findByChatId(chatId);
+        Pageable pageable = PageRequest.of(page, 20);
+        Page<Message> messagePage;
+        messagePage = messageRepository.findByChatId(chatId, pageable);
+        List<Message> content = messagePage.getContent();
+        ChatRoomMessagesDTO chatRoomMessagesDTO = new ChatRoomMessagesDTO(
+                String.valueOf(messagePage.getNumber()),
+                String.valueOf(messagePage.getTotalPages()),
+                String.valueOf(messagePage.getTotalElements()),
+                content
+        );
+
+        return chatRoomMessagesDTO;
     }
 
     /**
@@ -103,7 +109,7 @@ public class MessageService {
     @Transactional
     public Long countNewMessages(Long senderId, Long receiverId, Long itemId) {
         Optional<String> chatId = getChatId(senderId, receiverId, itemId);
-        List<Message> byChatId = messageRepository.findByChatId(chatId);
+        List<Message> byChatId = allMessages(String.valueOf(chatId));
         return byChatId.stream().filter(message -> message.getMessageStatus().equals(MessageStatus.RECEIVED)).count();
     }
 
@@ -111,13 +117,22 @@ public class MessageService {
     @Transactional
     public void updateMessages(Long senderId, Long receiverId, Long itemId) {
         Optional<String> chatId = getChatId(senderId, receiverId, itemId);
-        List<Message> allMessages = messageRepository.findByChatId(chatId);
+        List<Message> allMessages = allMessages(String.valueOf(chatId));
+
         for (Message message : allMessages) {
             if (message.getMessageStatus().equals(MessageStatus.RECEIVED)) {
                 message.updateStatus();
             }
         }
         return;
+    }
+
+    @Transactional
+    public List<Message> allMessages(String chatId) {
+
+        Pageable pageable = PageRequest.of(0, 1000);
+        Page<Message> byChatId = messageRepository.findByChatId(Optional.ofNullable(chatId), pageable);
+        return byChatId.getContent();
     }
 
     private Optional<String> getChatId(Long senderId, Long receiverId, Long itemId) {
