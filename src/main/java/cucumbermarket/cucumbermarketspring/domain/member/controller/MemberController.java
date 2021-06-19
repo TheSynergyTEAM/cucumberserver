@@ -4,20 +4,16 @@ import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.LoginResponseDto;
-import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberDto;
-//import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import cucumbermarket.cucumbermarketspring.exception.ForbiddenException;
-import cucumbermarket.cucumbermarketspring.exception.NotCorrectPasswordException;
 import cucumbermarket.cucumbermarketspring.security.JwtAuthenticationTokenProvider;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 @RestController
 @RequiredArgsConstructor

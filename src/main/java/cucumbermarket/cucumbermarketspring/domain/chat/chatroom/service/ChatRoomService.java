@@ -1,29 +1,32 @@
 package cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service;
 
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
+import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageRepository;
+import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageStatus;
+import cucumbermarket.cucumbermarketspring.domain.chat.Message.service.MessageService;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoom;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoomRepository;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.dto.ChatRoomListDTO;
-import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
-import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
-import javax.swing.text.html.Option;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
+    private final MessageRepository messageRepository;
+    private final MemberRepository memberRepository;
+    private final ItemRepository itemRepository;
+
 
     /**
      * 채팅방 생성
@@ -51,7 +54,7 @@ public class ChatRoomService {
     }
 
     /**
-     * 채팅 방 조회
+     * 채팅 개별 조회
      *
      * @param senderId
      * @param receiverId
@@ -71,14 +74,46 @@ public class ChatRoomService {
         }
     }
 
+    /**
+     * 채팅방 전체 조회
+     * @param senderId
+     * @return
+     */
     @Transactional
     public List<ChatRoomListDTO> findAllChatRoomsBySenderId(Long senderId) {
         List<ChatRoom> bySenderId = chatRoomRepository.findBySenderId(senderId);
         List<ChatRoomListDTO> chatRoomList = new ArrayList<ChatRoomListDTO>();
+
         for (ChatRoom chatRoom : bySenderId) {
-            chatRoomList.add(new ChatRoomListDTO(chatRoom.getChatId()));
+            String chatId = chatRoom.getChatId();
+
+            StringTokenizer st = new StringTokenizer(chatId,"_");
+            String s1= st.nextToken();
+            String s2= st.nextToken();
+            Long itemId = Long.parseLong(st.nextToken());
+
+            String senderName, receiverName, itemName;
+            senderName = memberRepository.findById(chatRoom.getSenderId()).get().getName();
+            receiverName = memberRepository.findById(chatRoom.getReceiverId()).get().getName();
+            itemName = itemRepository.findById(itemId).get().getTitle();
+
+            List<Message> chatRoomMessages = allMessages(chatId);
+            Message message = chatRoomMessages.get(chatRoomMessages.size()-1);
+            ChatRoomListDTO chatRoomListDTO = new ChatRoomListDTO(
+                    chatRoom.getSenderId(), chatRoom.getReceiverId(), itemId, chatId, senderName, receiverName, itemName
+            );
+            chatRoomListDTO.setLastContent(message.getContent());
+            chatRoomListDTO.setUnreadMessages((int) chatRoomMessages.stream().filter(m-> m.getMessageStatus().equals(MessageStatus.RECEIVED)).count());
+            chatRoomList.add(chatRoomListDTO);
+
         }
         return chatRoomList;
+    }
+
+    private List<Message> allMessages(String chatId) {
+        Pageable pageable = PageRequest.of(0, 1000);
+        Page<Message> byChatId = messageRepository.findByChatId(Optional.ofNullable(chatId), pageable);
+        return byChatId.getContent();
     }
 
 

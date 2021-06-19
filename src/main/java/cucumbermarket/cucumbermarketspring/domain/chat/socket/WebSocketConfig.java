@@ -15,13 +15,13 @@ import java.util.List;
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+public class  WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/user");
-        config.setUserDestinationPrefix("/user");
-        config.setApplicationDestinationPrefixes("/chat");
+//        config.setUserDestinationPrefix("/user");
+        config.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
@@ -29,13 +29,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         registry
                 .addEndpoint("/ws")
-//                .setAllowedOrigins("*")
+                .setAllowedOriginPatterns("*")
                 .withSockJS();
+
 
     }
 
     @Override
     public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
+        System.out.println("messageConverters = " + messageConverters);
         DefaultContentTypeResolver resolver = new DefaultContentTypeResolver();
         resolver.setDefaultMimeType(MimeTypeUtils.APPLICATION_JSON);
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();

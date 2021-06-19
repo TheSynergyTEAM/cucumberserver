@@ -40,6 +40,8 @@ public class QPhoto extends EntityPathBase<Photo> {
 
     public final StringPath origFileName = createString("origFileName");
 
+    public final cucumbermarket.cucumbermarketspring.domain.review.QReview review;
+
     public QPhoto(String variable) {
         this(Photo.class, forVariable(variable), INITS);
     }
@@ -59,6 +61,7 @@ public class QPhoto extends EntityPathBase<Photo> {
     public QPhoto(Class<? extends Photo> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.item = inits.isInitialized("item") ? new cucumbermarket.cucumbermarketspring.domain.item.QItem(forProperty("item"), inits.get("item")) : null;
+        this.review = inits.isInitialized("review") ? new cucumbermarket.cucumbermarketspring.domain.review.QReview(forProperty("review"), inits.get("review")) : null;
     }
 
 }

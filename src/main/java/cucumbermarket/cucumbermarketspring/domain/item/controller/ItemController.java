@@ -46,7 +46,9 @@ public class ItemController {
 
         Member member = memberService.searchMemberById(Long.parseLong(itemFileVO.getId()));
         Address address = new Address(itemFileVO.getCity(), itemFileVO.getStreet1(), "", "");
-        Categories category = Categories.find(itemFileVO.getCategory());
+  //      Categories category = Categories.find(itemFileVO.getCategory());
+        Categories category = Categories.valueOf(itemFileVO.getCategory());
+        int price = Integer.parseInt(itemFileVO.getPrice());
         Boolean sold = Boolean.parseBoolean(itemFileVO.getSold());
 
         ItemCreateRequestDto itemRequestDto = ItemCreateRequestDto.builder()
@@ -54,6 +56,7 @@ public class ItemController {
                         .address(address)
                         .title(itemFileVO.getTitle())
                         .categories(category)
+                        .price(price)
                         .spec(itemFileVO.getSpec())
                         .sold(sold)
                         .build();
@@ -70,13 +73,16 @@ public class ItemController {
     @CrossOrigin
     public CreateUpdateItemResponseDto update(@PathVariable Long id, ItemFileVO itemFileVO) throws Exception {
         Address address = new Address(itemFileVO.getCity(), itemFileVO.getStreet1(), "", "");
-        Categories category = Categories.find(itemFileVO.getCategory());
+    //    Categories category = Categories.find(itemFileVO.getCategory());
+        Categories category = Categories.valueOf(itemFileVO.getCategory());
+        int price = Integer.parseInt(itemFileVO.getPrice());
         Boolean sold = Boolean.parseBoolean(itemFileVO.getSold());
 
         ItemUpdateRequestDto itemRequestDto = ItemUpdateRequestDto.builder()
                 .address(address)
                 .title(itemFileVO.getTitle())
                 .categories(category)
+                .price(price)
                 .spec(itemFileVO.getSpec())
                 .sold(sold)
                 .build();
