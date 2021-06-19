@@ -1,4 +1,4 @@
-package cucumbermarket.cucumbermarketspring.domain.review;
+package cucumbermarket.cucumbermarketspring.domain.favourite;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -11,20 +11,18 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QReview is a Querydsl query type for Review
+ * QFavouriteItem is a Querydsl query type for FavouriteItem
  */
 @Generated("com.querydsl.codegen.EntitySerializer")
-public class QReview extends EntityPathBase<Review> {
+public class QFavouriteItem extends EntityPathBase<FavouriteItem> {
 
-    private static final long serialVersionUID = -628033481L;
+    private static final long serialVersionUID = 1947348192L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QReview review = new QReview("review");
+    public static final QFavouriteItem favouriteItem = new QFavouriteItem("favouriteItem");
 
     public final cucumbermarket.cucumbermarketspring.domain.QBaseTimeEntity _super = new cucumbermarket.cucumbermarketspring.domain.QBaseTimeEntity(this);
-
-    public final StringPath content = createString("content");
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> created = _super.created;
@@ -38,27 +36,23 @@ public class QReview extends EntityPathBase<Review> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modified = _super.modified;
 
-    public final ListPath<cucumbermarket.cucumbermarketspring.domain.file.Photo, cucumbermarket.cucumbermarketspring.domain.file.QPhoto> photo = this.<cucumbermarket.cucumbermarketspring.domain.file.Photo, cucumbermarket.cucumbermarketspring.domain.file.QPhoto>createList("photo", cucumbermarket.cucumbermarketspring.domain.file.Photo.class, cucumbermarket.cucumbermarketspring.domain.file.QPhoto.class, PathInits.DIRECT2);
-
-    public final NumberPath<Integer> ratingScore = createNumber("ratingScore", Integer.class);
-
-    public QReview(String variable) {
-        this(Review.class, forVariable(variable), INITS);
+    public QFavouriteItem(String variable) {
+        this(FavouriteItem.class, forVariable(variable), INITS);
     }
 
-    public QReview(Path<? extends Review> path) {
+    public QFavouriteItem(Path<? extends FavouriteItem> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QReview(PathMetadata metadata) {
+    public QFavouriteItem(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QReview(PathMetadata metadata, PathInits inits) {
-        this(Review.class, metadata, inits);
+    public QFavouriteItem(PathMetadata metadata, PathInits inits) {
+        this(FavouriteItem.class, metadata, inits);
     }
 
-    public QReview(Class<? extends Review> type, PathMetadata metadata, PathInits inits) {
+    public QFavouriteItem(Class<? extends FavouriteItem> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.item = inits.isInitialized("item") ? new cucumbermarket.cucumbermarketspring.domain.item.QItem(forProperty("item"), inits.get("item")) : null;
         this.member = inits.isInitialized("member") ? new cucumbermarket.cucumbermarketspring.domain.member.QMember(forProperty("member"), inits.get("member")) : null;
