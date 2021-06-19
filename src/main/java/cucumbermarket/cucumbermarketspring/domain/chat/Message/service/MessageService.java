@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -81,7 +82,7 @@ public class MessageService {
     public ChatRoomMessagesDTO findMessages(Long senderId, Long receiverId, Long itemId, int page) {
         // TODO Exception Handling
         Optional<String> chatId = getChatId(senderId, receiverId, itemId);
-        Pageable pageable = PageRequest.of(page, 20);
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("created").descending());
         Page<Message> messagePage;
         messagePage = messageRepository.findByChatId(chatId, pageable);
         List<Message> content = messagePage.getContent();
