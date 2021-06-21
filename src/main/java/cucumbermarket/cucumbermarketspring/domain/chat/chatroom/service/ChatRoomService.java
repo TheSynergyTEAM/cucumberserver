@@ -7,6 +7,7 @@ import cucumbermarket.cucumbermarketspring.domain.chat.Message.service.MessageSe
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoom;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoomRepository;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.dto.ChatRoomListDTO;
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -91,12 +92,11 @@ public class ChatRoomService {
             String s1= st.nextToken();
             String s2= st.nextToken();
             Long itemId = Long.parseLong(st.nextToken());
-
             String senderName, receiverName, itemName;
             senderName = memberRepository.findById(chatRoom.getSenderId()).get().getName();
             receiverName = memberRepository.findById(chatRoom.getReceiverId()).get().getName();
             itemName = itemRepository.findById(itemId).get().getTitle();
-
+            Item item = itemRepository.findById(itemId).get();
             List<Message> chatRoomMessages = allMessages(chatId);
             Message message = chatRoomMessages.get(chatRoomMessages.size()-1);
             ChatRoomListDTO chatRoomListDTO = new ChatRoomListDTO(
@@ -104,6 +104,11 @@ public class ChatRoomService {
             );
             chatRoomListDTO.setLastContent(message.getContent());
             chatRoomListDTO.setUnreadMessages((int) chatRoomMessages.stream().filter(m-> m.getMessageStatus().equals(MessageStatus.RECEIVED)).count());
+            if (item.getMember().getId() == senderId) {
+                chatRoomListDTO.setSeller(Boolean.TRUE);
+            } else {
+                chatRoomListDTO.setSeller(Boolean.FALSE);
+            }
             chatRoomList.add(chatRoomListDTO);
 
         }

@@ -42,11 +42,16 @@ public class MessageService {
      */
     @Transactional
     public void createMessage(@Payload MessageDto messageDto) {
-
+        Long senderId = messageDto.getSenderId();
+        Long receiverId = messageDto.getReceiverId();
+        Long itemId = messageDto.getItemId();
+        String chatId = getChatId(senderId, receiverId, itemId).get();
+        String chatId2 = getChatId(receiverId, senderId, itemId).get();
         Message originMessage = Message.builder()
                 .senderId(messageDto.getSenderId())
                 .receiverId(messageDto.getReceiverId())
-                .chatId(String.format("%s_%s_%s", messageDto.getSenderId(), messageDto.getReceiverId(), messageDto.getItemId()))
+//                .chatId(String.format("%s_%s_%s", senderId, receiverId, itemId))
+                .chatId(chatId)
                 .messageStatus(MessageStatus.RECEIVED)
                 .content(messageDto.getContent())
                 .build();
@@ -54,7 +59,8 @@ public class MessageService {
         Message createdMessage = Message.builder()
                 .senderId(messageDto.getSenderId())
                 .receiverId(messageDto.getReceiverId())
-                .chatId(String.format("%s_%s_%s", messageDto.getReceiverId(), messageDto.getSenderId(), messageDto.getItemId()))
+//                .chatId(String.format("%s_%s_%s", receiverId, senderId, itemId))
+                .chatId(chatId2)
                 .messageStatus(MessageStatus.RECEIVED)
                 .content(messageDto.getContent())
                 .build();
