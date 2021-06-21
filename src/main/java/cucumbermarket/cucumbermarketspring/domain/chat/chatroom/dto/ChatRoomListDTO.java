@@ -15,6 +15,8 @@ public class ChatRoomListDTO {
     private String senderName;
     private String receiverName;
     private String itemName;
+    private Boolean seller;
+    private String avatar;
 
     public ChatRoomListDTO(Long senderId, Long receiverId, Long itemId, String chatId, String senderName, String receiverName, String itemName) {
         this.senderId = senderId;
@@ -24,6 +26,7 @@ public class ChatRoomListDTO {
         this.senderName = senderName;
         this.receiverName = receiverName;
         this.itemName = itemName;
+        this.avatar = null;
     }
 
     public void setLastContent(String lastContent) {
@@ -32,5 +35,9 @@ public class ChatRoomListDTO {
 
     public void setUnreadMessages(int unreadMessages) {
         this.unreadMessages = unreadMessages;
+    }
+
+    public void setSeller(Boolean seller) {
+        this.seller = seller;
     }
 }
