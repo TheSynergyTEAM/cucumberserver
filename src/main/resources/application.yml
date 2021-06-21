@@ -4,8 +4,9 @@ spring:
   h2:
     console:
       enabled: true
+      path: /console/
   datasource:
-    url: jdbc:h2:tcp://localhost/~/cucumbertest
+    url: jdbc:h2:mem:cucumbertest
     username: sa
     password:
     driver-class-name: org.h2.Driver

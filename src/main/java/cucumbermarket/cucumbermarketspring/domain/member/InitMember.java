@@ -1,5 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.member;
 
+import cucumbermarket.cucumbermarketspring.domain.item.Item;
+import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.address.AddressVO;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +21,12 @@ import java.util.List;
 public class InitMember {
     private final InitService initService;
     private final MemberRepository memberRepository;
+    private final ItemRepository itemRepository;
 
     @PostConstruct
     public void init() {
         if (memberRepository.findAll().size() == 0) {
+            System.out.println("Here");
             initService.initDB();
         }
 
@@ -83,6 +87,10 @@ public class InitMember {
                     0
             );
             em.persist(member);
+            if (i == 1){
+                Item item = new Item(member, null, "장미 팝니다", null, 3000, "관리 힘듦요", address, Boolean.FALSE, 0);
+                em.persist(item);
+            }
         }
 
         private Member getMember(String name, String password, Address address1, LocalDate birthdate, String email, String contact, Integer ratingScore) {
