@@ -55,13 +55,13 @@ public class ChatMessageController {
         return "test";
     }
 
-//    @GetMapping("/message/{senderId}/{receiverId}/{itemId}/count")
-//    @CrossOrigin
-//    public ResponseEntity<?> countNewMessages(@PathVariable("senderId") Long senderId, @PathVariable("receiverId") Long receiverId, @PathVariable("itemId") Long itemId) {
-//        return ResponseEntity.ok(
-//                new CountMessageDTO(messageService.countNewMessages(senderId, receiverId, itemId))
-//        );
-//    }
+    @GetMapping("/message/{senderId}/count")
+    @CrossOrigin
+    public ResponseEntity<?> countNewMessages(@PathVariable("senderId") Long senderId) {
+        return ResponseEntity.ok(
+                new CountMessageDTO(messageService.countNewMessages(senderId))
+        );
+    }
 
     @GetMapping("/chatroom/{senderId}")
     @CrossOrigin

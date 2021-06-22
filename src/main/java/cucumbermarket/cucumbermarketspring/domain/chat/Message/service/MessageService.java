@@ -112,23 +112,24 @@ public class MessageService {
     /**
      * 메세지 수 조회 (읽지 않은 메세지)
      */
-//    @Transactional
-//    public Long countNewMessages(Long senderId) {
-////        Optional<String> chatId = getChatId(senderId, receiverId, itemId);
-//        List<ChatRoom> chatRoomList = chatRoomService.getChatRoomListBySenderId(senderId);
-//        for (ChatRoom chatRoom : chatRoomList) {
-//            List<Message> messages = chatRoomService.allMessages(chatRoom.getChatId());
-//
-//        }
-////        return byChatId.stream().filter(message -> message.getMessageStatus().equals(MessageStatus.RECEIVED)).count();
-//    }
+    @Transactional
+    public Long countNewMessages(Long senderId) {
+
+        long count = 0;
+        List<ChatRoom> chatRoomList = chatRoomService.getChatRoomListBySenderId(senderId);
+        for (ChatRoom chatRoom : chatRoomList) {
+            List<Message> messages = chatRoomService.allMessages(chatRoom.getChatId());
+            count += messages.stream().filter(m -> m.getMessageStatus().equals(MessageStatus.UNREAD)).count();
+
+        }
+        return count;
+    }
 
 
     @Transactional
     public void updateMessages(Long senderId, Long receiverId, Long itemId) {
         String chatId = getChatId(senderId, receiverId, itemId).get();
         List<Message> allMessages = allMessages(chatId);
-        System.out.println("allMessages.size() = " + allMessages.size());
         for (Message message : allMessages) {
             if (message.getMessageStatus().equals(MessageStatus.UNREAD)) {
                 message.updateStatus();

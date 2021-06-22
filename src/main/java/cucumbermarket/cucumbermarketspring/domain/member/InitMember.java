@@ -24,7 +24,6 @@ import java.util.List;
 public class InitMember {
     private final InitService initService;
     private final MemberRepository memberRepository;
-    private final ItemRepository itemRepository;
     private final InitChat initChat;
 
     @PostConstruct
@@ -93,6 +92,14 @@ public class InitMember {
             em.persist(member);
             if (i == 1){
                 Item item = new Item(member, null, "장미 팝니다", Categories.LIVING, 3000, "관리 힘듦요", address, Boolean.FALSE, 0);
+                em.persist(item);
+            }
+            if (i == 2) {
+                Item item = new Item(
+                        member,
+                        null,
+                        "아이폰 8 팝니다",
+                        Categories.DIGIT, 200000, "아이폰 8 싸게 팝니다.", address, Boolean.FALSE, 0);
                 em.persist(item);
             }
         }

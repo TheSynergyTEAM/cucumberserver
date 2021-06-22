@@ -41,6 +41,9 @@ public class ChatRoomService {
                 .chatId(chatId1)
                 .senderId(senderId)
                 .receiverId(receiverId)
+                .itemId(itemId)
+                .valid(Boolean.TRUE)
+                .completeRoom(Boolean.FALSE)
                 .build();
 
         ChatRoom chatRoomByReceiver = ChatRoom
@@ -48,6 +51,9 @@ public class ChatRoomService {
                 .chatId(chatId2)
                 .senderId(receiverId)
                 .receiverId(senderId)
+                .itemId(itemId)
+                .valid(Boolean.TRUE)
+                .completeRoom(Boolean.FALSE)
                 .build();
         chatRoomRepository.save(chatRoomBySender);
         chatRoomRepository.save(chatRoomByReceiver);
@@ -108,6 +114,8 @@ public class ChatRoomService {
             } else {
                 chatRoomListDTO.setSeller(Boolean.FALSE);
             }
+            chatRoomListDTO.setValid(chatRoom.getValid());
+            chatRoomListDTO.setCompleteRoom(chatRoom.getCompleteRoom());
             chatRoomList.add(chatRoomListDTO);
 
         }
@@ -126,4 +134,17 @@ public class ChatRoomService {
     }
 
 
+    @Transactional
+    public void updateValid(Long itemId, Long buyerId, Long sellerId) {
+        List<ChatRoom> chatRoomList = chatRoomRepository.findByItemId(itemId);
+        List<Long> bothId = new ArrayList<>();
+        bothId.add(buyerId);
+        bothId.add(sellerId);
+        for (ChatRoom chatRoom : chatRoomList) {
+            chatRoom.updateValid();
+            if (bothId.contains(chatRoom.getSenderId()) && bothId.contains(chatRoom.getReceiverId())) {
+                chatRoom.updateComplete();
+            }
+        }
+    }
 }

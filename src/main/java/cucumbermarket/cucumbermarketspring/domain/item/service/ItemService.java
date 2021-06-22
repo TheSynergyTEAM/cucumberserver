@@ -86,7 +86,9 @@ public class ItemService {
     public void soldOut(Long itemId, Long buyerId) {
         Item item = itemRepository.findById(itemId).orElseThrow(()
                 -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
-
+        if (item.getSold() == true) {
+            throw new IllegalArgumentException("이미 판매된 상품입니다");
+        }
         item.soldOut(true, buyerId);
     }
 
