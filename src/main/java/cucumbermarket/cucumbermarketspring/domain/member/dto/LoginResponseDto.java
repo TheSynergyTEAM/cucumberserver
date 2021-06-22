@@ -17,6 +17,7 @@ public class LoginResponseDto {
     private String email;
     private String contact;
     private Integer ratingscore;
+    private Boolean unread;
 
     public LoginResponseDto(){}
 
@@ -30,5 +31,6 @@ public class LoginResponseDto {
         this.email = email;
         this.contact = contact;
         this.ratingscore = ratingscore;
+        this.unread = Boolean.FALSE;
     }
 }

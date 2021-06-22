@@ -82,12 +82,11 @@ public class ChatRoomService {
      */
     @Transactional
     public List<ChatRoomListDTO> findAllChatRoomsBySenderId(Long senderId) {
-        List<ChatRoom> bySenderId = chatRoomRepository.findBySenderId(senderId);
+        List<ChatRoom> bySenderId = getChatRoomListBySenderId(senderId);
         List<ChatRoomListDTO> chatRoomList = new ArrayList<ChatRoomListDTO>();
 
         for (ChatRoom chatRoom : bySenderId) {
             String chatId = chatRoom.getChatId();
-
             StringTokenizer st = new StringTokenizer(chatId,"_");
             String s1= st.nextToken();
             String s2= st.nextToken();
@@ -103,7 +102,7 @@ public class ChatRoomService {
                     chatRoom.getSenderId(), chatRoom.getReceiverId(), itemId, chatId, senderName, receiverName, itemName
             );
             chatRoomListDTO.setLastContent(message.getContent());
-            chatRoomListDTO.setUnreadMessages((int) chatRoomMessages.stream().filter(m-> m.getMessageStatus().equals(MessageStatus.RECEIVED)).count());
+            chatRoomListDTO.setUnreadMessages((int) chatRoomMessages.stream().filter(m-> m.getMessageStatus().equals(MessageStatus.UNREAD)).count());
             if (item.getMember().getId() == senderId) {
                 chatRoomListDTO.setSeller(Boolean.TRUE);
             } else {
@@ -115,7 +114,12 @@ public class ChatRoomService {
         return chatRoomList;
     }
 
-    private List<Message> allMessages(String chatId) {
+    public List<ChatRoom> getChatRoomListBySenderId(Long senderId) {
+        List<ChatRoom> bySenderId = chatRoomRepository.findBySenderId(senderId);
+        return bySenderId;
+    }
+
+    public List<Message> allMessages(String chatId) {
         Pageable pageable = PageRequest.of(0, 1000);
         Page<Message> byChatId = messageRepository.findByChatId(Optional.ofNullable(chatId), pageable);
         return byChatId.getContent();

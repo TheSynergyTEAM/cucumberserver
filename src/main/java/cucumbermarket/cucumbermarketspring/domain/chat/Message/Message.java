@@ -40,6 +40,6 @@ public class Message extends BaseTimeEntity {
     private MessageStatus messageStatus;
 
     public void updateStatus() {
-        this.messageStatus = MessageStatus.DELIVERED;
+        this.messageStatus = MessageStatus.READ;
     }
 }

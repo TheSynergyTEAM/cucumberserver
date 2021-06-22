@@ -3,6 +3,7 @@ package cucumbermarket.cucumbermarketspring.domain.chat.Message.service;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageRepository;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageStatus;
+import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoom;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service.ChatRoomService;
 import cucumbermarket.cucumbermarketspring.domain.chat.socket.dto.ChatRoomMessagesDTO;
 import cucumbermarket.cucumbermarketspring.domain.chat.socket.dto.MessageDto;
@@ -50,18 +51,16 @@ public class MessageService {
         Message originMessage = Message.builder()
                 .senderId(messageDto.getSenderId())
                 .receiverId(messageDto.getReceiverId())
-//                .chatId(String.format("%s_%s_%s", senderId, receiverId, itemId))
                 .chatId(chatId)
-                .messageStatus(MessageStatus.RECEIVED)
+                .messageStatus(MessageStatus.READ)
                 .content(messageDto.getContent())
                 .build();
         messageRepository.save(originMessage);
         Message createdMessage = Message.builder()
-                .senderId(messageDto.getSenderId())
-                .receiverId(messageDto.getReceiverId())
-//                .chatId(String.format("%s_%s_%s", receiverId, senderId, itemId))
+                .senderId(messageDto.getReceiverId())
+                .receiverId(messageDto.getSenderId())
                 .chatId(chatId2)
-                .messageStatus(MessageStatus.RECEIVED)
+                .messageStatus(MessageStatus.UNREAD)
                 .content(messageDto.getContent())
                 .build();
         messageRepository.save(createdMessage);
@@ -113,21 +112,25 @@ public class MessageService {
     /**
      * 메세지 수 조회 (읽지 않은 메세지)
      */
-    @Transactional
-    public Long countNewMessages(Long senderId, Long receiverId, Long itemId) {
-        Optional<String> chatId = getChatId(senderId, receiverId, itemId);
-        List<Message> byChatId = allMessages(String.valueOf(chatId));
-        return byChatId.stream().filter(message -> message.getMessageStatus().equals(MessageStatus.RECEIVED)).count();
-    }
+//    @Transactional
+//    public Long countNewMessages(Long senderId) {
+////        Optional<String> chatId = getChatId(senderId, receiverId, itemId);
+//        List<ChatRoom> chatRoomList = chatRoomService.getChatRoomListBySenderId(senderId);
+//        for (ChatRoom chatRoom : chatRoomList) {
+//            List<Message> messages = chatRoomService.allMessages(chatRoom.getChatId());
+//
+//        }
+////        return byChatId.stream().filter(message -> message.getMessageStatus().equals(MessageStatus.RECEIVED)).count();
+//    }
 
 
     @Transactional
     public void updateMessages(Long senderId, Long receiverId, Long itemId) {
-        Optional<String> chatId = getChatId(senderId, receiverId, itemId);
-        List<Message> allMessages = allMessages(String.valueOf(chatId));
-
+        String chatId = getChatId(senderId, receiverId, itemId).get();
+        List<Message> allMessages = allMessages(chatId);
+        System.out.println("allMessages.size() = " + allMessages.size());
         for (Message message : allMessages) {
-            if (message.getMessageStatus().equals(MessageStatus.RECEIVED)) {
+            if (message.getMessageStatus().equals(MessageStatus.UNREAD)) {
                 message.updateStatus();
             }
         }
