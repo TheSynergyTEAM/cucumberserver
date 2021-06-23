@@ -41,6 +41,9 @@ public class ChatRoomService {
                 .chatId(chatId1)
                 .senderId(senderId)
                 .receiverId(receiverId)
+                .itemId(itemId)
+                .valid(Boolean.TRUE)
+                .completeRoom(Boolean.FALSE)
                 .build();
 
         ChatRoom chatRoomByReceiver = ChatRoom
@@ -48,6 +51,9 @@ public class ChatRoomService {
                 .chatId(chatId2)
                 .senderId(receiverId)
                 .receiverId(senderId)
+                .itemId(itemId)
+                .valid(Boolean.TRUE)
+                .completeRoom(Boolean.FALSE)
                 .build();
         chatRoomRepository.save(chatRoomBySender);
         chatRoomRepository.save(chatRoomByReceiver);
@@ -82,12 +88,11 @@ public class ChatRoomService {
      */
     @Transactional
     public List<ChatRoomListDTO> findAllChatRoomsBySenderId(Long senderId) {
-        List<ChatRoom> bySenderId = chatRoomRepository.findBySenderId(senderId);
+        List<ChatRoom> bySenderId = getChatRoomListBySenderId(senderId);
         List<ChatRoomListDTO> chatRoomList = new ArrayList<ChatRoomListDTO>();
 
         for (ChatRoom chatRoom : bySenderId) {
             String chatId = chatRoom.getChatId();
-
             StringTokenizer st = new StringTokenizer(chatId,"_");
             String s1= st.nextToken();
             String s2= st.nextToken();
@@ -103,23 +108,43 @@ public class ChatRoomService {
                     chatRoom.getSenderId(), chatRoom.getReceiverId(), itemId, chatId, senderName, receiverName, itemName
             );
             chatRoomListDTO.setLastContent(message.getContent());
-            chatRoomListDTO.setUnreadMessages((int) chatRoomMessages.stream().filter(m-> m.getMessageStatus().equals(MessageStatus.RECEIVED)).count());
+            chatRoomListDTO.setUnreadMessages((int) chatRoomMessages.stream().filter(m-> m.getMessageStatus().equals(MessageStatus.UNREAD)).count());
             if (item.getMember().getId() == senderId) {
                 chatRoomListDTO.setSeller(Boolean.TRUE);
             } else {
                 chatRoomListDTO.setSeller(Boolean.FALSE);
             }
+            chatRoomListDTO.setValid(chatRoom.getValid());
+            chatRoomListDTO.setCompleteRoom(chatRoom.getCompleteRoom());
             chatRoomList.add(chatRoomListDTO);
 
         }
         return chatRoomList;
     }
 
-    private List<Message> allMessages(String chatId) {
+    public List<ChatRoom> getChatRoomListBySenderId(Long senderId) {
+        List<ChatRoom> bySenderId = chatRoomRepository.findBySenderId(senderId);
+        return bySenderId;
+    }
+
+    public List<Message> allMessages(String chatId) {
         Pageable pageable = PageRequest.of(0, 1000);
         Page<Message> byChatId = messageRepository.findByChatId(Optional.ofNullable(chatId), pageable);
         return byChatId.getContent();
     }
 
 
+    @Transactional
+    public void updateValid(Long itemId, Long buyerId, Long sellerId) {
+        List<ChatRoom> chatRoomList = chatRoomRepository.findByItemId(itemId);
+        List<Long> bothId = new ArrayList<>();
+        bothId.add(buyerId);
+        bothId.add(sellerId);
+        for (ChatRoom chatRoom : chatRoomList) {
+            chatRoom.updateValid();
+            if (bothId.contains(chatRoom.getSenderId()) && bothId.contains(chatRoom.getReceiverId())) {
+                chatRoom.updateComplete();
+            }
+        }
+    }
 }
