@@ -72,6 +72,14 @@ public class ChatRoomService {
     public Optional<String> getChatId(Long senderId, Long receiverId, Long itemId) {
         try {
             String chatId = String.format("%s_%s_%s", senderId, receiverId, itemId);
+            try {
+                Optional<Item> byId = itemRepository.findById(itemId);
+                System.out.println("senderId = " + senderId + ", receiverId = " + receiverId + ", itemId = " + itemId);
+                System.out.println("byId = " + byId.get().getTitle());
+
+            } catch (NoSuchElementException emptyItem) {
+                return Optional.ofNullable("Empty Item");
+            }
             Optional<ChatRoom> bySenderIdAndReceiverId = chatRoomRepository.findByChatId(chatId);
             ChatRoom chatRoom = bySenderIdAndReceiverId.get();
             return Optional.ofNullable(chatRoom.getChatId());

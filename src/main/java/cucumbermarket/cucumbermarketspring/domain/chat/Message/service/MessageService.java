@@ -42,28 +42,18 @@ public class MessageService {
      * 메세지 생성
      */
     @Transactional
-    public void createMessage(@Payload MessageDto messageDto) {
+    public void createMessage(MessageDto messageDto) {
+
         Long senderId = messageDto.getSenderId();
         Long receiverId = messageDto.getReceiverId();
         Long itemId = messageDto.getItemId();
         String chatId = getChatId(senderId, receiverId, itemId).get();
         String chatId2 = getChatId(receiverId, senderId, itemId).get();
-        Message originMessage = Message.builder()
-                .senderId(messageDto.getSenderId())
-                .receiverId(messageDto.getReceiverId())
-                .chatId(chatId)
-                .messageStatus(MessageStatus.READ)
-                .content(messageDto.getContent())
-                .build();
-        messageRepository.save(originMessage);
-        Message createdMessage = Message.builder()
-                .senderId(messageDto.getReceiverId())
-                .receiverId(messageDto.getSenderId())
-                .chatId(chatId2)
-                .messageStatus(MessageStatus.UNREAD)
-                .content(messageDto.getContent())
-                .build();
-        messageRepository.save(createdMessage);
+        if (chatId.equals("Empty Item") && chatId2.equals("Empty Item")) {
+            throw new RuntimeException("존재하지 않는 아이템");
+        }
+        Message originMessage = getMessage(messageDto, chatId, messageDto.getSenderId(), messageDto.getReceiverId(), MessageStatus.READ);
+        Message createdMessage = getMessage(messageDto, chatId2, messageDto.getReceiverId(), messageDto.getSenderId(), MessageStatus.UNREAD);
         Member sender = memberService.searchMemberById(originMessage.getSenderId());
         Member receiver = memberService.searchMemberById(originMessage.getReceiverId());
         String destination1 = "/user/" + sender.getId() + "/" + receiver.getId() + "/" + messageDto.getItemId() + "/queue/messages";
@@ -78,6 +68,18 @@ public class MessageService {
                 originMessage
 
         );
+    }
+
+    private Message getMessage(MessageDto messageDto, String chatId, Long senderId2, Long receiverId2, MessageStatus read) {
+        Message originMessage = Message.builder()
+                .senderId(senderId2)
+                .receiverId(receiverId2)
+                .chatId(chatId)
+                .messageStatus(read)
+                .content(messageDto.getContent())
+                .build();
+        messageRepository.save(originMessage);
+        return originMessage;
     }
 
     /**
