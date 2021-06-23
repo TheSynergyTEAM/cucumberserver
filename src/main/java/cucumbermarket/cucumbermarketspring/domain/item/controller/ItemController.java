@@ -1,5 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.item.controller;
 
+import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service.ChatRoomService;
 import cucumbermarket.cucumbermarketspring.domain.favourite.service.FavouriteService;
 import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoDto;
 import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoResponseDto;
@@ -7,10 +8,7 @@ import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemFileVO;
 import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
-import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
-import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemListResponseDto;
-import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
-import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
+import cucumbermarket.cucumbermarketspring.domain.item.dto.*;
 import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
@@ -32,9 +30,9 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
     private final PhotoService fileService;
-    private AddressService addressService;
     private final MemberService memberService;
     private final FavouriteService favouriteService;
+    private final ChatRoomService chatRoomService;
 
     /**
      * 물품등록
@@ -132,11 +130,16 @@ public class ItemController {
     /**
      * 판매 완료
      */
-    @PatchMapping("/item/{id}/soldout")
+    @PostMapping("/item/sold")
     @CrossOrigin
-    public CreateUpdateItemResponseDto soldOut(@PathVariable("id") Long itemId, @RequestParam("buyer") Long buyerId) {
-        itemService.soldOut(itemId, buyerId);
-        return new CreateUpdateItemResponseDto(itemId);
+    public ResponseEntity<?> soldOut(@RequestBody ItemSoldDto itemSoldDto) {
+        try {
+            itemService.soldOut(itemSoldDto.getItemId(), itemSoldDto.getBuyerId());
+            chatRoomService.updateValid(itemSoldDto.getItemId(), itemSoldDto.getBuyerId(), itemSoldDto.getSellerId());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 판매된 상품입니다");
+        }
+        return ResponseEntity.ok().body("OK");
     }
 
     /**

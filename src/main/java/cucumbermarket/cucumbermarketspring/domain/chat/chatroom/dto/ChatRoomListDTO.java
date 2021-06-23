@@ -17,6 +17,8 @@ public class ChatRoomListDTO {
     private String itemName;
     private Boolean seller;
     private String avatar;
+    private Boolean valid;
+    private Boolean completeRoom;
 
     public ChatRoomListDTO(Long senderId, Long receiverId, Long itemId, String chatId, String senderName, String receiverName, String itemName) {
         this.senderId = senderId;
@@ -39,5 +41,13 @@ public class ChatRoomListDTO {
 
     public void setSeller(Boolean seller) {
         this.seller = seller;
+    }
+
+    public void setValid(Boolean valid) {
+        this.valid = valid;
+    }
+
+    public void setCompleteRoom(Boolean completeRoom) {
+        this.completeRoom = completeRoom;
     }
 }

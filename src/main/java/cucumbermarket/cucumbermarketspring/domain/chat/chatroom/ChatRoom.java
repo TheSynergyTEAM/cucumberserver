@@ -32,4 +32,20 @@ public class ChatRoom extends BaseTimeEntity {
     @Column(name = "receiver_id")
     private Long receiverId;
 
+    @Column(name = "item_id")
+    private Long itemId;
+
+    @Column(name = "valid")
+    private Boolean valid;
+
+    @Column(name = "complete")
+    private Boolean completeRoom;
+
+    public void updateValid() {
+        this.valid = Boolean.FALSE;
+    }
+
+    public void updateComplete() {
+        this.completeRoom = Boolean.TRUE;
+    }
 }

@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum MessageStatus {
-    RECEIVED, DELIVERED
+    UNREAD, READ
 }

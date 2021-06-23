@@ -23,10 +23,14 @@ public class QChatRoom extends EntityPathBase<ChatRoom> {
 
     public final StringPath chatId = createString("chatId");
 
+    public final BooleanPath completeRoom = createBoolean("completeRoom");
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> created = _super.created;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final NumberPath<Long> itemId = createNumber("itemId", Long.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modified = _super.modified;
@@ -34,6 +38,8 @@ public class QChatRoom extends EntityPathBase<ChatRoom> {
     public final NumberPath<Long> receiverId = createNumber("receiverId", Long.class);
 
     public final NumberPath<Long> senderId = createNumber("senderId", Long.class);
+
+    public final BooleanPath valid = createBoolean("valid");
 
     public QChatRoom(String variable) {
         super(ChatRoom.class, forVariable(variable));

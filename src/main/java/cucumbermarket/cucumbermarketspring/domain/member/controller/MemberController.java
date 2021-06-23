@@ -1,5 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.member.controller;
 
+import cucumbermarket.cucumbermarketspring.domain.chat.Message.service.MessageService;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
@@ -28,6 +29,7 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MessageService messageService;
     private final MemberRepository memberRepository;
     private final JwtAuthenticationTokenProvider jwtAuthenticationTokenProvider;
 
@@ -39,6 +41,9 @@ public class MemberController {
         if (tokenOwnerId > 0) {
             Member member = memberRepository.getOne(tokenOwnerId);
             LoginResponseDto loginResponseDTO = getLoginResponseDTO(member);
+            if (messageService.countNewMessages(member.getId()) > 0) {
+                loginResponseDTO.setUnread(Boolean.TRUE);
+            }
             return ResponseEntity.ok().header(
                     HttpHeaders.AUTHORIZATION,token
             ).body(
@@ -84,9 +89,10 @@ public class MemberController {
 
         Member member = memberRepository.findByEmail(email);
         LoginResponseDto loginResponseDTO = getLoginResponseDTO(member);
-
+        if (messageService.countNewMessages(member.getId()) > 0) {
+            loginResponseDTO.setUnread(Boolean.TRUE);
+        }
         String token = jwtAuthenticationTokenProvider.issue(member.getId()).getToken();
-        System.out.println("token = " + token);
         return ResponseEntity.ok()
                 .header(
                         HttpHeaders.AUTHORIZATION,
