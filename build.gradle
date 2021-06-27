@@ -38,6 +38,8 @@ dependencies {
 	implementation 'org.webjars:bootstrap:3.3.7'
 	implementation 'org.webjars:jquery:3.1.1-1'
 
+	implementation 'org.mariadb.jdbc:mariadb-java-client'
+
 	compile group: 'com.querydsl', name: 'querydsl-jpa'
 	compile group: 'com.querydsl', name: 'querydsl-apt'
 	compileOnly 'org.projectlombok:lombok'
