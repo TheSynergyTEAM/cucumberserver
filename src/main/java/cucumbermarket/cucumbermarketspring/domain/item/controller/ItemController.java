@@ -148,6 +148,7 @@ public class ItemController {
     @DeleteMapping("/item/{id}")
     @CrossOrigin
     public ResponseEntity<?> delete(@PathVariable Long id){
+        chatRoomService.updateValidByDeletedItem(id);
         itemService.delete(id);
         return ResponseEntity.ok().body("OK");
     }

@@ -1,6 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.member.controller;
 
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.service.MessageService;
+import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service.ChatRoomService;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
@@ -31,6 +32,7 @@ public class MemberController {
     private final MemberService memberService;
     private final MessageService messageService;
     private final MemberRepository memberRepository;
+    private final ChatRoomService chatRoomService;
     private final JwtAuthenticationTokenProvider jwtAuthenticationTokenProvider;
 
     @CrossOrigin
@@ -146,6 +148,7 @@ public class MemberController {
     @DeleteMapping("/member/{id}")
     public ResponseEntity<?> deleteMember(@PathVariable("id") Long id) {
         memberService.deleteMember(id);
+        chatRoomService.updateValidByDeletedMember(id);
         return ResponseEntity.ok().body("OK");
     }
 
