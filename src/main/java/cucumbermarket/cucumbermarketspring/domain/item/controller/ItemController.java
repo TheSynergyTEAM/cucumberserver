@@ -44,8 +44,8 @@ public class ItemController {
 
         Member member = memberService.searchMemberById(Long.parseLong(itemFileVO.getId()));
         Address address = new Address(itemFileVO.getCity(), itemFileVO.getStreet1(), "", "");
-  //      Categories category = Categories.find(itemFileVO.getCategory());
-        Categories category = Categories.valueOf(itemFileVO.getCategory());
+        Categories category = Categories.find(itemFileVO.getCategory());
+//        Categories category = Categories.valueOf(itemFileVO.getCategory());
         int price = Integer.parseInt(itemFileVO.getPrice());
         Boolean sold = Boolean.parseBoolean(itemFileVO.getSold());
 

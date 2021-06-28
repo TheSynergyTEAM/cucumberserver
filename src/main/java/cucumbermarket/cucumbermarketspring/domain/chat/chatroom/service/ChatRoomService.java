@@ -3,7 +3,6 @@ package cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageRepository;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageStatus;
-import cucumbermarket.cucumbermarketspring.domain.chat.Message.service.MessageService;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoom;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoomRepository;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.dto.ChatRoomListDTO;

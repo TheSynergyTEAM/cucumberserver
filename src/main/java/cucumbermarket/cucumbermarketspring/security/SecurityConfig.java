@@ -28,7 +28,6 @@ import java.util.List;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
     private final MemberService memberService;
 
     private static final String[] PUBLIC_URI = {

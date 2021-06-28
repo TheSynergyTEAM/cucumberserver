@@ -24,6 +24,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final cucumbermarket.cucumbermarketspring.domain.member.address.QAddress address;
 
+    public final cucumbermarket.cucumbermarketspring.domain.member.avatar.QAvatar avatar;
+
     public final DatePath<java.time.LocalDate> birthdate = createDate("birthdate", java.time.LocalDate.class);
 
     public final StringPath contact = createString("contact");
@@ -65,6 +67,7 @@ public class QMember extends EntityPathBase<Member> {
     public QMember(Class<? extends Member> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.address = inits.isInitialized("address") ? new cucumbermarket.cucumbermarketspring.domain.member.address.QAddress(forProperty("address")) : null;
+        this.avatar = inits.isInitialized("avatar") ? new cucumbermarket.cucumbermarketspring.domain.member.avatar.QAvatar(forProperty("avatar"), inits.get("avatar")) : null;
     }
 
 }
