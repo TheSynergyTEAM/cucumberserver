@@ -1,10 +1,10 @@
 spring:
-  jpa:
-    hibernate:
-      dialect: "org.hibernate.dialect.MySQL5InnoDBDialect storage-engine:innodb"
-    properties: local
   profiles:
-    active: local
-    include: "ouath,real-db"
+    include: oauth,real-db
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+          storage-engine:innodb
   session:
     store-type: jdbc
