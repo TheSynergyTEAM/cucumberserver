@@ -1,16 +1,10 @@
 spring:
-  profiles:
-    include: ouath,real-db
-    active: local
   jpa:
+    hibernate:
+      dialect: "org.hibernate.dialect.MySQL5InnoDBDialect storage-engine:innodb"
     properties: local
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-          storage-engine:innodb
-  datasource:
-    driverClassName: org.mariadb.jdbc.Driver
-    password: master1234
-    url: jdbc:mariadb://cucumberserver.cnfroc6abnee.ap-northeast-2.rds.amanonaws.com:3306/cucumbermarket
-    username: cucumber
+  profiles:
+    active: local
+    include: "ouath,real-db"
   session:
     store-type: jdbc
