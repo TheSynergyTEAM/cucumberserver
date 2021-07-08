@@ -15,6 +15,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
@@ -95,11 +97,11 @@ public class MemberController {
             loginResponseDTO.setUnread(Boolean.TRUE);
         }
         String token = jwtAuthenticationTokenProvider.issue(member.getId()).getToken();
+        HttpHeaders responseheaders = new HttpHeaders();
+        responseheaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        responseheaders.add("authorization", token);
         return ResponseEntity.ok()
-                .header(
-                        HttpHeaders.AUTHORIZATION,
-                        token
-                        )
+                .headers(responseheaders)
                 .body(loginResponseDTO);
     }
 
