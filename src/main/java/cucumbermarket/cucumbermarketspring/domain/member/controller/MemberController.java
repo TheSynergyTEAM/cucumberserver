@@ -80,7 +80,7 @@ public class MemberController {
     /**
      * 로그인
      */
-    @CrossOrigin(exposedHeaders = {"Authorization"})
+    @CrossOrigin
     @PostMapping("/login")
     public ResponseEntity<?> loginMember(@RequestBody @Valid LoginRequestDTO loginRequest) {
         String email = loginRequest.getEmail();
@@ -99,7 +99,8 @@ public class MemberController {
         String token = jwtAuthenticationTokenProvider.issue(member.getId()).getToken();
         HttpHeaders responseheaders = new HttpHeaders();
         responseheaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        responseheaders.add("authorization", token);
+        responseheaders.add("Authorization", token);
+
         return ResponseEntity.ok()
                 .headers(responseheaders)
                 .body(loginResponseDTO);
