@@ -1,6 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.member.controller;
 
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.service.MessageService;
+import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service.ChatRoomService;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
@@ -14,6 +15,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
@@ -31,6 +34,7 @@ public class MemberController {
     private final MemberService memberService;
     private final MessageService messageService;
     private final MemberRepository memberRepository;
+    private final ChatRoomService chatRoomService;
     private final JwtAuthenticationTokenProvider jwtAuthenticationTokenProvider;
 
     @CrossOrigin
@@ -76,7 +80,7 @@ public class MemberController {
     /**
      * 로그인
      */
-    @CrossOrigin(exposedHeaders = {"Authorization"})
+    @CrossOrigin
     @PostMapping("/login")
     public ResponseEntity<?> loginMember(@RequestBody @Valid LoginRequestDTO loginRequest) {
         String email = loginRequest.getEmail();
@@ -93,11 +97,12 @@ public class MemberController {
             loginResponseDTO.setUnread(Boolean.TRUE);
         }
         String token = jwtAuthenticationTokenProvider.issue(member.getId()).getToken();
+        HttpHeaders responseheaders = new HttpHeaders();
+        responseheaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        responseheaders.add("Authorization", token);
+
         return ResponseEntity.ok()
-                .header(
-                        HttpHeaders.AUTHORIZATION,
-                        token
-                        )
+                .headers(responseheaders)
                 .body(loginResponseDTO);
     }
 
@@ -146,6 +151,7 @@ public class MemberController {
     @DeleteMapping("/member/{id}")
     public ResponseEntity<?> deleteMember(@PathVariable("id") Long id) {
         memberService.deleteMember(id);
+        chatRoomService.updateValidByDeletedMember(id);
         return ResponseEntity.ok().body("OK");
     }
 

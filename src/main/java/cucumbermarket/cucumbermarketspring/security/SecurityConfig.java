@@ -28,7 +28,6 @@ import java.util.List;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
     private final MemberService memberService;
 
     private static final String[] PUBLIC_URI = {
@@ -87,10 +86,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://cucum.netlify.com"));
         configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.setAllowedHeaders(ImmutableList.of("Authorization", "Cache-Control", "Content-Type", "refreshToken"));
-        configuration.setAllowedMethods(ImmutableList.of("HEAD",
-                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "refreshToken"));
+        configuration.setAllowedMethods(List.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowCredentials(true);
+        configuration.addExposedHeader("Authorization");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
