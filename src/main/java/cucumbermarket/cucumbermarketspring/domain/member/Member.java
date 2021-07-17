@@ -6,12 +6,14 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
+import cucumbermarket.cucumbermarketspring.domain.member.avatar.Avatar;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
 import cucumbermarket.cucumbermarketspring.domain.review.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.annotations.Proxy;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -72,7 +74,10 @@ public class Member implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
 
-    //빌더
+    @OneToOne
+    @JoinColumn(name = "avatar_id")
+    private Avatar avatar;
+
     @Builder
     public Member(String name, String password, Address address, LocalDate birthdate, String email, String contact, int ratingScore, String role) {
         this.name = name;
@@ -98,6 +103,14 @@ public class Member implements UserDetails {
         this.address = new Address(updateMemberDto.getCity(), updateMemberDto.getStreet1(), updateMemberDto.getStreet2(), updateMemberDto.getZipcode());
         this.email = updateMemberDto.getEmail();
         this.contact = updateMemberDto.getContact();
+    }
+
+    public void updateAvatar(Avatar avatar) {
+        this.avatar = avatar;
+    }
+
+    public void deleteAvatar() {
+        this.avatar = null;
     }
 
     // 사용자 권한 콜렉션 형태로 반환

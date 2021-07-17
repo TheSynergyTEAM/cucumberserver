@@ -15,6 +15,11 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +36,12 @@ public class ChatMessageController {
 
     @MessageMapping("/chat")
     @CrossOrigin
-    public void processMessage(@Payload MessageDto messageDto) {
-        messageService.createMessage(messageDto);
+    public void processMessage(@Payload MessageDto messageDto) throws IOException {
+        try {
+            messageService.createMessage(messageDto);
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
 
     }
 

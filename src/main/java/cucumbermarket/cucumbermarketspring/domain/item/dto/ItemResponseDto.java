@@ -21,6 +21,7 @@ public class ItemResponseDto {
     private int views;
     private Long favourite;
     private List<Long> fileid;
+    private Long buyerId;
 
     public ItemResponseDto(Item entity, List<Long> fileId, Long favourite){
         this.id = entity.getId();
@@ -34,6 +35,7 @@ public class ItemResponseDto {
         this.sold = entity.getSold();
         this.created = entity.getCreated();
         this.views = entity.getViews();
+        this.buyerId = entity.getBuyerId();
         this.favourite = favourite;
         this.fileid = fileId;
     }

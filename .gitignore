@@ -4,6 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+cucumberserver/build/
 
 ### STS ###
 .apt_generated
@@ -22,7 +23,9 @@ bin/
 *.iws
 *.iml
 *.ipr
-*.yml
+!*.yml
+
+application-credentials.properties
 
 out/
 !**/src/main/**/out/

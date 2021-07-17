@@ -3,7 +3,6 @@ package cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageRepository;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.MessageStatus;
-import cucumbermarket.cucumbermarketspring.domain.chat.Message.service.MessageService;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoom;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoomRepository;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.dto.ChatRoomListDTO;
@@ -72,6 +71,14 @@ public class ChatRoomService {
     public Optional<String> getChatId(Long senderId, Long receiverId, Long itemId) {
         try {
             String chatId = String.format("%s_%s_%s", senderId, receiverId, itemId);
+            try {
+                Optional<Item> byId = itemRepository.findById(itemId);
+                System.out.println("senderId = " + senderId + ", receiverId = " + receiverId + ", itemId = " + itemId);
+                System.out.println("byId = " + byId.get().getTitle());
+
+            } catch (NoSuchElementException emptyItem) {
+                return Optional.ofNullable("Empty Item");
+            }
             Optional<ChatRoom> bySenderIdAndReceiverId = chatRoomRepository.findByChatId(chatId);
             ChatRoom chatRoom = bySenderIdAndReceiverId.get();
             return Optional.ofNullable(chatRoom.getChatId());
@@ -93,15 +100,23 @@ public class ChatRoomService {
 
         for (ChatRoom chatRoom : bySenderId) {
             String chatId = chatRoom.getChatId();
-            StringTokenizer st = new StringTokenizer(chatId,"_");
-            String s1= st.nextToken();
-            String s2= st.nextToken();
-            Long itemId = Long.parseLong(st.nextToken());
+            Long itemId = chatRoom.getItemId();
             String senderName, receiverName, itemName;
+            Long itemSellerId = 0L;
             senderName = memberRepository.findById(chatRoom.getSenderId()).get().getName();
-            receiverName = memberRepository.findById(chatRoom.getReceiverId()).get().getName();
-            itemName = itemRepository.findById(itemId).get().getTitle();
-            Item item = itemRepository.findById(itemId).get();
+            try {
+                receiverName = memberRepository.findById(chatRoom.getReceiverId()).get().getName();
+            } catch (NoSuchElementException e) {
+                receiverName = "탈퇴한 회원";
+            }
+            try {
+                Item item = itemRepository.findById(itemId).get();
+                itemName = item.getTitle();
+                itemSellerId = item.getMember().getId();
+            } catch (NoSuchElementException e) {
+                itemName = "존재 하지 않는 물건";
+                itemSellerId = -1L;
+            }
             List<Message> chatRoomMessages = allMessages(chatId);
             Message message = chatRoomMessages.get(chatRoomMessages.size()-1);
             ChatRoomListDTO chatRoomListDTO = new ChatRoomListDTO(
@@ -109,7 +124,7 @@ public class ChatRoomService {
             );
             chatRoomListDTO.setLastContent(message.getContent());
             chatRoomListDTO.setUnreadMessages((int) chatRoomMessages.stream().filter(m-> m.getMessageStatus().equals(MessageStatus.UNREAD)).count());
-            if (item.getMember().getId() == senderId) {
+            if (itemSellerId == senderId) {
                 chatRoomListDTO.setSeller(Boolean.TRUE);
             } else {
                 chatRoomListDTO.setSeller(Boolean.FALSE);
@@ -125,6 +140,11 @@ public class ChatRoomService {
     public List<ChatRoom> getChatRoomListBySenderId(Long senderId) {
         List<ChatRoom> bySenderId = chatRoomRepository.findBySenderId(senderId);
         return bySenderId;
+    }
+
+    public List<ChatRoom> getChatRoomListByItemId(Long itemId) {
+        List<ChatRoom> byitemId = chatRoomRepository.findByItemId(itemId);
+        return byitemId;
     }
 
     public List<Message> allMessages(String chatId) {
@@ -145,6 +165,28 @@ public class ChatRoomService {
             if (bothId.contains(chatRoom.getSenderId()) && bothId.contains(chatRoom.getReceiverId())) {
                 chatRoom.updateComplete();
             }
+        }
+    }
+
+    @Transactional
+    public void updateValidByDeletedMember(Long memberId) {
+        List<ChatRoom> chatRoomList = getChatRoomListBySenderId(memberId);
+        for (ChatRoom chatRoom : chatRoomList) {
+            String senderId = String.valueOf(chatRoom.getSenderId());
+            String receiverId = String.valueOf(chatRoom.getReceiverId());
+            String itemId = String.valueOf(chatRoom.getItemId());
+            String mirroredChatId = receiverId + '_' + senderId + '_' + itemId;
+            ChatRoom mirroredChatRoom = chatRoomRepository.findByChatId(mirroredChatId).get();
+            chatRoom.updateValid();
+            mirroredChatRoom.updateValid();
+        }
+    }
+
+    @Transactional
+    public void updateValidByDeletedItem(Long itemId) {
+        List<ChatRoom> chatRoomListByItemId = getChatRoomListByItemId(itemId);
+        for (ChatRoom chatRoom : chatRoomListByItemId) {
+            chatRoom.updateValid();
         }
     }
 }
