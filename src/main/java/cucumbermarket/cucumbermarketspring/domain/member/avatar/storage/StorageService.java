@@ -33,7 +33,7 @@ import java.util.zip.Inflater;
 @AllArgsConstructor
 public class StorageService {
 
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${aws.s3.bucket}")
     public String bucket;
 
     private S3Uploader s3Uploader;
