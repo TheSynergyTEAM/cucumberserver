@@ -19,8 +19,7 @@ public class AvatarUploadController {
 
     @PostMapping("/member/{id}/avatar")
     public ResponseEntity<?> handleAvatarUpload(@PathVariable("id") Long id, @RequestParam("file") MultipartFile file) {
-
-        storageService.store(id, file);
+        storageService.save(id, file);
         return ResponseEntity.ok().body("ok");
     }
 
@@ -28,10 +27,11 @@ public class AvatarUploadController {
     public ResponseEntity<?> handleAvatarRequest(@PathVariable("id") Long id) {
         // Receive avatar file path
         try {
-            Path filePath = storageService.load(id);
-            byte[] bytes = IOUtils.toByteArray(filePath.toUri());
-            return ResponseEntity.ok().body(bytes);
-        } catch (NullPointerException | IOException e) {
+            byte[] downloaded = storageService.download(id);
+//            Path filePath = storageService.download(id);
+//            byte[] bytes = IOUtils.toByteArray(filePath.toUri());
+            return ResponseEntity.ok().body(downloaded);
+        } catch (NullPointerException e) {
             return ResponseEntity.badRequest().body("프로필이 존재하지 않습니다.");
         }
     }

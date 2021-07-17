@@ -1,5 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.file;
 
+import cucumbermarket.cucumbermarketspring.aws.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,10 +15,10 @@ public class UploadController {
 
     private final S3Uploader uploader;
 
-    @PostMapping("/upload/single")
-    public String upload(@RequestParam("data") MultipartFile file) throws IOException {
-        return uploader.upload(file, "static");
-    }
+//    @PostMapping("/upload/single")
+//    public String upload(@RequestParam("data") MultipartFile file) throws IOException {
+//        return uploader.upload(file, "static");
+//    }
 
 /*    @PostMapping("/upload/multi")
     public String upload2(@RequestParam("data") MultipartFile file) throws IOException {

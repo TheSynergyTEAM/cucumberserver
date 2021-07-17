@@ -1,17 +1,20 @@
 package cucumbermarket.cucumbermarketspring.domain.member.avatar.storage;
 
+import cucumbermarket.cucumbermarketspring.aws.S3Uploader;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.avatar.Avatar;
 import cucumbermarket.cucumbermarketspring.domain.member.avatar.AvatarRepository;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,14 +22,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class StorageService {
+
+    @Value("${cloud.aws.s3.bucket}")
+    public String bucket;
+
+    private S3Uploader s3Uploader;
 
     private Path rootLocation;
     private AvatarRepository avatarRepository;
@@ -40,54 +50,64 @@ public class StorageService {
     }
 
     @Transactional
-    public void store(Long memberId, MultipartFile file) {
-        try {
-            if (file.isEmpty()) {
-                throw new StorageException("Failed to store empty file.");
-            }
-            String originalFileExtension = "";
-            if (file.getContentType().equals("image/jpeg"))
-                originalFileExtension = ".jpeg";
-            else if (file.getContentType().equals("image/png"))
-                originalFileExtension = ".png";
-            else if (file.getContentType().equals("image/jpg"))
-                originalFileExtension = ".jpg";
-            else{
-                throw new StorageExtensionException("잘못된 형식의 파일");
-            }
-            String newFileName = memberId.toString() + "_avatar" + originalFileExtension;
-            Path destinationFile = this.rootLocation.resolve(
-                    Paths.get(newFileName))
-                    .normalize().toAbsolutePath();
-            if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
-                // This is a security check
-                throw new StorageException(
-                        "Cannot store file outside current directory.");
-            }
-            try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, destinationFile,
-                        StandardCopyOption.REPLACE_EXISTING);
-            }
-            Member foundMember = memberRepository.findById(memberId).get();
-            Avatar byName = avatarRepository.findByName(memberId.toString() + "_avatar");
-            if (byName != null) {
-                avatarRepository.delete(byName);
-            }
-            Avatar avatar = Avatar.builder().
-                    member(foundMember).
-                    name(memberId.toString() + "_avatar").
-                    bytes(compressBytes(file.getBytes())).
-                    path(newFileName).
-                    build();
-            foundMember.updateAvatar(avatar);
+    public Avatar save(Long memberId, MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new StorageException("Failed to store empty file.");
+        }
+        String originalFileExtension = "";
+        if (file.getContentType().equals("image/jpeg"))
+            originalFileExtension = ".jpeg";
+        else if (file.getContentType().equals("image/png"))
+            originalFileExtension = ".png";
+        else if (file.getContentType().equals("image/jpg"))
+            originalFileExtension = ".jpg";
+        else{
+            throw new StorageExtensionException("File Uploaded is not an type of image");
+        }
+        // get file metadata
+        HashMap<String, String> metadata = new HashMap<>();
+        metadata.put("Content-Type", file.getContentType());
+        metadata.put("Content-Length", String.valueOf(file.getSize()));
 
-            avatarRepository.save(avatar);
+        //Save Image in S3 and then save in the database
+        String path = String.format("%s/%s", bucket, UUID.randomUUID());
+        String newFileName = memberId.toString() + "_avatar" + originalFileExtension;
+        try {
+            s3Uploader.upload(path, newFileName, Optional.of(metadata), file.getInputStream());
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to upload file", e);
         }
-        catch (IOException e) {
-            throw new StorageException("Failed to store file.", e);
+
+        Member foundMember = memberRepository.findById(memberId).get();
+        Avatar byName = avatarRepository.findByName(newFileName);
+        if (byName != null) {
+            avatarRepository.delete(byName);
         }
+        Avatar avatar = Avatar.builder().
+                member(foundMember).
+                name(newFileName).
+                path(path).
+                build();
+        foundMember.updateAvatar(avatar);
+        avatarRepository.save(avatar);
+        return avatarRepository.findByName(newFileName);
     }
 
+
+    public byte[] download(Long memberId) {
+        Member member = memberRepository.findById(memberId).get();
+        Avatar avatar = member.getAvatar();
+        if (avatar == null) {
+            return new byte[0];
+        }
+//        Path destinationFile = this.rootLocation.resolve(
+//                Paths.get(avatar.getPath()))
+//                .normalize().toAbsolutePath();
+        return s3Uploader.download(avatar.getPath(), avatar.getName());
+    }
+
+
+    //Todo
     @Transactional
     public void init() {
         try {
@@ -101,6 +121,19 @@ public class StorageService {
     @Transactional
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
+    }
+
+
+    @Transactional
+    public void delete(Long memberId) {
+
+        Member member = memberRepository.findById(memberId).get();
+        Avatar avatar = member.getAvatar();
+        if (avatar == null) {
+            throw new NullPointerException("프로필 사진이 존재하지 않습니다.");
+        }
+        member.deleteAvatar();
+        avatarRepository.delete(avatar);
     }
 
     // compress the image bytes before storing it in the database
@@ -121,7 +154,7 @@ public class StorageService {
         System.out.println("Compressed Image Byte Size - " + outputStream.toByteArray().length);
         return outputStream.toByteArray();
     }
-    // uncompress the image bytes before returning it to the angular application
+
     public static byte[] decompressBytes(byte[] data) {
         Inflater inflater = new Inflater();
         inflater.setInput(data);
@@ -137,30 +170,5 @@ public class StorageService {
         } catch (DataFormatException e) {
         }
         return outputStream.toByteArray();
-    }
-
-    public Path load(Long memberId) {
-        Member member = memberRepository.findById(memberId).get();
-        try {
-            Avatar avatar = member.getAvatar();
-            Path destinationFile = this.rootLocation.resolve(
-                    Paths.get(avatar.getPath()))
-                    .normalize().toAbsolutePath();
-            return destinationFile;
-        } catch (NullPointerException e) {
-            throw new NullPointerException("프로필 사진이 존재하지 않습니다.");
-        }
-    }
-
-    @Transactional
-    public void delete(Long memberId) {
-
-        Member member = memberRepository.findById(memberId).get();
-        Avatar avatar = member.getAvatar();
-        if (avatar == null) {
-            throw new NullPointerException("프로필 사진이 존재하지 않습니다.");
-        }
-        member.deleteAvatar();
-        avatarRepository.delete(avatar);
     }
 }
