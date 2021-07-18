@@ -29,11 +29,11 @@ public class CucumbermarketSpringApplication extends SpringBootServletInitialize
 		return new HiddenHttpMethodFilter();
 	}
 
-	@Bean
-	CommandLineRunner init(StorageService storageService) {
-		return (args) -> {
-			storageService.deleteAll();
-			storageService.init();
-		};
-	}
+//	@Bean
+//	CommandLineRunner init(StorageService storageService) {
+//		return (args) -> {
+//			storageService.deleteAll();
+//			storageService.init();
+//		};
+//	}
 }
