@@ -1,5 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.member.avatar.storage;
 
+import cucumbermarket.cucumbermarketspring.aws.BucketName;
 import cucumbermarket.cucumbermarketspring.aws.S3Uploader;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
@@ -30,8 +31,6 @@ import java.util.zip.Inflater;
 @Service
 public class StorageService {
 
-    @Value("${aws.s3.bucket}")
-    public String bucket;
 
     private final S3Uploader s3Uploader;
 
@@ -39,7 +38,7 @@ public class StorageService {
     private final AvatarRepository avatarRepository;
     private final MemberRepository memberRepository;
 
-//    @Autowired
+    //    @Autowired
 //    public StorageService(StorageProperties properties, AvatarRepository avatarRepository, MemberRepository memberRepository) {
 //        this.rootLocation = Paths.get(properties.getLocation());
 //        this.avatarRepository = avatarRepository;
@@ -67,7 +66,7 @@ public class StorageService {
         metadata.put("Content-Length", String.valueOf(file.getSize()));
 
         //Save Image in S3 and then save in the database
-        String path = String.format("%s/%s", bucket, UUID.randomUUID());
+        String path = String.format("%s/%s", BucketName.TODO_IMAGE.getBucketName(), UUID.randomUUID());
         String newFileName = memberId.toString() + "_avatar" + originalFileExtension;
         try {
             s3Uploader.upload(path, newFileName, Optional.of(metadata), file.getInputStream());
