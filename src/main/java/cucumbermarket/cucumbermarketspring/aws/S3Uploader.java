@@ -2,13 +2,12 @@ package cucumbermarket.cucumbermarketspring.aws;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -19,11 +18,10 @@ import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
-@RequiredArgsConstructor
-@Component
+@AllArgsConstructor
+@Service
 public class S3Uploader {
-
-    private final AmazonS3 amazonS3Client;
+    private final AmazonS3 amazonS3;
 
     @Value("${aws.s3.bucket}")
     public String bucket;
@@ -36,17 +34,27 @@ public class S3Uploader {
             }
         });
         try {
-            amazonS3Client.putObject(path, fileName, inputStream, objectMetadata);
+            amazonS3.putObject(path, fileName, inputStream, objectMetadata);
         } catch (AmazonServiceException e) {
             throw new IllegalStateException("Failed to upload the file", e.getCause());
         }
     }
 
+    public byte[] download(String path, String key) {
+        try {
+            S3Object object = amazonS3.getObject(path, key);
+            S3ObjectInputStream objectContent = object.getObjectContent();
+            return IOUtils.toByteArray(objectContent);
+        } catch (AmazonServiceException | IOException exception) {
+            throw new IllegalStateException("Failed to download the file", exception);
+        }
+    }
 
     public String upload1(MultipartFile multipartFile, String dirName) throws IOException {
         File uploadFile = convert(multipartFile).orElseThrow(() -> new IllegalArgumentException(("MultipartFile -> File로 전환 실패")));
         return upload2(uploadFile, dirName);
     }
+
 
     private String upload2(File uploadFile, String dirName) {
         String fileName = dirName + File.separator + uploadFile.getName();
@@ -56,8 +64,8 @@ public class S3Uploader {
     }
 
     private String putS3(File uploadFile, String fileName) {
-        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
-        return amazonS3Client.getUrl(bucket, fileName).toString();
+        amazonS3.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
+        return amazonS3.getUrl(bucket, fileName).toString();
     }
 
     private void removeNewFile(File targetFile) {
@@ -79,13 +87,4 @@ public class S3Uploader {
         return Optional.empty();
     }
 
-    public byte[] download(String path, String key) {
-        try {
-            S3Object object = amazonS3Client.getObject(path, key);
-            S3ObjectInputStream objectContent = object.getObjectContent();
-            return IOUtils.toByteArray(objectContent);
-        } catch (AmazonServiceException | IOException exception) {
-            throw new IllegalStateException("Failed to download the file", exception);
-        }
-    }
 }
