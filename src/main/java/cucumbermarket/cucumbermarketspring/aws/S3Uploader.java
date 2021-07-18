@@ -23,9 +23,6 @@ import java.util.Optional;
 public class S3Uploader {
     private final AmazonS3 amazonS3;
 
-    @Value("${aws.s3.bucket}")
-    public String bucket;
-
     public void upload(String path, String fileName, Optional<Map<String, String>> optionalMetaData, InputStream inputStream) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         optionalMetaData.ifPresent(m -> {
@@ -64,8 +61,8 @@ public class S3Uploader {
     }
 
     private String putS3(File uploadFile, String fileName) {
-        amazonS3.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
-        return amazonS3.getUrl(bucket, fileName).toString();
+        amazonS3.putObject(new PutObjectRequest(BucketName.TODO_IMAGE.getBucketName(), fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
+        return amazonS3.getUrl(BucketName.TODO_IMAGE.getBucketName(), fileName).toString();
     }
 
     private void removeNewFile(File targetFile) {
