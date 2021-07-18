@@ -6,6 +6,7 @@ import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.avatar.Avatar;
 import cucumbermarket.cucumbermarketspring.domain.member.avatar.AvatarRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,26 +26,25 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-@Service
 @AllArgsConstructor
+@Service
 public class StorageService {
 
     @Value("${aws.s3.bucket}")
     public String bucket;
 
-    @Autowired
-    private S3Uploader s3Uploader;
+    private final S3Uploader s3Uploader;
 
-    private Path rootLocation;
-    private AvatarRepository avatarRepository;
-    private MemberRepository memberRepository;
+//    private Path rootLocation;
+    private final AvatarRepository avatarRepository;
+    private final MemberRepository memberRepository;
 
-    @Autowired
-    public StorageService(StorageProperties properties, AvatarRepository avatarRepository, MemberRepository memberRepository) {
-        this.rootLocation = Paths.get(properties.getLocation());
-        this.avatarRepository = avatarRepository;
-        this.memberRepository = memberRepository;
-    }
+//    @Autowired
+//    public StorageService(StorageProperties properties, AvatarRepository avatarRepository, MemberRepository memberRepository) {
+//        this.rootLocation = Paths.get(properties.getLocation());
+//        this.avatarRepository = avatarRepository;
+//        this.memberRepository = memberRepository;
+//    }
 
     @Transactional
     public Avatar save(Long memberId, MultipartFile file) {
@@ -105,20 +105,20 @@ public class StorageService {
 
 
     //Todo
-    @Transactional
-    public void init() {
-        try {
-            Files.createDirectories(rootLocation);
-        }
-        catch (IOException e) {
-            throw new StorageException("Could not initialize storage", e);
-        }
-    }
-
-    @Transactional
-    public void deleteAll() {
-        FileSystemUtils.deleteRecursively(rootLocation.toFile());
-    }
+//    @Transactional
+//    public void init() {
+//        try {
+//            Files.createDirectories(rootLocation);
+//        }
+//        catch (IOException e) {
+//            throw new StorageException("Could not initialize storage", e);
+//        }
+//    }
+//
+//    @Transactional
+//    public void deleteAll() {
+//        FileSystemUtils.deleteRecursively(rootLocation.toFile());
+//    }
 
 
     @Transactional
