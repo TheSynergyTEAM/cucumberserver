@@ -32,6 +32,7 @@ public class StorageService {
     @Value("${aws.s3.bucket}")
     public String bucket;
 
+    @Autowired
     private S3Uploader s3Uploader;
 
     private Path rootLocation;
