@@ -30,8 +30,6 @@ import java.util.zip.Inflater;
 @Service
 public class StorageService {
 
-    @Value("${aws.s3.bucket}")
-    public String bucket;
 
     private final S3Uploader s3Uploader;
 
@@ -39,7 +37,10 @@ public class StorageService {
     private final AvatarRepository avatarRepository;
     private final MemberRepository memberRepository;
 
-//    @Autowired
+    @Value("${aws.s3.bucket}")
+    private String bucket;
+
+    //    @Autowired
 //    public StorageService(StorageProperties properties, AvatarRepository avatarRepository, MemberRepository memberRepository) {
 //        this.rootLocation = Paths.get(properties.getLocation());
 //        this.avatarRepository = avatarRepository;
