@@ -1,32 +1,33 @@
 package cucumbermarket.cucumbermarketspring.domain.file.util;
 
+import cucumbermarket.cucumbermarketspring.aws.BucketName;
+import cucumbermarket.cucumbermarketspring.aws.S3Uploader;
 import cucumbermarket.cucumbermarketspring.domain.file.Photo;
 import cucumbermarket.cucumbermarketspring.domain.file.PhotoRepository;
 import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoDto;
 import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
+import cucumbermarket.cucumbermarketspring.domain.member.avatar.storage.StorageExtensionException;
 import cucumbermarket.cucumbermarketspring.domain.review.Review;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Component
+@RequiredArgsConstructor
 public class FileHandler {
 
     private final PhotoService photoService;
     private final PhotoRepository photoRepository;
 
-    public FileHandler(PhotoService photoService, PhotoRepository photoRepository) {
-        this.photoService = photoService;
-        this.photoRepository = photoRepository;
-    }
 
     public List<Photo> parseFileInfo(
             Item item,
@@ -160,4 +161,5 @@ public class FileHandler {
 
         return fileList;
     }
+
 }

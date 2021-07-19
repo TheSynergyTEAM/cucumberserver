@@ -1,6 +1,8 @@
 package cucumbermarket.cucumbermarketspring.domain.item.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import cucumbermarket.cucumbermarketspring.aws.BucketName;
+import cucumbermarket.cucumbermarketspring.aws.S3Uploader;
 import cucumbermarket.cucumbermarketspring.domain.file.Photo;
 import cucumbermarket.cucumbermarketspring.domain.file.PhotoRepository;
 import cucumbermarket.cucumbermarketspring.domain.file.util.FileHandler;
@@ -11,7 +13,10 @@ import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
+import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.QAddress;
+import cucumbermarket.cucumbermarketspring.domain.member.avatar.Avatar;
+import cucumbermarket.cucumbermarketspring.domain.member.avatar.storage.StorageExtensionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +25,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
 public class ItemService {
+
+    private final S3Uploader s3Uploader;
     private final ItemRepository itemRepository;
     private final PhotoRepository photoRepository;
     private final FileHandler fileHandler;
@@ -38,6 +46,25 @@ public class ItemService {
     @Transactional
     public Long save(ItemCreateRequestDto requestDto, List<MultipartFile> files) throws Exception {
 
+        Item item = createItem(requestDto);
+        int fileNumber = 0;
+        for (MultipartFile file : files) {
+            saveToS3(item, file, fileNumber);
+            fileNumber++;
+        }
+
+        List<Photo> photoList = fileHandler.parseFileInfo(item, files);
+
+        if(!CollectionUtils.isEmpty(photoList)){
+            for(Photo photo : photoList)
+                item.addPhoto(photoRepository.save(photo));
+        }
+
+        return itemRepository.save(item).getId();
+    }
+
+    @Transactional
+    private Item createItem(ItemCreateRequestDto requestDto) {
         Item item = new Item(
                 requestDto.getMember(),
                 null,
@@ -48,15 +75,7 @@ public class ItemService {
                 requestDto.getAddress(),
                 requestDto.getSold(),
                 0);
-
-        List<Photo> photoList = fileHandler.parseFileInfo(item, files);
-
-        if(!CollectionUtils.isEmpty(photoList)){
-            for(Photo photo : photoList)
-                item.addPhoto(photoRepository.save(photo));
-        }
-
-        return itemRepository.save(item).getId();
+        return item;
     }
 
     /**
@@ -186,7 +205,7 @@ public class ItemService {
                .fetch();
 
         return itemList;
-    }
+   }
 
     /**
      * 상품 전체 조회(카테고리 기준)
@@ -231,4 +250,55 @@ public class ItemService {
         return itemRepository.findAll();
     }
 
+    public void saveToS3(Item item, MultipartFile file, int fileNumber) {
+
+        String originalFileExtension = "";
+        if (file.getContentType().equals("image/jpeg"))
+            originalFileExtension = ".jpeg";
+        else if (file.getContentType().equals("image/png"))
+            originalFileExtension = ".png";
+        else if (file.getContentType().equals("image/jpg"))
+            originalFileExtension = ".jpg";
+        else {
+            throw new StorageExtensionException("File Uploaded is not an type of image");
+        }
+        // get file metadata
+        HashMap<String, String> metadata = new HashMap<>();
+        metadata.put("Content-Type", file.getContentType());
+        metadata.put("Content-Length", String.valueOf(file.getSize()));
+
+        //Save Image in S3 and then save in the database
+        String path = String.format(
+                "%s/%s/%s",
+                BucketName.TODO_IMAGE.getBucketName(),
+                "item",
+                UUID.randomUUID());
+        String newFileName = "item_" + item.getId() + "_" + fileNumber + originalFileExtension;
+        try {
+            s3Uploader.upload(path, newFileName, Optional.of(metadata), file.getInputStream());
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to upload file", e);
+        }
+        Photo photo = Photo.builder().
+                origFileName(newFileName).
+                filePath(path).
+                fileSize(file.getSize()).build();
+        photoRepository.save(photo);
+
+    }
+
+    public List<byte[]> download(Long itemId) {
+        Item item = itemRepository.findById(itemId).get();
+        List<byte[]> fileList = new ArrayList<>();
+        List<Photo> photoList = item.getPhoto();
+        if (photoList == null) {
+            return fileList;
+        }
+        for (Photo photo : photoList) {
+            byte[] download = s3Uploader.download(photo.getFilePath(), photo.getOrigFileName());
+            fileList.add(download);
+        }
+        return fileList;
+    }
 }
+

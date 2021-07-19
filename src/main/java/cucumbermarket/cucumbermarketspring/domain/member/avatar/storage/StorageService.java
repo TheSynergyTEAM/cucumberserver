@@ -30,15 +30,13 @@ import java.util.zip.Inflater;
 @RequiredArgsConstructor
 @Service
 public class StorageService {
-
-
     private final S3Uploader s3Uploader;
 
 //    private Path rootLocation;
     private final AvatarRepository avatarRepository;
     private final MemberRepository memberRepository;
 
-    //    @Autowired
+//    @Autowired
 //    public StorageService(StorageProperties properties, AvatarRepository avatarRepository, MemberRepository memberRepository) {
 //        this.rootLocation = Paths.get(properties.getLocation());
 //        this.avatarRepository = avatarRepository;
@@ -66,7 +64,7 @@ public class StorageService {
         metadata.put("Content-Length", String.valueOf(file.getSize()));
 
         //Save Image in S3 and then save in the database
-        String path = String.format("%s/%s", BucketName.TODO_IMAGE.getBucketName(), UUID.randomUUID());
+        String path = String.format("%s/%s/%s", BucketName.TODO_IMAGE.getBucketName(), "avatar", UUID.randomUUID());
         String newFileName = memberId.toString() + "_avatar" + originalFileExtension;
         try {
             s3Uploader.upload(path, newFileName, Optional.of(metadata), file.getInputStream());
