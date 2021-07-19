@@ -12,7 +12,6 @@ import cucumbermarket.cucumbermarketspring.domain.item.dto.*;
 import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
-import cucumbermarket.cucumbermarketspring.domain.member.address.AddressService;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -156,9 +155,9 @@ public class ItemController {
     /**
      * 물품 개별 조회
      */
-    @GetMapping("/item/{id}")
+    @GetMapping("/item/{id}/{member}")
     @CrossOrigin
-    public ItemResponseDto findById(@PathVariable("id") Long id){
+    public ItemResponseDto findById(@PathVariable Long id, @PathVariable Long member){
         List<PhotoResponseDto> photoResponseDtoList = fileService.findAllByItem(id);
         List<Long> photoId = new ArrayList<>();
         for(PhotoResponseDto photoResponseDto : photoResponseDtoList)
@@ -167,7 +166,9 @@ public class ItemController {
         Item item = itemService.searchItemById(id);
         itemService.updateViews(id, item.getViews());
         Long favourite = favouriteService.countFavourite(id);
-        return itemService.findOne(id, photoId, favourite);
+        Boolean mine = favouriteService.isItMine(member, id);
+
+        return itemService.findOne(id, photoId, favourite, mine);
     }
 
     /**
@@ -181,7 +182,8 @@ public class ItemController {
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            Boolean mine = favouriteService.isItMine(memberId, item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
 
@@ -199,7 +201,8 @@ public class ItemController {
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            Boolean mine = favouriteService.isItMine(memberId, item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
 
@@ -209,15 +212,19 @@ public class ItemController {
     /**
      * 물품 전체 조회(구 기준)
      */
-    @GetMapping("/item/area")
+    @GetMapping("/item/area/{id}")
     @CrossOrigin
-    public List<ItemListResponseDto> findByArea(@RequestParam("city") String city, @RequestParam("street") String street) {
+    public List<ItemListResponseDto> findByArea(
+            @PathVariable Long id,
+            @RequestParam("city") String city,
+            @RequestParam("street") String street) {
         List<Item> itemList = itemService.findByArea(city, street);
         List<ItemListResponseDto> responseDtoList = new ArrayList<>();
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            Boolean mine = favouriteService.isItMine(id, item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
 
@@ -227,16 +234,17 @@ public class ItemController {
     /**
      * 물품 전체 조회(카테고리 기준)
      */
-    @GetMapping("/item/search/1")
+    @GetMapping("/item/search/1/{id}")
     @CrossOrigin
-    public List<ItemListResponseDto> findByCategory(@RequestParam("category") String category) {
+    public List<ItemListResponseDto> findByCategory(@PathVariable Long id, @RequestParam("category") String category) {
         Categories categories = Categories.find(category);
         List<Item> itemList = itemService.findByCategory(categories);
         List<ItemListResponseDto> responseDtoList = new ArrayList<>();
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            Boolean mine = favouriteService.isItMine(id, item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
 
@@ -246,15 +254,16 @@ public class ItemController {
     /**
      * 물품 전체 조회(키워드 기준)
      */
-    @GetMapping("/item/search/2")
+    @GetMapping("/item/search/2/{id}")
     @CrossOrigin
-    public List<ItemListResponseDto> findByKeyword(@RequestParam("keyword") String keyword) {
+    public List<ItemListResponseDto> findByKeyword(@PathVariable Long id, @RequestParam("keyword") String keyword) {
         List<Item> itemList = itemService.findByKeyword(keyword);
         List<ItemListResponseDto> responseDtoList = new ArrayList<>();
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            Boolean mine = favouriteService.isItMine(id, item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
 
@@ -264,15 +273,16 @@ public class ItemController {
     /**
      * 물품 전체 조회
      */
-    @GetMapping("/item/list")
+    @GetMapping("/item/list/{id}")
     @CrossOrigin
-    public List<ItemListResponseDto> findAll() {
+    public List<ItemListResponseDto> findAll(@PathVariable Long id) {
         List<Item> itemList = itemService.findAll();
         List<ItemListResponseDto> responseDtoList = new ArrayList<>();
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            Boolean mine = favouriteService.isItMine(id, item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
 

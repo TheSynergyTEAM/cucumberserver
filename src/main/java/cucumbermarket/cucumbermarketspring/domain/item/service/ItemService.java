@@ -107,11 +107,11 @@ public class ItemService {
      * 상품 개별 조회(정보 + 파일)
      * */
     @Transactional(readOnly = true)
-    public ItemResponseDto findOne(Long id, List<Long> fileId, Long count){
+    public ItemResponseDto findOne(Long id, List<Long> fileId, Long count, Boolean mine){
         Item entity = itemRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
 
-        return new ItemResponseDto(entity, fileId, count);
+        return new ItemResponseDto(entity, fileId, count, mine);
     }
 
     /**

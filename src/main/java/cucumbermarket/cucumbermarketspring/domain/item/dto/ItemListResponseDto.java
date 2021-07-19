@@ -17,11 +17,12 @@ public class ItemListResponseDto {
     private Boolean sold;
     private LocalDateTime created;
     private int views;
-    private Long favourite;
+    private Long favCnt;
+    private Boolean like;
     private Long thumbnailid;
 
 
-    public ItemListResponseDto(Item entity, Long favourite) {
+    public ItemListResponseDto(Item entity, Long favCnt, Boolean like) {
         this.id = entity.getId();
         this.member = entity.getMember().getUsername();
         this.city = entity.getAddress().getCity();
@@ -32,7 +33,8 @@ public class ItemListResponseDto {
         this.sold = entity.getSold();
         this.created = entity.getCreated();
         this.views = entity.getViews();
-        this.favourite = favourite;
+        this.favCnt = favCnt;
+        this.like = like;
 
         if(!entity.getPhoto().isEmpty())
             this.thumbnailid = entity.getPhoto().get(0).getId();
