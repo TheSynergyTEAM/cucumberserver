@@ -53,7 +53,7 @@ public class MessageService {
             throw new RuntimeException("존재하지 않는 아이템");
         }
         Message originMessage = getMessage(messageDto, chatId, messageDto.getSenderId(), messageDto.getReceiverId(), MessageStatus.READ);
-        Message createdMessage = getMessage(messageDto, chatId2, messageDto.getReceiverId(), messageDto.getSenderId(), MessageStatus.UNREAD);
+        Message createdMessage = getMessage(messageDto, chatId2, messageDto.getSenderId(), messageDto.getReceiverId(), MessageStatus.UNREAD);
         Member sender = memberService.searchMemberById(originMessage.getSenderId());
         Member receiver = memberService.searchMemberById(originMessage.getReceiverId());
         String destination1 = "/user/" + sender.getId() + "/" + receiver.getId() + "/" + messageDto.getItemId() + "/queue/messages";
@@ -65,8 +65,7 @@ public class MessageService {
 
         simpMessagingTemplate.convertAndSend(
                 destination2,
-                originMessage
-
+                createdMessage
         );
     }
 

@@ -1,6 +1,5 @@
 package cucumbermarket.cucumbermarketspring.domain.chat.socket.controller;
 
-import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.service.MessageService;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.dto.ChatRoomListDTO;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service.ChatRoomService;
@@ -15,24 +14,15 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 public class ChatMessageController {
 
-    @Autowired
     private final ChatRoomService chatRoomService;
-    @Autowired
     private final MessageService messageService;
-    @Autowired
-    private final MemberService memberService;
 
     @MessageMapping("/chat")
     @CrossOrigin
