@@ -16,7 +16,7 @@ public class ItemResponseDto {
     private String spec;
     private String city;
     private String street;
-    private Boolean sold;
+    private String sold;
     private LocalDateTime created;
     private int views;
     private Long favCnt;
@@ -33,7 +33,7 @@ public class ItemResponseDto {
         this.spec = entity.getSpec();
         this.city = entity.getAddress().getCity();
         this.street = entity.getAddress().getStreet1();
-        this.sold = entity.getSold();
+        this.sold = entity.getSold().getValue();
         this.created = entity.getCreated();
         this.views = entity.getViews();
         this.buyerId = entity.getBuyerId();

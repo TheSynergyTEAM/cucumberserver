@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] PUBLIC_URI = {
             "/", "/login", "/address/city/**", "/member",
-            "/category", "/item/**","/item", "/item/list", "/item/area",
+            "/category", "/item/**","/item", "/item/list", "/item/area", "/status",
             "/thumbnail/**", "/image/**",
             "/test", "/webjars/**", "/ws/**", "/user/**", "/chat/**",
             "/review/list/**", "/message/**", "/console/**",

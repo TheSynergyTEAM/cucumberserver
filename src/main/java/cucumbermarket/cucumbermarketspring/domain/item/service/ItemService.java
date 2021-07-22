@@ -11,6 +11,7 @@ import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
+import cucumbermarket.cucumbermarketspring.domain.item.status.Status;
 import cucumbermarket.cucumbermarketspring.domain.member.address.QAddress;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -86,10 +87,23 @@ public class ItemService {
     public void soldOut(Long itemId, Long buyerId) {
         Item item = itemRepository.findById(itemId).orElseThrow(()
                 -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
-        if (item.getSold() == true) {
+        if (item.getSold().getValue().equals(Status.SOLD)) {
             throw new IllegalArgumentException("이미 판매된 상품입니다");
         }
-        item.soldOut(true, buyerId);
+        item.soldOut(Status.SOLD, buyerId);
+    }
+
+    /**
+    * 상품 판매 상태 변경
+    * */
+    @Transactional
+    public void changeState(Long itemId, Status status) {
+        Item item = itemRepository.findById(itemId).orElseThrow(()
+                -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+        if (item.getSold().getValue().equals(Status.SOLD)) {
+            throw new IllegalArgumentException("이미 판매된 상품입니다");
+        }
+        item.changeStatus(status);
     }
 
     /**
