@@ -14,7 +14,7 @@ public class ItemListResponseDto {
     private String title;
     private String categories;
     private int price;
-    private Boolean sold;
+    private String sold;
     private LocalDateTime created;
     private int views;
     private Long favCnt;
@@ -30,7 +30,7 @@ public class ItemListResponseDto {
         this.title = entity.getTitle();
         this.categories = entity.getCategories().getValue();
         this.price = entity.getPrice();
-        this.sold = entity.getSold();
+        this.sold = entity.getSold().getValue();
         this.created = entity.getCreated();
         this.views = entity.getViews();
         this.favCnt = favCnt;

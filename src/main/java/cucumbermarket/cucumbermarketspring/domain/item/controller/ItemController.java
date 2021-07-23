@@ -10,6 +10,7 @@ import cucumbermarket.cucumbermarketspring.domain.item.ItemFileVO;
 import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.*;
 import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
+import cucumbermarket.cucumbermarketspring.domain.item.status.Status;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
@@ -44,9 +45,8 @@ public class ItemController {
         Member member = memberService.searchMemberById(Long.parseLong(itemFileVO.getId()));
         Address address = new Address(itemFileVO.getCity(), itemFileVO.getStreet1(), "", "");
         Categories category = Categories.find(itemFileVO.getCategory());
-//        Categories category = Categories.valueOf(itemFileVO.getCategory());
         int price = Integer.parseInt(itemFileVO.getPrice());
-        Boolean sold = Boolean.parseBoolean(itemFileVO.getSold());
+        Status sold = Status.find(itemFileVO.getSold());
 
         ItemCreateRequestDto itemRequestDto = ItemCreateRequestDto.builder()
                         .member(member)
@@ -70,10 +70,9 @@ public class ItemController {
     @CrossOrigin
     public CreateUpdateItemResponseDto update(@PathVariable Long id, ItemFileVO itemFileVO) throws Exception {
         Address address = new Address(itemFileVO.getCity(), itemFileVO.getStreet1(), "", "");
-    //    Categories category = Categories.find(itemFileVO.getCategory());
-        Categories category = Categories.valueOf(itemFileVO.getCategory());
+        Categories category = Categories.find(itemFileVO.getCategory());
         int price = Integer.parseInt(itemFileVO.getPrice());
-        Boolean sold = Boolean.parseBoolean(itemFileVO.getSold());
+        Status sold = Status.find(itemFileVO.getSold());
 
         ItemUpdateRequestDto itemRequestDto = ItemUpdateRequestDto.builder()
                 .address(address)
@@ -135,6 +134,21 @@ public class ItemController {
         try {
             itemService.soldOut(itemSoldDto.getItemId(), itemSoldDto.getBuyerId());
             chatRoomService.updateValid(itemSoldDto.getItemId(), itemSoldDto.getBuyerId(), itemSoldDto.getSellerId());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 판매된 상품입니다");
+        }
+        return ResponseEntity.ok().body("OK");
+    }
+
+    /**
+     * 상태 변경
+     */
+    @PostMapping("/item/change")
+    @CrossOrigin
+    public ResponseEntity<?> change(@RequestBody ItemStatusDto itemStatusDto) {
+        try {
+            Status sold = Status.find(itemStatusDto.getStatus());
+            itemService.changeState(itemStatusDto.getItemId(), sold);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 판매된 상품입니다");
         }

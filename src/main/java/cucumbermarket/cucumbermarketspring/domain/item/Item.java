@@ -6,6 +6,7 @@ import cucumbermarket.cucumbermarketspring.domain.BaseTimeEntity;
 import cucumbermarket.cucumbermarketspring.domain.favourite.FavouriteItem;
 import cucumbermarket.cucumbermarketspring.domain.file.Photo;
 import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
+import cucumbermarket.cucumbermarketspring.domain.item.status.Status;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.review.Review;
@@ -53,7 +54,8 @@ public class Item extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String spec;
 
-    private Boolean sold;
+    @Enumerated(EnumType.STRING)
+    private Status sold;
 
     @Column(columnDefinition = "int default 0")
     private int views;
@@ -72,7 +74,7 @@ public class Item extends BaseTimeEntity {
      * 빌더
      * */
     @Builder
-    public Item(Member member, Long buyerId, String title, Categories categories, int price, String spec, Address address, Boolean sold, int views){
+    public Item(Member member, Long buyerId, String title, Categories categories, int price, String spec, Address address, Status sold, int views){
         this.member = member;
         this.buyerId = buyerId;
         this.title = title;
@@ -84,7 +86,7 @@ public class Item extends BaseTimeEntity {
         this.views = views;
     }
 
-    public void update(String title, Categories categories, int price, String spec, Address address, Boolean sold){
+    public void update(String title, Categories categories, int price, String spec, Address address, Status sold){
         this.title = title;
         this.address = address;
         this.categories = categories;
@@ -97,7 +99,11 @@ public class Item extends BaseTimeEntity {
         this.views = views + 1;
     }
 
-    public void soldOut(Boolean sold, Long memberId){
+    public void changeStatus(Status sold) {
+        this.sold = sold;
+    }
+
+    public void soldOut(Status sold, Long memberId){
         this.sold = sold;
         this.buyerId = memberId;
     }
