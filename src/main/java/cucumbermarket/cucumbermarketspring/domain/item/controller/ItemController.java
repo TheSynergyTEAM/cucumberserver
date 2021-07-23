@@ -173,7 +173,7 @@ public class ItemController {
     @CrossOrigin
     public ItemResponseDto findById(
             @PathVariable Long id,
-            @RequestParam(value="user", required = false, defaultValue = "0") Long member
+            @RequestParam(value="user", required = false, defaultValue = "0") String member
             ) {
         List<PhotoResponseDto> photoResponseDtoList = fileService.findAllByItem(id);
         List<Long> photoId = new ArrayList<>();
@@ -183,7 +183,7 @@ public class ItemController {
         Item item = itemService.searchItemById(id);
         itemService.updateViews(id, item.getViews());
         Long favourite = favouriteService.countFavourite(id);
-        Boolean mine = favouriteService.isItMine(member, id);
+        Boolean mine = favouriteService.isItMine(Long.parseLong(member), id);
 
         return itemService.findOne(id, photoId, favourite, mine);
     }
@@ -232,7 +232,7 @@ public class ItemController {
     @GetMapping("/item/area")
     @CrossOrigin
     public List<ItemListResponseDto> findByArea(
-            @RequestParam(value="user", required = false, defaultValue = "0") Long id,
+            @RequestParam(value="user", required = false, defaultValue = "0") String id,
             @RequestParam("city") String city,
             @RequestParam("street") String street) {
         List<Item> itemList = itemService.findByArea(city, street);
@@ -240,7 +240,7 @@ public class ItemController {
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            Boolean mine = favouriteService.isItMine(id, item.getId());
+            Boolean mine = favouriteService.isItMine(Long.parseLong(id), item.getId());
             ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
@@ -254,7 +254,7 @@ public class ItemController {
     @GetMapping("/item/search/1")
     @CrossOrigin
     public List<ItemListResponseDto> findByCategory(
-            @RequestParam(value="user", required = false, defaultValue = "0") Long id,
+            @RequestParam(value="user", required = false, defaultValue = "0") String id,
             @RequestParam("category") String category) {
         Categories categories = Categories.find(category);
         List<Item> itemList = itemService.findByCategory(categories);
@@ -262,7 +262,7 @@ public class ItemController {
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            Boolean mine = favouriteService.isItMine(id, item.getId());
+            Boolean mine = favouriteService.isItMine(Long.parseLong(id), item.getId());
             ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
@@ -276,14 +276,14 @@ public class ItemController {
     @GetMapping("/item/search/2/")
     @CrossOrigin
     public List<ItemListResponseDto> findByKeyword(
-            @RequestParam(value="user", required = false, defaultValue = "0") Long id,
+            @RequestParam(value="user", required = false, defaultValue = "0") String id,
             @RequestParam("keyword") String keyword) {
         List<Item> itemList = itemService.findByKeyword(keyword);
         List<ItemListResponseDto> responseDtoList = new ArrayList<>();
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            Boolean mine = favouriteService.isItMine(id, item.getId());
+            Boolean mine = favouriteService.isItMine(Long.parseLong(id), item.getId());
             ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
@@ -296,13 +296,13 @@ public class ItemController {
      */
     @GetMapping("/item/list")
     @CrossOrigin
-    public List<ItemListResponseDto> findAll(@RequestParam(value="user", required = false, defaultValue = "0") Long id) {
+    public List<ItemListResponseDto> findAll(@RequestParam(value="user", required = false, defaultValue = "0") String id) {
         List<Item> itemList = itemService.findAll();
         List<ItemListResponseDto> responseDtoList = new ArrayList<>();
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            Boolean mine = favouriteService.isItMine(id, item.getId());
+            Boolean mine = favouriteService.isItMine(Long.parseLong(id), item.getId());
             ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
