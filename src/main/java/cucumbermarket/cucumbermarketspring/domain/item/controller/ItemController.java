@@ -169,9 +169,12 @@ public class ItemController {
     /**
      * 물품 개별 조회
      */
-    @GetMapping("/item/{id}/{member}")
+    @GetMapping("/item/{id}")
     @CrossOrigin
-    public ItemResponseDto findById(@PathVariable Long id, @PathVariable Long member){
+    public ItemResponseDto findById(
+            @PathVariable Long id,
+            @RequestParam(value="user", required = false, defaultValue = "0") Long member
+            ) {
         List<PhotoResponseDto> photoResponseDtoList = fileService.findAllByItem(id);
         List<Long> photoId = new ArrayList<>();
         for(PhotoResponseDto photoResponseDto : photoResponseDtoList)
@@ -226,10 +229,10 @@ public class ItemController {
     /**
      * 물품 전체 조회(구 기준)
      */
-    @GetMapping("/item/area/{id}")
+    @GetMapping("/item/area")
     @CrossOrigin
     public List<ItemListResponseDto> findByArea(
-            @PathVariable Long id,
+            @RequestParam(value="user", required = false, defaultValue = "0") Long id,
             @RequestParam("city") String city,
             @RequestParam("street") String street) {
         List<Item> itemList = itemService.findByArea(city, street);
@@ -248,9 +251,11 @@ public class ItemController {
     /**
      * 물품 전체 조회(카테고리 기준)
      */
-    @GetMapping("/item/search/1/{id}")
+    @GetMapping("/item/search/1")
     @CrossOrigin
-    public List<ItemListResponseDto> findByCategory(@PathVariable Long id, @RequestParam("category") String category) {
+    public List<ItemListResponseDto> findByCategory(
+            @RequestParam(value="user", required = false, defaultValue = "0") Long id,
+            @RequestParam("category") String category) {
         Categories categories = Categories.find(category);
         List<Item> itemList = itemService.findByCategory(categories);
         List<ItemListResponseDto> responseDtoList = new ArrayList<>();
@@ -268,9 +273,11 @@ public class ItemController {
     /**
      * 물품 전체 조회(키워드 기준)
      */
-    @GetMapping("/item/search/2/{id}")
+    @GetMapping("/item/search/2/")
     @CrossOrigin
-    public List<ItemListResponseDto> findByKeyword(@PathVariable Long id, @RequestParam("keyword") String keyword) {
+    public List<ItemListResponseDto> findByKeyword(
+            @RequestParam(value="user", required = false, defaultValue = "0") Long id,
+            @RequestParam("keyword") String keyword) {
         List<Item> itemList = itemService.findByKeyword(keyword);
         List<ItemListResponseDto> responseDtoList = new ArrayList<>();
 
@@ -287,9 +294,9 @@ public class ItemController {
     /**
      * 물품 전체 조회
      */
-    @GetMapping("/item/list/{id}")
+    @GetMapping("/item/list")
     @CrossOrigin
-    public List<ItemListResponseDto> findAll(@PathVariable Long id) {
+    public List<ItemListResponseDto> findAll(@RequestParam(value="user", required = false, defaultValue = "0") Long id) {
         List<Item> itemList = itemService.findAll();
         List<ItemListResponseDto> responseDtoList = new ArrayList<>();
 
