@@ -1,6 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.file.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import cucumbermarket.cucumbermarketspring.aws.S3Uploader;
 import cucumbermarket.cucumbermarketspring.domain.file.Photo;
 import cucumbermarket.cucumbermarketspring.domain.file.PhotoRepository;
 import cucumbermarket.cucumbermarketspring.domain.file.QPhoto;
