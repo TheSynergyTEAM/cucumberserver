@@ -23,10 +23,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -100,6 +97,26 @@ public class MessageService {
         );
 
         return chatRoomMessagesDTO;
+    }
+
+    /**
+     *
+     * @param senderId
+     * @param receiverId
+     * @param itemId
+     * @return
+     */
+    @Transactional
+    public List<Message> findMessagesWithoutPage(Long senderId, Long receiverId, Long itemId) {
+        Optional<String> chatId = getChatId(senderId, receiverId, itemId);
+        List<Message> messageList = messageRepository.findByChatId(chatId.get());
+        Collections.sort(messageList, new Comparator<Message>() {
+            @Override
+            public int compare(Message o1, Message o2) {
+                return o2.getCreated().compareTo(o1.getCreated());
+            }
+        });
+        return messageList;
     }
 
     /**
