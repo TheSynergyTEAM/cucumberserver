@@ -1,5 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.chat.socket.controller;
 
+import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.service.MessageService;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.dto.ChatRoomListDTO;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service.ChatRoomService;
@@ -46,6 +47,18 @@ public class ChatMessageController {
         messageService.updateMessages(senderId, receiverId, itemId);
         return ResponseEntity.ok(
                 chatRoomMessagesDTO
+        );
+    }
+
+    @GetMapping("/message/{senderId}/{receiverId}/{itemId}/v2")
+    @CrossOrigin
+    public ResponseEntity<?> findChatMessagesWithoutPage(@PathVariable("senderId") Long senderId,
+                                              @PathVariable("receiverId") Long receiverId,
+                                              @PathVariable("itemId") Long itemId){
+        List<Message> messagesWithoutPage = messageService.findMessagesWithoutPage(senderId, receiverId, itemId);
+        messageService.updateMessages(senderId, receiverId, itemId);
+        return ResponseEntity.ok(
+                messagesWithoutPage
         );
     }
 
