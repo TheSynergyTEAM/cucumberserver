@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Controller
 @RequiredArgsConstructor
@@ -69,6 +70,24 @@ public class ChatMessageController {
         return ResponseEntity.ok().body(
                 allChatRoomsBySenderId
         );
+    }
+
+    @GetMapping("/chatroom/{senderId}/{itemName}/{memberName}")
+    @CrossOrigin
+    public ResponseEntity<?> chatRoomListByItemIdOrMemberId(
+            @PathVariable("senderId") Long senderId,
+            @PathVariable("itemName") String itemName,
+            @PathVariable("memberName") String memberName
+    ) {
+        try {
+            List<ChatRoomListDTO> chatRoomList = chatRoomService.findAllChatRoomsByItemIdOrMemberName
+                    (senderId, itemName, memberName);
+            return ResponseEntity.ok().body(
+                    chatRoomList
+            );
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().body("검색 결과가 존재하지 않습니다.");
+        }
     }
 
     @Getter
