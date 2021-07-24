@@ -25,8 +25,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FileHandler {
 
-    private final PhotoService photoService;
-    private final PhotoRepository photoRepository;
+//    private final PhotoService photoService;
+//    private final PhotoRepository photoRepository;
 
 
     public List<Photo> parseFileInfo(

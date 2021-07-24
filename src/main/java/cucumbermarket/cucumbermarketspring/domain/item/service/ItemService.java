@@ -46,24 +46,23 @@ public class ItemService {
     @Transactional
     public Long save(ItemCreateRequestDto requestDto, List<MultipartFile> files) throws Exception {
 
-        Item item = createItem(requestDto);
-        int fileNumber = 0;
+        Item newItem = createItem(requestDto);
+        int fileNumber = 1;
         for (MultipartFile file : files) {
-            saveToS3(item, file, fileNumber);
+            saveToS3(newItem, file, fileNumber);
             fileNumber++;
         }
 
-        List<Photo> photoList = fileHandler.parseFileInfo(item, files);
+//        List<Photo> photoList = fileHandler.parseFileInfo(newItem, files);
+//
+//        if(!CollectionUtils.isEmpty(photoList)){
+//            for(Photo photo : photoList)
+//                newItem.addPhoto(photoRepository.save(photo));
+//        }
 
-        if(!CollectionUtils.isEmpty(photoList)){
-            for(Photo photo : photoList)
-                item.addPhoto(photoRepository.save(photo));
-        }
-
-        return itemRepository.save(item).getId();
+        return itemRepository.save(newItem).getId();
     }
 
-    @Transactional
     private Item createItem(ItemCreateRequestDto requestDto) {
         Item item = new Item(
                 requestDto.getMember(),
