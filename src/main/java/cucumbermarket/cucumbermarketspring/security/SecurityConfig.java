@@ -1,9 +1,7 @@
 package cucumbermarket.cucumbermarketspring.security;
 
-import com.google.common.collect.ImmutableList;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -32,10 +31,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] PUBLIC_URI = {
             "/", "/login", "/address/city/**", "/member",
-            "/category", "/item/**","/item", "/item/list", "/item/area",
-            "/thumbnail/**", "/image/**", "/upload",
+            "/category", "/item/**","/item", "/item/list", "/item/area", "/status",
+            "/thumbnail/**", "/image/**",
             "/test", "/webjars/**", "/ws/**", "/user/**", "/chat/**",
-            "/review/list/**","/message/**", "/console/**"
+            "/review/list/**", "/message/**", "/console/**",
+            "/favourite", "/favourite/**"
     };
 
     @Bean

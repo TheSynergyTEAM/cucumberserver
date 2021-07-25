@@ -13,7 +13,7 @@ import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemCreateRequestDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.ItemUpdateRequestDto;
-import cucumbermarket.cucumbermarketspring.domain.member.Member;
+import cucumbermarket.cucumbermarketspring.domain.item.status.Status;
 import cucumbermarket.cucumbermarketspring.domain.member.address.QAddress;
 import cucumbermarket.cucumbermarketspring.domain.member.avatar.Avatar;
 import cucumbermarket.cucumbermarketspring.domain.member.avatar.storage.StorageExtensionException;
@@ -104,10 +104,23 @@ public class ItemService {
     public void soldOut(Long itemId, Long buyerId) {
         Item item = itemRepository.findById(itemId).orElseThrow(()
                 -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
-        if (item.getSold() == true) {
+        if (item.getSold().getValue().equals(Status.SOLD)) {
             throw new IllegalArgumentException("이미 판매된 상품입니다");
         }
-        item.soldOut(true, buyerId);
+        item.soldOut(Status.SOLD, buyerId);
+    }
+
+    /**
+    * 상품 판매 상태 변경
+    * */
+    @Transactional
+    public void changeState(Long itemId, Status status) {
+        Item item = itemRepository.findById(itemId).orElseThrow(()
+                -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
+        if (item.getSold().getValue().equals(Status.SOLD)) {
+            throw new IllegalArgumentException("이미 판매된 상품입니다");
+        }
+        item.changeStatus(status);
     }
 
     /**
@@ -125,11 +138,11 @@ public class ItemService {
      * 상품 개별 조회(정보 + 파일)
      * */
     @Transactional(readOnly = true)
-    public ItemResponseDto findOne(Long id, List<Long> fileId, Long count){
+    public ItemResponseDto findOne(Long id, List<Long> fileId, Long count, Boolean mine){
         Item entity = itemRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
 
-        return new ItemResponseDto(entity, fileId, count);
+        return new ItemResponseDto(entity, fileId, count, mine);
     }
 
     /**

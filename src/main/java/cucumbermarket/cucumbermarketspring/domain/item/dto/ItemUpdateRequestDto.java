@@ -1,6 +1,7 @@
 package cucumbermarket.cucumbermarketspring.domain.item.dto;
 
 import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
+import cucumbermarket.cucumbermarketspring.domain.item.status.Status;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,10 +15,10 @@ public class ItemUpdateRequestDto {
     private int price;
     private String spec;
     private Address address;
-    private Boolean sold;
+    private Status sold;
 
     @Builder
-    public ItemUpdateRequestDto(String title, Categories categories, int price, String spec, Address address, Boolean sold){
+    public ItemUpdateRequestDto(String title, Categories categories, int price, String spec, Address address, Status sold){
         this.title = title;
         this.categories = categories;
         this.price = price;

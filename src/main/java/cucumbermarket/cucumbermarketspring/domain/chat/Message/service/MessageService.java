@@ -23,10 +23,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -53,7 +50,7 @@ public class MessageService {
             throw new RuntimeException("존재하지 않는 아이템");
         }
         Message originMessage = getMessage(messageDto, chatId, messageDto.getSenderId(), messageDto.getReceiverId(), MessageStatus.READ);
-        Message createdMessage = getMessage(messageDto, chatId2, messageDto.getReceiverId(), messageDto.getSenderId(), MessageStatus.UNREAD);
+        Message createdMessage = getMessage(messageDto, chatId2, messageDto.getSenderId(), messageDto.getReceiverId(), MessageStatus.UNREAD);
         Member sender = memberService.searchMemberById(originMessage.getSenderId());
         Member receiver = memberService.searchMemberById(originMessage.getReceiverId());
         String destination1 = "/user/" + sender.getId() + "/" + receiver.getId() + "/" + messageDto.getItemId() + "/queue/messages";
@@ -65,8 +62,7 @@ public class MessageService {
 
         simpMessagingTemplate.convertAndSend(
                 destination2,
-                originMessage
-
+                createdMessage
         );
     }
 
@@ -101,6 +97,26 @@ public class MessageService {
         );
 
         return chatRoomMessagesDTO;
+    }
+
+    /**
+     *
+     * @param senderId
+     * @param receiverId
+     * @param itemId
+     * @return
+     */
+    @Transactional
+    public List<Message> findMessagesWithoutPage(Long senderId, Long receiverId, Long itemId) {
+        Optional<String> chatId = getChatId(senderId, receiverId, itemId);
+        List<Message> messageList = messageRepository.findByChatId(chatId.get());
+        Collections.sort(messageList, new Comparator<Message>() {
+            @Override
+            public int compare(Message o1, Message o2) {
+                return o2.getCreated().compareTo(o1.getCreated());
+            }
+        });
+        return messageList;
     }
 
     /**
