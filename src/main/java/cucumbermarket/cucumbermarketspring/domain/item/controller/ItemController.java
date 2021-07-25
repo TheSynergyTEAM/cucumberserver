@@ -318,7 +318,7 @@ public class ItemController {
      */
     @GetMapping("/item/photos")
     @CrossOrigin
-    public ResponseEntity<?> itemPhotoRequest(@RequestParam(value = "item", required = true) Long id) {
+    public ResponseEntity<?> itemPhotoRequestAll(@RequestParam(value = "item", required = true) Long id) {
         List<byte[]> photoList = itemService.listDownload(id);
         PhotoResponseDtoV2 dtoV2 = PhotoResponseDtoV2.builder().
                 related("item").total(photoList.size()).relatedId(id).photoList(photoList).build();
@@ -326,6 +326,21 @@ public class ItemController {
         return ResponseEntity.ok().body(
                 dtoV2
         );
+    }
+
+    @GetMapping("/item/photo")
+    @CrossOrigin
+    public ResponseEntity<?> itemPhotoRequest(@RequestParam(value = "itemId") Long itemId, @RequestParam(value = "fileNumber") int fileNumber) {
+        byte[] photo = itemService.download(itemId, fileNumber);
+        if (photo != null && photo.length > 0) {
+            return ResponseEntity.ok().body(
+                    photo
+            );
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    "해당 파일이 존재하지 않습니다"
+            );
+        }
     }
 
     @Data

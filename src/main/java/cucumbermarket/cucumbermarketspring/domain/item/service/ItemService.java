@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
@@ -311,6 +312,20 @@ public class ItemService {
             fileList.add(download);
         }
         return fileList;
+    }
+
+    public byte[] download(Long itemId, int fileNumber) {
+        Item item = itemRepository.findById(itemId).get();
+        List<Photo> photoList = item.getPhoto();
+        if (photoList.isEmpty()) {
+            return new byte[0];
+        }
+        Optional<Photo> p = photoList.stream().filter(photo -> photo.getOrigFileName().contains("item_" + itemId + "_" + fileNumber + '.')).
+                findFirst();
+        if (!p.isPresent()) {
+            return new byte[0];
+        }
+        return s3Uploader.download(p.get().getFilePath(), p.get().getOrigFileName());
     }
 }
 
