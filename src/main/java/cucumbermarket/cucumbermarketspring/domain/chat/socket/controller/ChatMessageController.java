@@ -89,14 +89,13 @@ public class ChatMessageController {
     @CrossOrigin
     public ResponseEntity<?> chatRoomListByItemIdOrMemberId(
             @RequestParam(value = "senderId") Long senderId,
-            @RequestParam(value = "itemName", required = false, defaultValue = "") String itemName,
-            @RequestParam(value = "memberName", required = false, defaultValue = "") String memberName) {
-        if (itemName.equals("") && memberName.equals("")) {
+            @RequestParam(value = "keyword", required = true, defaultValue = "") String keyword) {
+        if (keyword.equals("")) {
             return ResponseEntity.badRequest().body("검색 결과가 존재하지 않습니다.");
         }
         try {
             List<ChatRoomListDTO> chatRoomList = chatRoomService.findAllChatRoomsByItemIdOrMemberName
-                    (senderId, itemName, memberName);
+                    (senderId, keyword);
             return ResponseEntity.ok().body(
                     chatRoomList
             );
