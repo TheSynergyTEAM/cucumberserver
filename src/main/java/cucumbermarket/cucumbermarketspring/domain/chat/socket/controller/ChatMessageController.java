@@ -85,13 +85,15 @@ public class ChatMessageController {
         );
     }
 
-    @GetMapping("/chatroom/{senderId}/{itemName}/{memberName}")
+    @GetMapping("/chatroom")
     @CrossOrigin
     public ResponseEntity<?> chatRoomListByItemIdOrMemberId(
-            @PathVariable("senderId") Long senderId,
-            @PathVariable("itemName") String itemName,
-            @PathVariable("memberName") String memberName
-    ) {
+            @RequestParam(value = "senderId") Long senderId,
+            @RequestParam(value = "itemName", required = false, defaultValue = "") String itemName,
+            @RequestParam(value = "memberName", required = false, defaultValue = "") String memberName) {
+        if (itemName.equals("") && memberName.equals("")) {
+            return ResponseEntity.badRequest().body("검색 결과가 존재하지 않습니다.");
+        }
         try {
             List<ChatRoomListDTO> chatRoomList = chatRoomService.findAllChatRoomsByItemIdOrMemberName
                     (senderId, itemName, memberName);
