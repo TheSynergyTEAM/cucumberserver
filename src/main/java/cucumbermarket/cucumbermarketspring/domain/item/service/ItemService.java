@@ -299,7 +299,7 @@ public class ItemService {
 
     }
 
-    public List<byte[]> download(Long itemId) {
+    public List<byte[]> listDownload(Long itemId) {
         Item item = itemRepository.findById(itemId).get();
         List<byte[]> fileList = new ArrayList<>();
         List<Photo> photoList = item.getPhoto();

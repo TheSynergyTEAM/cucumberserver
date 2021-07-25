@@ -4,6 +4,7 @@ import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service.ChatRoom
 import cucumbermarket.cucumbermarketspring.domain.favourite.service.FavouriteService;
 import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoDto;
 import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoResponseDto;
+import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoResponseDtoV2;
 import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemFileVO;
@@ -310,6 +311,22 @@ public class ItemController {
         return responseDtoList;
     }
 
+    /**
+     *
+     * @param id (item Id)
+     * @return
+     */
+    @GetMapping("/item/photos")
+    @CrossOrigin
+    public ResponseEntity<?> itemPhotoRequest(@RequestParam(value = "item", required = true) Long id) {
+        List<byte[]> photoList = itemService.listDownload(id);
+        PhotoResponseDtoV2 dtoV2 = PhotoResponseDtoV2.builder().
+                related("item").total(photoList.size()).relatedId(id).photoList(photoList).build();
+
+        return ResponseEntity.ok().body(
+                dtoV2
+        );
+    }
 
     @Data
     static class CreateUpdateItemResponseDto {
@@ -319,5 +336,4 @@ public class ItemController {
             this.id = id;
         }
     }
-
 }
