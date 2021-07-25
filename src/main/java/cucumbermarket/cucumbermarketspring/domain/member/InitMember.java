@@ -2,12 +2,11 @@ package cucumbermarket.cucumbermarketspring.domain.member;
 
 import cucumbermarket.cucumbermarketspring.domain.chat.InitChat;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
-import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
 import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
+import cucumbermarket.cucumbermarketspring.domain.item.status.Status;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
 import cucumbermarket.cucumbermarketspring.domain.member.address.AddressVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,7 +90,7 @@ public class InitMember {
             );
             em.persist(member);
             if (i == 1){
-                Item item = new Item(member, null, "장미 팝니다", Categories.LIVING, 3000, "관리 힘듦요", address, Boolean.FALSE, 0);
+                Item item = new Item(member, null, "장미 팝니다", Categories.LIVING, 3000, "관리 힘듦요", address, Status.SALE, 0);
                 em.persist(item);
             }
             if (i == 2) {
@@ -99,7 +98,7 @@ public class InitMember {
                         member,
                         null,
                         "아이폰 8 팝니다",
-                        Categories.DIGIT, 200000, "아이폰 8 싸게 팝니다.", address, Boolean.FALSE, 0);
+                        Categories.DIGIT, 200000, "아이폰 8 싸게 팝니다.", address, Status.SALE, 0);
                 em.persist(item);
             }
         }

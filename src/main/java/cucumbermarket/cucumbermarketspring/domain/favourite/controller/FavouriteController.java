@@ -11,6 +11,7 @@ import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,7 @@ public class FavouriteController {
      * */
     @PostMapping("/favourite")
     @CrossOrigin
+    @ResponseStatus(HttpStatus.CREATED)
     public CreateFavItemResponseDto create(@RequestBody CreateFavItemRequestDto createRequest){
         Item item = itemService.searchItemById(createRequest.getItemid());
         Member member = memberService.searchMemberById(createRequest.getMemberid());

@@ -15,24 +15,16 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Controller
 @RequiredArgsConstructor
 public class ChatMessageController {
 
-    @Autowired
     private final ChatRoomService chatRoomService;
-    @Autowired
     private final MessageService messageService;
-    @Autowired
-    private final MemberService memberService;
 
     @MessageMapping("/chat")
     @CrossOrigin
@@ -58,6 +50,18 @@ public class ChatMessageController {
         );
     }
 
+    @GetMapping("/message/{senderId}/{receiverId}/{itemId}/v2")
+    @CrossOrigin
+    public ResponseEntity<?> findChatMessagesWithoutPage(@PathVariable("senderId") Long senderId,
+                                              @PathVariable("receiverId") Long receiverId,
+                                              @PathVariable("itemId") Long itemId){
+        List<Message> messagesWithoutPage = messageService.findMessagesWithoutPage(senderId, receiverId, itemId);
+        messageService.updateMessages(senderId, receiverId, itemId);
+        return ResponseEntity.ok(
+                messagesWithoutPage
+        );
+    }
+
     @RequestMapping("/test")
     @CrossOrigin
     public String testview(){
@@ -79,6 +83,24 @@ public class ChatMessageController {
         return ResponseEntity.ok().body(
                 allChatRoomsBySenderId
         );
+    }
+
+    @GetMapping("/chatroom/{senderId}/{itemName}/{memberName}")
+    @CrossOrigin
+    public ResponseEntity<?> chatRoomListByItemIdOrMemberId(
+            @PathVariable("senderId") Long senderId,
+            @PathVariable("itemName") String itemName,
+            @PathVariable("memberName") String memberName
+    ) {
+        try {
+            List<ChatRoomListDTO> chatRoomList = chatRoomService.findAllChatRoomsByItemIdOrMemberName
+                    (senderId, itemName, memberName);
+            return ResponseEntity.ok().body(
+                    chatRoomList
+            );
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().body("검색 결과가 존재하지 않습니다.");
+        }
     }
 
     @Getter

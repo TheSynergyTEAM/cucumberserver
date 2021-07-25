@@ -97,4 +97,24 @@ public class FavouriteService {
 
         return count;
     }
+
+    /**
+     *  내가 찜하기 누른 상품인지 판별
+     */
+    @Transactional(readOnly = true)
+    public Boolean isItMine(Long loginId, Long itemId) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        QFavouriteItem favouriteItem = QFavouriteItem.favouriteItem;
+
+        Long count = queryFactory
+                .selectFrom(favouriteItem)
+                .where(favouriteItem.item.id.eq(itemId).and(favouriteItem.member.id.eq(loginId)))
+                .fetchCount();
+
+        if(count == 1)
+            return true;
+        else
+            return false;
+    }
 }

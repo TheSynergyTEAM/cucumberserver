@@ -4,15 +4,16 @@ import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service.ChatRoom
 import cucumbermarket.cucumbermarketspring.domain.favourite.service.FavouriteService;
 import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoDto;
 import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoResponseDto;
+import cucumbermarket.cucumbermarketspring.domain.file.dto.PhotoResponseDtoV2;
 import cucumbermarket.cucumbermarketspring.domain.file.service.PhotoService;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemFileVO;
 import cucumbermarket.cucumbermarketspring.domain.item.category.Categories;
 import cucumbermarket.cucumbermarketspring.domain.item.dto.*;
 import cucumbermarket.cucumbermarketspring.domain.item.service.ItemService;
+import cucumbermarket.cucumbermarketspring.domain.item.status.Status;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
-import cucumbermarket.cucumbermarketspring.domain.member.address.AddressService;
 import cucumbermarket.cucumbermarketspring.domain.member.service.MemberService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -45,9 +46,8 @@ public class ItemController {
         Member member = memberService.searchMemberById(Long.parseLong(itemFileVO.getId()));
         Address address = new Address(itemFileVO.getCity(), itemFileVO.getStreet1(), "", "");
         Categories category = Categories.find(itemFileVO.getCategory());
-//        Categories category = Categories.valueOf(itemFileVO.getCategory());
         int price = Integer.parseInt(itemFileVO.getPrice());
-        Boolean sold = Boolean.parseBoolean(itemFileVO.getSold());
+        Status sold = Status.find(itemFileVO.getSold());
 
         ItemCreateRequestDto itemRequestDto = ItemCreateRequestDto.builder()
                         .member(member)
@@ -71,10 +71,9 @@ public class ItemController {
     @CrossOrigin
     public CreateUpdateItemResponseDto update(@PathVariable Long id, ItemFileVO itemFileVO) throws Exception {
         Address address = new Address(itemFileVO.getCity(), itemFileVO.getStreet1(), "", "");
-    //    Categories category = Categories.find(itemFileVO.getCategory());
-        Categories category = Categories.valueOf(itemFileVO.getCategory());
+        Categories category = Categories.find(itemFileVO.getCategory());
         int price = Integer.parseInt(itemFileVO.getPrice());
-        Boolean sold = Boolean.parseBoolean(itemFileVO.getSold());
+        Status sold = Status.find(itemFileVO.getSold());
 
         ItemUpdateRequestDto itemRequestDto = ItemUpdateRequestDto.builder()
                 .address(address)
@@ -143,6 +142,21 @@ public class ItemController {
     }
 
     /**
+     * 상태 변경
+     */
+    @PostMapping("/item/change")
+    @CrossOrigin
+    public ResponseEntity<?> change(@RequestBody ItemStatusDto itemStatusDto) {
+        try {
+            Status sold = Status.find(itemStatusDto.getStatus());
+            itemService.changeState(itemStatusDto.getItemId(), sold);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 판매된 상품입니다");
+        }
+        return ResponseEntity.ok().body("OK");
+    }
+
+    /**
      * 물품삭제
      */
     @DeleteMapping("/item/{id}")
@@ -158,7 +172,10 @@ public class ItemController {
      */
     @GetMapping("/item/{id}")
     @CrossOrigin
-    public ItemResponseDto findById(@PathVariable("id") Long id){
+    public ItemResponseDto findById(
+            @PathVariable Long id,
+            @RequestParam(value="user", required = false, defaultValue = "0") String member
+            ) {
         List<PhotoResponseDto> photoResponseDtoList = fileService.findAllByItem(id);
         List<Long> photoId = new ArrayList<>();
         for(PhotoResponseDto photoResponseDto : photoResponseDtoList)
@@ -167,7 +184,9 @@ public class ItemController {
         Item item = itemService.searchItemById(id);
         itemService.updateViews(id, item.getViews());
         Long favourite = favouriteService.countFavourite(id);
-        return itemService.findOne(id, photoId, favourite);
+        Boolean mine = favouriteService.isItMine(Long.parseLong(member), id);
+
+        return itemService.findOne(id, photoId, favourite, mine);
     }
 
     /**
@@ -181,7 +200,8 @@ public class ItemController {
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            Boolean mine = favouriteService.isItMine(memberId, item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
 
@@ -199,7 +219,8 @@ public class ItemController {
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            Boolean mine = favouriteService.isItMine(memberId, item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
 
@@ -211,13 +232,17 @@ public class ItemController {
      */
     @GetMapping("/item/area")
     @CrossOrigin
-    public List<ItemListResponseDto> findByArea(@RequestParam("city") String city, @RequestParam("street") String street) {
+    public List<ItemListResponseDto> findByArea(
+            @RequestParam(value="user", required = false, defaultValue = "0") String id,
+            @RequestParam("city") String city,
+            @RequestParam("street") String street) {
         List<Item> itemList = itemService.findByArea(city, street);
         List<ItemListResponseDto> responseDtoList = new ArrayList<>();
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            Boolean mine = favouriteService.isItMine(Long.parseLong(id), item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
 
@@ -229,14 +254,17 @@ public class ItemController {
      */
     @GetMapping("/item/search/1")
     @CrossOrigin
-    public List<ItemListResponseDto> findByCategory(@RequestParam("category") String category) {
+    public List<ItemListResponseDto> findByCategory(
+            @RequestParam(value="user", required = false, defaultValue = "0") String id,
+            @RequestParam("category") String category) {
         Categories categories = Categories.find(category);
         List<Item> itemList = itemService.findByCategory(categories);
         List<ItemListResponseDto> responseDtoList = new ArrayList<>();
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            Boolean mine = favouriteService.isItMine(Long.parseLong(id), item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
 
@@ -248,13 +276,16 @@ public class ItemController {
      */
     @GetMapping("/item/search/2")
     @CrossOrigin
-    public List<ItemListResponseDto> findByKeyword(@RequestParam("keyword") String keyword) {
+    public List<ItemListResponseDto> findByKeyword(
+            @RequestParam(value="user", required = false, defaultValue = "0") String id,
+            @RequestParam("keyword") String keyword) {
         List<Item> itemList = itemService.findByKeyword(keyword);
         List<ItemListResponseDto> responseDtoList = new ArrayList<>();
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            Boolean mine = favouriteService.isItMine(Long.parseLong(id), item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
 
@@ -266,19 +297,51 @@ public class ItemController {
      */
     @GetMapping("/item/list")
     @CrossOrigin
-    public List<ItemListResponseDto> findAll() {
+    public List<ItemListResponseDto> findAll(@RequestParam(value="user", required = false, defaultValue = "0") String id) {
         List<Item> itemList = itemService.findAll();
         List<ItemListResponseDto> responseDtoList = new ArrayList<>();
 
         for(Item item : itemList){
             Long favourite = favouriteService.countFavourite(item.getId());
-            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite);
+            Boolean mine = favouriteService.isItMine(Long.parseLong(id), item.getId());
+            ItemListResponseDto responseDto = new ItemListResponseDto(item, favourite, mine);
             responseDtoList.add(responseDto);
         }
 
         return responseDtoList;
     }
 
+    /**
+     *
+     * @param id (item Id)
+     * @return
+     */
+    @GetMapping("/item/photos")
+    @CrossOrigin
+    public ResponseEntity<?> itemPhotoRequestAll(@RequestParam(value = "item", required = true) Long id) {
+        List<byte[]> photoList = itemService.listDownload(id);
+        PhotoResponseDtoV2 dtoV2 = PhotoResponseDtoV2.builder().
+                related("item").total(photoList.size()).relatedId(id).photoList(photoList).build();
+
+        return ResponseEntity.ok().body(
+                dtoV2
+        );
+    }
+
+    @GetMapping("/item/photo")
+    @CrossOrigin
+    public ResponseEntity<?> itemPhotoRequest(@RequestParam(value = "itemId") Long itemId, @RequestParam(value = "fileNumber") int fileNumber) {
+        byte[] photo = itemService.download(itemId, fileNumber);
+        if (photo != null && photo.length > 0) {
+            return ResponseEntity.ok().body(
+                    photo
+            );
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    "해당 파일이 존재하지 않습니다"
+            );
+        }
+    }
 
     @Data
     static class CreateUpdateItemResponseDto {
@@ -288,5 +351,4 @@ public class ItemController {
             this.id = id;
         }
     }
-
 }
