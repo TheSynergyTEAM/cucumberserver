@@ -144,15 +144,13 @@ public class ItemController {
     /**
      * 상태 변경
      */
-    @PostMapping("/item/change")
+    @PatchMapping("/item/change")
     @CrossOrigin
-    public ResponseEntity<?> change(@RequestBody ItemStatusDto itemStatusDto) {
-        try {
-            Status sold = Status.find(itemStatusDto.getStatus());
-            itemService.changeState(itemStatusDto.getItemId(), sold);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 판매된 상품입니다");
-        }
+    public ResponseEntity<?> change(@RequestBody ItemStatusDto itemStatusDto) throws Exception {
+
+        Status sold = Status.find(itemStatusDto.getStatus());
+        itemService.changeState(itemStatusDto.getItemId(), sold);
+
         return ResponseEntity.ok().body("OK");
     }
 

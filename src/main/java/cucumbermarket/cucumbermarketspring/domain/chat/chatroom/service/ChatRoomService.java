@@ -191,14 +191,14 @@ public class ChatRoomService {
         }
     }
 
-    public List<ChatRoomListDTO> findAllChatRoomsByItemIdOrMemberName(Long senderId, String itemName, String memberName) {
+    public List<ChatRoomListDTO> findAllChatRoomsByItemIdOrMemberName(Long senderId, String keyword) {
         List<ChatRoomListDTO> chatRoomList = findAllChatRoomsBySenderId(senderId);
         if (chatRoomList.isEmpty()) {
             throw new NoSuchElementException("존재하지 않는 Sender Id");
         }
         List<ChatRoomListDTO> resultList = new ArrayList<>();
         for (ChatRoomListDTO cr : chatRoomList) {
-            if (cr.getItemName().contains(itemName) || cr.getReceiverName().contains(memberName)) {
+            if (cr.getItemName().contains(keyword) || cr.getReceiverName().contains(keyword)) {
                 resultList.add(cr);
             }
         }
