@@ -97,12 +97,10 @@ public class ItemService {
     * 상품 판매 상태 변경
     * */
     @Transactional
-    public void changeState(Long itemId, Status status) {
+    public void changeState(Long itemId, Status status) throws Exception {
         Item item = itemRepository.findById(itemId).orElseThrow(()
                 -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
-        if (item.getSold().getValue().equals(Status.SOLD)) {
-            throw new IllegalArgumentException("이미 판매된 상품입니다");
-        }
+
         item.changeStatus(status);
     }
 
@@ -196,7 +194,7 @@ public class ItemService {
 
        List<Item> itemList = queryFactory
                .selectFrom(item)
-               .where(item.address.city.eq(city).and(item.address.street1.eq(street)))
+               .where(address.city.eq(city).and(address.street1.eq(street)))
                .fetch();
 
         return itemList;
