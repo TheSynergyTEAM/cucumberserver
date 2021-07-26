@@ -1,5 +1,6 @@
 package cucumbermarket.cucumbermarketspring.domain.chat.socket.controller;
 
+import cucumbermarket.cucumbermarketspring.domain.chat.Message.Message;
 import cucumbermarket.cucumbermarketspring.domain.chat.Message.service.MessageService;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.dto.ChatRoomListDTO;
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service.ChatRoomService;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Controller
 @RequiredArgsConstructor
@@ -48,6 +50,18 @@ public class ChatMessageController {
         );
     }
 
+    @GetMapping("/message/{senderId}/{receiverId}/{itemId}/v2")
+    @CrossOrigin
+    public ResponseEntity<?> findChatMessagesWithoutPage(@PathVariable("senderId") Long senderId,
+                                              @PathVariable("receiverId") Long receiverId,
+                                              @PathVariable("itemId") Long itemId){
+        List<Message> messagesWithoutPage = messageService.findMessagesWithoutPage(senderId, receiverId, itemId);
+        messageService.updateMessages(senderId, receiverId, itemId);
+        return ResponseEntity.ok(
+                messagesWithoutPage
+        );
+    }
+
     @RequestMapping("/test")
     @CrossOrigin
     public String testview(){
@@ -69,6 +83,25 @@ public class ChatMessageController {
         return ResponseEntity.ok().body(
                 allChatRoomsBySenderId
         );
+    }
+
+    @GetMapping("/chatroom")
+    @CrossOrigin
+    public ResponseEntity<?> chatRoomListByItemIdOrMemberId(
+            @RequestParam(value = "senderId") Long senderId,
+            @RequestParam(value = "keyword", required = true, defaultValue = "") String keyword) {
+        if (keyword.equals("")) {
+            return ResponseEntity.badRequest().body("검색 결과가 존재하지 않습니다.");
+        }
+        try {
+            List<ChatRoomListDTO> chatRoomList = chatRoomService.findAllChatRoomsByItemIdOrMemberName
+                    (senderId, keyword);
+            return ResponseEntity.ok().body(
+                    chatRoomList
+            );
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.badRequest().body("검색 결과가 존재하지 않습니다.");
+        }
     }
 
     @Getter

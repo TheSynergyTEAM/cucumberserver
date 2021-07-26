@@ -8,6 +8,7 @@ import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.ChatRoomReposito
 import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.dto.ChatRoomListDTO;
 import cucumbermarket.cucumbermarketspring.domain.item.Item;
 import cucumbermarket.cucumbermarketspring.domain.item.ItemRepository;
+import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -189,4 +190,19 @@ public class ChatRoomService {
             chatRoom.updateValid();
         }
     }
+
+    public List<ChatRoomListDTO> findAllChatRoomsByItemIdOrMemberName(Long senderId, String keyword) {
+        List<ChatRoomListDTO> chatRoomList = findAllChatRoomsBySenderId(senderId);
+        if (chatRoomList.isEmpty()) {
+            throw new NoSuchElementException("존재하지 않는 Sender Id");
+        }
+        List<ChatRoomListDTO> resultList = new ArrayList<>();
+        for (ChatRoomListDTO cr : chatRoomList) {
+            if (cr.getItemName().contains(keyword) || cr.getReceiverName().contains(keyword)) {
+                resultList.add(cr);
+            }
+        }
+        return resultList;
+    }
+
 }
