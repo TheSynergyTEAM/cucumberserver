@@ -76,7 +76,6 @@ public class StorageService {
             Avatar avatar = Avatar.builder().
                     member(foundMember).
                     name(memberId.toString() + "_avatar").
-                    bytes(compressBytes(file.getBytes())).
                     path(newFileName).
                     build();
             foundMember.updateAvatar(avatar);
@@ -118,7 +117,7 @@ public class StorageService {
             outputStream.close();
         } catch (IOException e) {
         }
-        System.out.println("Compressed Image Byte Size - " + outputStream.toByteArray().length);
+//        System.out.println("Compressed Image Byte Size - " + outputStream.toByteArray().length);
         return outputStream.toByteArray();
     }
     // uncompress the image bytes before returning it to the angular application
@@ -146,6 +145,7 @@ public class StorageService {
             Path destinationFile = this.rootLocation.resolve(
                     Paths.get(avatar.getPath()))
                     .normalize().toAbsolutePath();
+
             return destinationFile;
         } catch (NullPointerException e) {
             throw new NullPointerException("프로필 사진이 존재하지 않습니다.");
@@ -162,5 +162,14 @@ public class StorageService {
         }
         member.deleteAvatar();
         avatarRepository.delete(avatar);
+    }
+
+    public String getAvatarPath(Long memberId) {
+        try {
+            Avatar avatar = avatarRepository.findByName(memberId.toString() + "_avatar");
+            return avatar.getPath();
+        } catch (NullPointerException e) {
+            return "";
+        }
     }
 }

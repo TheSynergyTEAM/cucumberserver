@@ -25,10 +25,6 @@ public class Avatar {
     @Column(name = "name")
     private String name;
 
-    @Lob
-    @Column(name = "bytes")
-    private byte[] bytes;
-
     @Column(name = "path")
     private String path;
     public Avatar() {

@@ -5,6 +5,7 @@ import cucumbermarket.cucumbermarketspring.domain.chat.chatroom.service.ChatRoom
 import cucumbermarket.cucumbermarketspring.domain.member.MemberRepository;
 import cucumbermarket.cucumbermarketspring.domain.member.Member;
 import cucumbermarket.cucumbermarketspring.domain.member.address.Address;
+import cucumbermarket.cucumbermarketspring.domain.member.avatar.storage.StorageService;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.LoginResponseDto;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.MemberProfileDto;
 import cucumbermarket.cucumbermarketspring.domain.member.dto.UpdateMemberDto;
@@ -21,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
@@ -35,6 +37,7 @@ public class MemberController {
     private final MessageService messageService;
     private final MemberRepository memberRepository;
     private final ChatRoomService chatRoomService;
+    private final StorageService storageService;
     private final JwtAuthenticationTokenProvider jwtAuthenticationTokenProvider;
 
     @CrossOrigin
@@ -107,7 +110,7 @@ public class MemberController {
     }
 
     private LoginResponseDto getLoginResponseDTO(Member member) {
-        return new LoginResponseDto(
+        LoginResponseDto responseDto = new LoginResponseDto(
                 member.getId(),
                 member.getName(),
                 member.getAddress(),
@@ -116,6 +119,8 @@ public class MemberController {
                 member.getContact(),
                 member.getRatingScore()
         );
+        responseDto.setAvatar(storageService.getAvatarPath(member.getId()));
+        return responseDto;
     }
 
     /**
@@ -125,9 +130,7 @@ public class MemberController {
     @GetMapping("/member/{id}")
     public MemberProfileDto getMemberProfile(@PathVariable("id") Long id) {
         MemberProfileDto memberProfile = memberService.getMemberProfile(id);
-        System.out.println("memberProfile = " + memberProfile);
         if (memberProfile.getName() == null) {
-            System.out.println("here");
             throw new ForbiddenException();
         }
         return memberProfile;
