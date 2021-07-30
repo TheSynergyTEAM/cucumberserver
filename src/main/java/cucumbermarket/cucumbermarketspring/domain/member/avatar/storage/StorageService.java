@@ -76,7 +76,7 @@ public class StorageService {
             Avatar avatar = Avatar.builder().
                     member(foundMember).
                     name(memberId.toString() + "_avatar").
-                    path(newFileName).
+                    path(destinationFile.toString()).
                     build();
             foundMember.updateAvatar(avatar);
 
