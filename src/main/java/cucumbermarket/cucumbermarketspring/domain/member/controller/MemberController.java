@@ -119,7 +119,11 @@ public class MemberController {
                 member.getContact(),
                 member.getRatingScore()
         );
-        responseDto.setAvatar(storageService.getAvatarPath(member.getId()));
+        String avatarPath = storageService.getAvatarPath(member.getId());
+        if (!avatarPath.equals("")) {
+            responseDto.setAvatar(avatarPath);
+        }
+//        responseDto.setAvatar(storageService.getAvatarPath(member.getId()));
         return responseDto;
     }
 
@@ -132,6 +136,10 @@ public class MemberController {
         MemberProfileDto memberProfile = memberService.getMemberProfile(id);
         if (memberProfile.getName() == null) {
             throw new ForbiddenException();
+        }
+        String avatarPath = storageService.getAvatarPath(id);
+        if (!avatarPath.equals("")) {
+            memberProfile.setAvatar(avatarPath);
         }
         return memberProfile;
     }
