@@ -295,7 +295,7 @@ public class ItemController {
      */
     @GetMapping("/item/list")
     @CrossOrigin
-    public List<ItemListResponseDto> findAll(@RequestParam(value="user", required = false, defaultValue = "0") String id) {
+    public List<ItemListResponseDto> findAll(@RequestParam(value="user", required = false) String id) {
         List<Item> itemList = itemService.findAll();
         List<ItemListResponseDto> responseDtoList = new ArrayList<>();
 
