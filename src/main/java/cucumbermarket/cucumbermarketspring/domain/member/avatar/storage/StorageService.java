@@ -105,7 +105,7 @@ public class StorageService {
 
     public String getAvatarPath(Long memberId) {
         try {
-            Avatar avatar = avatarRepository.findByName(memberId.toString() + "_avatar");
+            Avatar avatar = avatarRepository.findByNameContaining(memberId.toString() + "_avatar");
             return avatar.getPath();
         } catch (NullPointerException e) {
             return "";

@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AvatarRepository extends JpaRepository<Avatar, Long> {
 
     Avatar findByName(String name);
+    Avatar findByNameContaining(String name);
 }
