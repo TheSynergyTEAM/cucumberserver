@@ -18,6 +18,7 @@ public class LoginResponseDto {
     private String contact;
     private Integer ratingscore;
     private Boolean unread;
+    private String avatar;
 
     public LoginResponseDto(){}
 

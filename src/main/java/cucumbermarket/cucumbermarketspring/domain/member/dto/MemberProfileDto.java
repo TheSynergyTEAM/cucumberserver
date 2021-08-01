@@ -14,6 +14,7 @@ public class MemberProfileDto {
     private String email;
     private String contact;
     private Integer ratingscore;
+    private String avatar;
 
     public MemberProfileDto() {
     }

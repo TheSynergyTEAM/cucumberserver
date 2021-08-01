@@ -36,14 +36,9 @@ public class StorageService {
     private final AvatarRepository avatarRepository;
     private final MemberRepository memberRepository;
 
-//    @Autowired
-//    public StorageService(StorageProperties properties, AvatarRepository avatarRepository, MemberRepository memberRepository) {
-//        this.rootLocation = Paths.get(properties.getLocation());
-//        this.avatarRepository = avatarRepository;
-//        this.memberRepository = memberRepository;
-//    }
 
     @Transactional
+
     public Avatar save(Long memberId, MultipartFile file) {
         if (file.isEmpty()) {
             throw new StorageException("Failed to store empty file.");
@@ -55,7 +50,7 @@ public class StorageService {
             originalFileExtension = ".png";
         else if (file.getContentType().equals("image/jpg"))
             originalFileExtension = ".jpg";
-        else{
+        else {
             throw new StorageExtensionException("File Uploaded is not an type of image");
         }
         // get file metadata
@@ -87,36 +82,14 @@ public class StorageService {
         return avatarRepository.findByName(newFileName);
     }
 
-
     public byte[] download(Long memberId) {
         Member member = memberRepository.findById(memberId).get();
         Avatar avatar = member.getAvatar();
         if (avatar == null) {
             return new byte[0];
         }
-//        Path destinationFile = this.rootLocation.resolve(
-//                Paths.get(avatar.getPath()))
-//                .normalize().toAbsolutePath();
         return s3Uploader.download(avatar.getPath(), avatar.getName());
     }
-
-
-    //Todo
-//    @Transactional
-//    public void init() {
-//        try {
-//            Files.createDirectories(rootLocation);
-//        }
-//        catch (IOException e) {
-//            throw new StorageException("Could not initialize storage", e);
-//        }
-//    }
-//
-//    @Transactional
-//    public void deleteAll() {
-//        FileSystemUtils.deleteRecursively(rootLocation.toFile());
-//    }
-
 
     @Transactional
     public void delete(Long memberId) {
@@ -130,39 +103,12 @@ public class StorageService {
         avatarRepository.delete(avatar);
     }
 
-    // compress the image bytes before storing it in the database
-    public static byte[] compressBytes(byte[] data) {
-        Deflater deflater = new Deflater();
-        deflater.setInput(data);
-        deflater.finish();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-        byte[] buffer = new byte[1024];
-        while (!deflater.finished()) {
-            int count = deflater.deflate(buffer);
-            outputStream.write(buffer, 0, count);
-        }
+    public String getAvatarPath(Long memberId) {
         try {
-            outputStream.close();
-        } catch (IOException e) {
+            Avatar avatar = avatarRepository.findByName(memberId.toString() + "_avatar");
+            return avatar.getPath();
+        } catch (NullPointerException e) {
+            return "";
         }
-        System.out.println("Compressed Image Byte Size - " + outputStream.toByteArray().length);
-        return outputStream.toByteArray();
-    }
-
-    public static byte[] decompressBytes(byte[] data) {
-        Inflater inflater = new Inflater();
-        inflater.setInput(data);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-        byte[] buffer = new byte[1024];
-        try {
-            while (!inflater.finished()) {
-                int count = inflater.inflate(buffer);
-                outputStream.write(buffer, 0, count);
-            }
-            outputStream.close();
-        } catch (IOException ioe) {
-        } catch (DataFormatException e) {
-        }
-        return outputStream.toByteArray();
     }
 }

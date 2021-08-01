@@ -42,6 +42,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             try{
                 authenticationTokenProvider.validateToken(token);
                 Long tokenOwnerId = authenticationTokenProvider.getTokenOwnerId(token);
+                request.setAttribute("memberId", tokenOwnerId);
                 try {
                     Member memberByTokenId = memberRepository.getOne(tokenOwnerId);
                     User member = (User) memberService.loadUserByUsername(memberByTokenId.getEmail());
