@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -17,9 +19,10 @@ public class AvatarUploadController {
 
     private final StorageService storageService;
 
-    @PostMapping("/member/{id}/avatar")
-    public ResponseEntity<?> handleAvatarUpload(@PathVariable("id") Long id, @RequestParam("file") MultipartFile file) {
-        storageService.save(id, file);
+    @PostMapping("/member/avatar")
+    public ResponseEntity<?> handleAvatarUpload(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
+        long memberId = Long.parseLong(request.getAttribute("memberId").toString());
+        storageService.save(memberId, file);
         return ResponseEntity.ok().body("ok");
     }
 

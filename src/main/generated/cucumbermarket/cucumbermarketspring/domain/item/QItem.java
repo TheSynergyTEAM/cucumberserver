@@ -48,7 +48,7 @@ public class QItem extends EntityPathBase<Item> {
 
     public final cucumbermarket.cucumbermarketspring.domain.review.QReview review;
 
-    public final BooleanPath sold = createBoolean("sold");
+    public final EnumPath<cucumbermarket.cucumbermarketspring.domain.item.status.Status> sold = createEnum("sold", cucumbermarket.cucumbermarketspring.domain.item.status.Status.class);
 
     public final StringPath spec = createString("spec");
 

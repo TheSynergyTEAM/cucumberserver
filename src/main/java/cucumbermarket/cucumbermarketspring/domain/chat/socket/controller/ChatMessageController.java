@@ -15,6 +15,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -88,14 +90,16 @@ public class ChatMessageController {
     @GetMapping("/chatroom")
     @CrossOrigin
     public ResponseEntity<?> chatRoomListByItemIdOrMemberId(
-            @RequestParam(value = "senderId") Long senderId,
-            @RequestParam(value = "keyword", required = true, defaultValue = "") String keyword) {
+//            @RequestParam(value = "senderId") Long senderId,
+            @RequestParam(value = "keyword", defaultValue = "") String keyword, HttpServletRequest request) {
         if (keyword.equals("")) {
             return ResponseEntity.badRequest().body("검색 결과가 존재하지 않습니다.");
         }
+        long memberId = Long.parseLong(request.getAttribute("memberId").toString());
         try {
+
             List<ChatRoomListDTO> chatRoomList = chatRoomService.findAllChatRoomsByItemIdOrMemberName
-                    (senderId, keyword);
+                    (memberId, keyword);
             return ResponseEntity.ok().body(
                     chatRoomList
             );
